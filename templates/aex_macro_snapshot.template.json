@@ -1,0 +1,21 @@
+{
+  "as_of": "2026-04-02T00:00:00Z",
+  "regime_horizon_days": 5,
+  "base_case": "defensive / unstable",
+  "dominant_driver": "example placeholder",
+  "invalidators": [
+    "example invalidator"
+  ],
+  "ecb_stance": "hold / restrictive bias",
+  "fed_spillover": "secondary",
+  "geopolitical_flags": [],
+  "energy_flags": [],
+  "event_calendar": [],
+  "aex_sector_notes": {
+    "semis_tech": "",
+    "energy_materials": "",
+    "financials": "",
+    "defensives": "",
+    "global_cyclicals": ""
+  }
+}
