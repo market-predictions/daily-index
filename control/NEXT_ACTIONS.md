@@ -1,154 +1,94 @@
-# FX Review OS — Next Actions
+# Daily Index OS — Next Actions
 
 ## Status legend
-- `[USER]` = must be done manually by you in UI or external systems
-- `[ASSISTANT]` = I can do directly in chat/repo
-- `[JOINT]` = I prepare, you apply/approve
+- `[USER]` = manual user action
+- `[ASSISTANT]` = can be done directly in repo/chat
+- `[JOINT]` = assistant prepares, user wires providers, secrets, or external systems
 
 ---
 
-## Phase 1 — establish the working environment
+## Phase 1 — verify the current workflow state
 
-### 1. Create the ChatGPT Project
+### 1. Confirm the dry-test GitHub Actions results
 - Owner: `[USER]`
-- Action: create a new ChatGPT Project named **FX Review OS**.
-- Why: Projects are the correct recurring workbench for ongoing FX system work.
-- Done when: the project exists in your sidebar.
+- Action: inspect the Actions tab for commit `c58cc741f3bd96068ac8d713fc528aa964ac5f32`
+- Goal: confirm which workflows passed, failed, or were skipped
+- Why: the connector did not surface combined statuses yet
 
-### 2. Paste project instructions
+### 2. Keep using the control-layer read order
+1. `control/SYSTEM_INDEX.md`
+2. `control/CURRENT_STATE.md`
+3. `control/NEXT_ACTIONS.md`
+4. only then the minimum relevant execution file(s)
+
+---
+
+## Phase 2 — improve data depth safely
+
+### 3. Add a dedicated macro snapshot producer
+Target artifact:
+- `output_aex/aex_macro_snapshot.json`
+
+### 4. Decide the option-chain provider path
+Needed for:
+- AEX option chains
+- implied volatility / skew / term structure
+- spot / futures reference pricing
+- later structure building
+
+### 5. Add richer AEX composition / concentration logic
+Target outcome:
+- explicit AEX sector / concentration module in the report generator
+
+---
+
+## Phase 3 — move from report scaffolding to structure intelligence
+
+### 6. Build the first structure-selection engine
+Target outcome:
+- strike-aware defined-risk structure builder
+- max-loss / max-gain / financing-ratio calculation
+- approved-family enforcement
+
+### 7. Add portfolio-state and Greeks-state refresh logic
+Target artifacts:
+- `output_aex/aex_option_portfolio_state.json`
+- `output_aex/aex_option_risk_state.json`
+
+### 8. Keep the first generator conservative until structure selection exists
+Rule:
+- default to no-trade until the structure builder is real, not implied
+
+---
+
+## Phase 4 — delivery hardening
+
+### 9. Add SMTP secrets to the repo if email delivery should be active
+Needed by workflow:
+- `MRKT_RPRTS_SMTP_HOST`
+- `MRKT_RPRTS_SMTP_PORT`
+- `MRKT_RPRTS_SMTP_USER`
+- `MRKT_RPRTS_SMTP_PASS`
+- `MRKT_RPRTS_MAIL_FROM`
+- `MRKT_RPRTS_MAIL_TO`
+
+### 10. Confirm recipient(s)
+Set the default recipient list for the AEX workflow.
+
+---
+
+## Phase 5 — housekeeping
+
+### 11. Delete temporary branch `tmp-tree-test`
 - Owner: `[USER]`
-- Source file: `control/CHATGPT_PROJECT_INSTRUCTIONS.md`
-- Action: open Project settings and paste the instruction text.
-- Done when: the FX project has its own instructions separate from your global custom instructions.
+- Why: the connector exposed branch creation/search but not branch deletion
 
-### 3. Use the lean bootstrap upload model
-- Owner: `[USER]`
-- Primary upload:
-  - `control/PROJECT_BOOTSTRAP.md`
-- Action:
-  - upload only the bootstrap file as the default stable project context
-  - do **not** upload changing repo files as standard project context unless there is a specific task-driven need
-- Why:
-  - the ChatGPT Project should stay lean
-  - GitHub should remain the live source of truth for prompts, scripts, workflows, outputs, and state files
-  - this reduces drift between project memory and repo reality
-- Done when:
-  - the project contains the bootstrap file
-  - future sessions read the live repo files from GitHub instead of relying on stale uploaded copies
-
----
-
-## Phase 2 — make state authority obvious and durable
-
-### 4. Keep using the control layer at the start of each FX session
-- Owner: `[JOINT]`
-- Action: every meaningful FX architecture, debugging, prompt, state, workflow, or delivery session starts with:
-  1. `control/SYSTEM_INDEX.md`
-  2. `control/CURRENT_STATE.md`
-  3. `control/NEXT_ACTIONS.md`
-  4. only then the minimum relevant execution file(s)
-- Done when: sessions no longer need to rediscover how the system is organized.
-
-### 5. Keep the four-layer model explicit
-- Owner: `[ASSISTANT]`
-- Action: preserve and reinforce the separation between:
-  1. decision framework
-  2. input/state contract
-  3. output contract
-  4. operational runbook
-- Why: this is the core architectural improvement and must not collapse back into a monolith.
-- Done when: future changes and reviews are consistently framed against these four layers.
-
-### 6. Validate stale-data handling
-- Owner: `[ASSISTANT]`
-- Action: review handling of:
-  - stale technical overlay files
-  - stale valuation data
-  - stale portfolio values
-  - stale report artifacts
-- Done when: stale inputs cannot silently flatten, distort, or misstate the portfolio or report.
-
----
-
-## Phase 3 — complete the as-is split architecture safely
-
-### 7. Keep the split test strictly non-destructive
-- Owner: `[JOINT]`
-- Action:
-  - keep `fx.txt` unchanged as the production prompt
-  - use `prompts/as_is_split/` only for comparison runs
-  - keep split outputs in `output_split_test/`
-- Done when: the split architecture can be evaluated without changing production behavior.
-
-### 8. Use the split runtime as the comparison entrypoint
-- Owner: `[ASSISTANT]`
-- Source file: `prompts/as_is_split/FX_RUNTIME_SPLIT.txt`
-- Action:
-  - use the split runtime as the entrypoint for split tests
-  - preserve the exact read order defined there
-  - treat `05_SECTION_MAP.md` as reference only, not as runtime authority
-- Done when: split runs are reproducible and faithful to production logic.
-
-### 9. Compare split outputs against production outputs
-- Owner: `[ASSISTANT]`
-- Action:
-  - compare methodology preservation
-  - compare research coverage
-  - compare scoring integrity
-  - compare portfolio treatment
-  - compare executive presentation quality
-  - compare delivery-readiness
-- Done when: the split architecture is validated as truly “as-is” in practical output quality, not just in wording.
-
----
-
-## Phase 4 — tighten boundaries without changing behavior
-
-### 10. Extract the state/input contract more explicitly from production logic
-- Owner: `[ASSISTANT]`
-- Action:
-  - clarify what is authoritative for implementation facts
-  - clarify what is authoritative for strategy intent
-  - clarify deterministic conflict resolution between the two
-- Done when: the state model can be understood without rereading the whole monolith.
-
-### 11. Review `send_fxreport.py` against the new architecture
-- Owner: `[ASSISTANT]`
-- Action: identify which responsibilities belong in the script and which should stop living in the prompt.
-- Focus areas:
-  - manifest/receipt logic
-  - HTML/PDF rendering
-  - equity-curve handling
-  - stale-report detection
-  - portfolio-valuation refresh logic
-
-### 12. Review the GitHub Actions workflow
-- Owner: `[ASSISTANT]`
-- Action: confirm that workflow responsibilities stay limited to orchestration, secrets, execution, and delivery.
-- Done when: workflow logic is clearly operational, not decision-making.
-
----
-
-## Phase 5 — optional GPT layer
-
-### 13. Decide whether to build the optional helper GPT
-- Owner: `[USER]`
-- Source file: `control/OPTIONAL_CUSTOM_GPT_SPEC.md`
-- Recommendation: build it only as an **architect/reviewer GPT**, not as the primary production runner.
-- Done when: you either create it or explicitly decide to skip it.
-
----
-
-## Suggested immediate next move
-
-The best next move after this update is:
-1. keep the ChatGPT Project lean with `control/PROJECT_BOOTSTRAP.md` as the default upload
-2. use the control-layer read order for each serious FX session
-3. run split comparisons through `prompts/as_is_split/FX_RUNTIME_SPLIT.txt`
-4. only after output validation, continue boundary tightening in production-adjacent files
+### 12. Keep the repo lean
+- remove temporary test artifacts when they no longer serve a workflow purpose
+- prefer canonical control filenames only
+- avoid reintroducing FX-only files into this repo
 
 ---
 
 ## Current checkpoint
-
-**Architecture transition in progress — split runtime exists, production prompt remains protected, control layer should now align fully with the lean bootstrap + live GitHub reading model.**
+**Control-layer normalization completed; next priority is verifying current workflow outcomes and upgrading data/structure depth without relaxing the no-trade discipline too early.**

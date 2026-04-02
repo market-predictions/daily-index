@@ -1,101 +1,74 @@
-# FX Review OS — System Index
+# Daily Index OS — System Index
 
-This file is the **first entry point** for any serious work on the `daily-fx` system.
+This file is the **first entry point** for meaningful work on `market-predictions/daily-index`.
 
 ## Purpose
-This repository contains both the production execution files and a new control layer meant to reduce confusion between analysis logic, state management, and delivery.
+This repository contains a dedicated operating system for structured **weekly AEX index option plays**.
 
-Use this file first so you do not start in the wrong place.
-
-## Canonical execution files
-Read these after the control files and only when relevant to the task.
-
-- `fx.txt` — current monolithic masterprompt for the Weekly FX Review.
-- `send_fxreport.py` — delivery/rendering script for HTML email, PDF generation, attachments, and manifest logic.
-- `.github/workflows/send-weekly-report.yml` — GitHub Actions workflow that runs the report and delivery process.
-- `output/` — archived FX reports and state artifacts.
-- `output/fx_portfolio_state.json` — explicit portfolio implementation state when present.
-- `output/fx_trade_ledger.csv` — trade/event history for the model portfolio when present.
-- `output/fx_valuation_history.csv` — valuation history when present.
-- `output/fx_recommendation_scorecard.csv` — recommendation scoring history when present.
-- `output/fx_technical_overlay.json` — technical confirmation overlay input.
-- `daily_outputs/latest/` and `mt5_output/latest/` — current supporting artifacts.
+The architecture is designed to keep four layers separate:
+- decision framework
+- input / state contract
+- output contract
+- operational runbook
 
 ## Canonical control files
-These are the new control-layer files for future sessions.
-
 - `control/CURRENT_STATE.md`
 - `control/NEXT_ACTIONS.md`
 - `control/DECISION_LOG.md`
+- `control/PROJECT_BOOTSTRAP.md`
 - `control/CHATGPT_PROJECT_INSTRUCTIONS.md`
 - `control/OPTIONAL_CUSTOM_GPT_SPEC.md`
 
+## Canonical execution files
+### Framework files
+- `prompts/aex_weekly_options/01_DECISION_FRAMEWORK.md`
+- `prompts/aex_weekly_options/02_INPUT_STATE_CONTRACT.md`
+- `prompts/aex_weekly_options/03_OUTPUT_CONTRACT.md`
+- `prompts/aex_weekly_options/04_OPERATIONAL_RUNBOOK.md`
+
+### Snapshot / data producers
+- `build_aex_primary_technical_snapshot.py`
+- `build_aex_cross_market_confirmation.py`
+- `build_aex_option_surface_snapshot.py`
+- `run_aex_snapshot_suite.py`
+
+### Report / validation / delivery
+- `generate_weekly_aex_option_review.py`
+- `validate_aex_trade_plan.py`
+- `send_aex_options_report.py`
+
+### Workflows
+- `.github/workflows/refresh-aex-snapshots.yml`
+- `.github/workflows/build-weekly-aex-review.yml`
+- `.github/workflows/validate-aex-trade-plan.yml`
+- `.github/workflows/send-weekly-aex-options.yml`
+
 ## Operating model
-This repository should be read in four layers.
+Read the repository in four layers.
 
 ### 1. Decision framework
-This is the strategic FX judgment layer:
-- macro regime
-- policy divergence
-- currency ranking
-- portfolio rotation
-- opportunity selection
+Strategic regime, approved financing families, burden-of-proof rules, and no-trade default.
 
-Primary file today:
-- `fx.txt`
-
-### 2. Input/state contract
-This is where the repo decides what facts are authoritative.
-
-The FX system is already more mature here than ETF because it explicitly references:
-- state files
-- technical overlay files
-- valuation history
-- trade ledger files
-
-Even so, the authority rules should remain explicit and easy to find.
+### 2. Input / state contract
+Defines the AEX-primary technical layer, cross-market confirmation layer, option-surface layer, and risk state.
 
 ### 3. Output contract
-This defines the report shape and premium delivery expectations.
-
-Today much of it still lives inside `fx.txt` and is implemented in `send_fxreport.py`.
+Defines the weekly report, machine trade plan, and required state updates.
 
 ### 4. Operational runbook
-This defines how the system is actually run.
-
-Today the prompt still carries too much runbook logic. Over time, the scripts and workflow should own more of the true execution layer.
+Defines automation levels, refresh order, timing gates, validation gates, and delivery behavior.
 
 ## Session start rule
-For architecture work, debugging, prompt changes, or flow redesign, start in this order:
-
+For architecture work, debugging, workflow changes, or state-authority work, read in this order:
 1. `control/SYSTEM_INDEX.md`
 2. `control/CURRENT_STATE.md`
 3. `control/NEXT_ACTIONS.md`
-4. only then open the specific execution file(s) needed for the task
-
-Recommended execution file priority by task:
-- macro / logic / structure → `fx.txt`
-- delivery / email / PDF / manifest → `send_fxreport.py`
-- workflow / secrets / scheduling → `.github/workflows/send-weekly-report.yml`
-- implementation-state disputes → the relevant file in `output/`
-
-## Session close rule
-At the end of any meaningful architecture or implementation session:
-
-1. write stable decisions into `control/DECISION_LOG.md`
-2. update `control/CURRENT_STATE.md` if the architecture changed
-3. update `control/NEXT_ACTIONS.md` so the next session can restart without rediscovery
+4. only then the minimum relevant execution file(s)
 
 ## Non-negotiable discipline
-- Do not collapse state, strategy, and delivery logic back into one giant opaque prompt.
-- Do not let technical overlay evidence become the only decision engine.
-- Do not claim delivery succeeded without a real receipt or manifest.
-- Do not treat stale overlay files as if they were fresh without labeling them.
-
-## Current direction of travel
-The target architecture for FX is:
-
-- **ChatGPT Project** as working memory and recurring workspace
-- **GitHub** as explicit state, audit trail, and operational source of truth
-- **GitHub Actions + scripts** as execution and delivery layer
-- **Optional Custom GPT** only as architect/reviewer, not as the production runner
+- Do not let technicals become the only decision engine.
+- Do not collapse the four layers into one giant prompt.
+- Do not treat “covered writing” as a vague concept.
+- Do not force trades; **no-trade** is the default until the burden of proof is met.
+- Do not claim delivery succeeded without a manifest or receipt.
+- Do not treat incomplete public option-chain coverage as if it were production-grade surface data.
