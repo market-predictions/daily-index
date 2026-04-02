@@ -1,0 +1,15 @@
+{
+  "report_date": "2026-04-02",
+  "approval_status": "no_trade",
+  "automation_level": 1,
+  "directional_regime": "unknown",
+  "options_regime": "unknown",
+  "primary_decision": "NO_TRADE",
+  "no_trade_reason": "template",
+  "structures_considered": [],
+  "approved_structures": [],
+  "portfolio_overlap_assessment": "",
+  "timing_gate_status": "",
+  "freshness_summary": "",
+  "risk_budget_summary": ""
+}
