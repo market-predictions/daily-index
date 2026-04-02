@@ -86,7 +86,7 @@ A report should not be rendered or mailed if the trade-plan artifact is internal
 Add a first snapshot-driven weekly report generator that still defaults to **no-trade**.
 
 ### Why
-The repository needs a real end-to-end pipeline, but it should stay conservative until a real structure builder exists.
+The repository needed a real end-to-end pipeline, but it should stay conservative until a real structure builder existed.
 
 ---
 
@@ -96,3 +96,12 @@ Normalize the control layer to canonical filenames inside `daily-index` and remo
 
 ### Why
 A dedicated AEX repo should not require AEX-prefixed control filenames or contain stale FX control documents as its primary entry points.
+
+---
+
+## 2026-04-03
+### Decision
+Add a conservative macro snapshot producer, a first strike-aware structure builder, and a portfolio/Greeks refresh layer.
+
+### Why
+The repository needed real data depth and a path from regime assessment to structure candidates and live risk-state tracking without jumping to auto-execution.

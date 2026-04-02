@@ -29,8 +29,13 @@ The architecture is designed to keep four layers separate:
 ### Snapshot / data producers
 - `build_aex_primary_technical_snapshot.py`
 - `build_aex_cross_market_confirmation.py`
+- `build_aex_macro_snapshot.py`
 - `build_aex_option_surface_snapshot.py`
 - `run_aex_snapshot_suite.py`
+
+### Structure / portfolio layer
+- `build_aex_structure_candidates.py`
+- `refresh_aex_portfolio_and_risk_state.py`
 
 ### Report / validation / delivery
 - `generate_weekly_aex_option_review.py`
@@ -50,7 +55,7 @@ Read the repository in four layers.
 Strategic regime, approved financing families, burden-of-proof rules, and no-trade default.
 
 ### 2. Input / state contract
-Defines the AEX-primary technical layer, cross-market confirmation layer, option-surface layer, and risk state.
+Defines the AEX-primary technical layer, cross-market confirmation layer, macro layer, option-surface layer, structure board, and risk state.
 
 ### 3. Output contract
 Defines the weekly report, machine trade plan, and required state updates.
@@ -72,3 +77,4 @@ For architecture work, debugging, workflow changes, or state-authority work, rea
 - Do not force trades; **no-trade** is the default until the burden of proof is met.
 - Do not claim delivery succeeded without a manifest or receipt.
 - Do not treat incomplete public option-chain coverage as if it were production-grade surface data.
+- Do not auto-apply approved trade plans to the live portfolio at automation level 1.

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Run the first live AEX input producers in sequence.
+Run the live AEX input producers in sequence.
 
 Outputs:
 - output_aex/aex_primary_technical_snapshot.json
 - output_aex/aex_cross_market_confirmation.json
+- output_aex/aex_macro_snapshot.json
 - output_aex/aex_option_surface_snapshot.json
 """
 
@@ -16,6 +17,7 @@ import sys
 SCRIPTS = [
     "build_aex_primary_technical_snapshot.py",
     "build_aex_cross_market_confirmation.py",
+    "build_aex_macro_snapshot.py",
     "build_aex_option_surface_snapshot.py",
 ]
 

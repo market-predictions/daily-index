@@ -5,6 +5,7 @@ on:
     paths:
       - "build_aex_primary_technical_snapshot.py"
       - "build_aex_cross_market_confirmation.py"
+      - "build_aex_macro_snapshot.py"
       - "build_aex_option_surface_snapshot.py"
       - "run_aex_snapshot_suite.py"
       - ".github/workflows/refresh-aex-snapshots.yml"
@@ -40,4 +41,5 @@ jobs:
           path: |
             output_aex/aex_primary_technical_snapshot.json
             output_aex/aex_cross_market_confirmation.json
+            output_aex/aex_macro_snapshot.json
             output_aex/aex_option_surface_snapshot.json

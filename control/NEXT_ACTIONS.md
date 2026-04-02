@@ -9,9 +9,9 @@
 
 ## Phase 1 — verify the current workflow state
 
-### 1. Confirm the dry-test GitHub Actions results
+### 1. Confirm the GitHub Actions results
 - Owner: `[USER]`
-- Action: inspect the Actions tab for commit `c58cc741f3bd96068ac8d713fc528aa964ac5f32`
+- Action: inspect the Actions tab for the latest daily-index commits
 - Goal: confirm which workflows passed, failed, or were skipped
 - Why: the connector did not surface combined statuses yet
 
@@ -23,41 +23,43 @@
 
 ---
 
-## Phase 2 — improve data depth safely
+## Phase 2 — improve execution realism safely
 
-### 3. Add a dedicated macro snapshot producer
-Target artifact:
-- `output_aex/aex_macro_snapshot.json`
-
-### 4. Decide the option-chain provider path
+### 3. Decide the option-chain provider path
 Needed for:
 - AEX option chains
 - implied volatility / skew / term structure
 - spot / futures reference pricing
-- later structure building
+- better strike selection
 
-### 5. Add richer AEX composition / concentration logic
-Target outcome:
-- explicit AEX sector / concentration module in the report generator
+### 4. Decide how execution events will be recorded
+Target input:
+- `input_aex/aex_execution_events.json`
+
+### 5. Confirm whether the model portfolio should carry explicit long AEX exposure
+Why:
+- collar / overwrite-style families should only activate when underlying exposure is real
 
 ---
 
-## Phase 3 — move from report scaffolding to structure intelligence
+## Phase 3 — move from structure scaffolding to structure quality
 
-### 6. Build the first structure-selection engine
+### 6. Upgrade the first structure builder
 Target outcome:
-- strike-aware defined-risk structure builder
-- max-loss / max-gain / financing-ratio calculation
-- approved-family enforcement
+- wider strike search
+- better expiry selection
+- stronger candidate ranking
+- better financing and convexity scoring
 
-### 7. Add portfolio-state and Greeks-state refresh logic
-Target artifacts:
-- `output_aex/aex_option_portfolio_state.json`
-- `output_aex/aex_option_risk_state.json`
+### 7. Deepen the macro producer
+Target outcome:
+- richer AEX composition notes
+- better Europe / ECB / energy classification
+- less placeholder use
 
-### 8. Keep the first generator conservative until structure selection exists
+### 8. Keep automation conservative
 Rule:
-- default to no-trade until the structure builder is real, not implied
+- approved structures remain proposal-only until explicit execution confirmation arrives
 
 ---
 
@@ -91,4 +93,4 @@ Set the default recipient list for the AEX workflow.
 ---
 
 ## Current checkpoint
-**Control-layer normalization completed; next priority is verifying current workflow outcomes and upgrading data/structure depth without relaxing the no-trade discipline too early.**
+**Macro snapshot, strike-aware structure candidates, and portfolio/Greeks refresh now exist; next priority is verifying workflow outcomes and improving the realism of chain data and execution ingestion.**

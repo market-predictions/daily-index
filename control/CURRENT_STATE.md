@@ -11,7 +11,10 @@ A dedicated operating environment for **weekly AEX index option plays** with a c
 - Split four-layer framework in `prompts/aex_weekly_options/`
 - Live public **AEX primary technical snapshot** producer
 - Live public **cross-market confirmation** producer
+- Conservative **macro snapshot** producer with optional manual overlay
 - Conservative **option-surface snapshot** producer with provider-file fallback
+- First **strike-aware structure-candidate builder**
+- First **portfolio / Greeks refresh** layer
 - First **snapshot suite runner**
 - First **weekly AEX review generator**
 - **Trade-plan validator** with business-rule checks
@@ -32,28 +35,22 @@ A dedicated operating environment for **weekly AEX index option plays** with a c
 7. **No-trade as default**
 8. **Validation gate before render/send**
 9. **Public option-chain coverage treated conservatively**
+10. **Automation level 1 does not auto-apply approved trade plans to live portfolio state**
 
 ## Current strengths
-- The repo is now clearly index-options focused.
+- The repo is clearly index-options focused.
 - The control layer is AEX-native and restart-friendly.
-- Snapshot production, report generation, validation, and delivery are separate layers.
-- The system defaults to no-trade instead of forcing structures.
+- Snapshot production, structure building, report generation, validation, and delivery are separate layers.
+- The system still defaults to no-trade unless the new structure-candidate gates are met.
 - Public option-surface data is fail-safe rather than over-trusted.
+- Portfolio and Greeks state now have a real refresh path.
 
 ## Current weaknesses / open items
-- There is still no dedicated macro snapshot producer.
-- There is still no strike-selection / structure-builder engine.
 - There is still no broker execution layer.
-- Portfolio-state and Greeks-state refresh logic are not fully wired into the report generator yet.
+- The macro snapshot is still a conservative scrape/overlay design, not a full institutional data pipeline.
+- The structure builder is still a first-pass strike selector, not yet a full optimizer.
+- Portfolio-state updates still require explicit execution events at automation level 1.
 - Dry-test workflow results were triggered by commit, but their final pass/fail status was not visible through the connector endpoint at the time of the last check.
 
-## Dry-test state
-A dry-test commit was pushed that:
-- tightened workflow gates
-- added the first report generator
-- added a valid no-trade report/trade-plan pair for workflow validation
-
-At the time of the last connector check, GitHub had not surfaced combined commit statuses yet.
-
 ## Current status label
-**AEX operating system established and normalized — canonical control layer now belongs to daily-index, core snapshot/report/validation workflow exists, and the next work should focus on data depth, structure building, and verified workflow outcomes.**
+**AEX operating system materially expanded — macro snapshot, structure candidate board, and portfolio/Greeks refresh now exist; the next work should focus on workflow verification, execution ingestion, and better structure optimization.**

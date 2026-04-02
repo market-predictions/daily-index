@@ -5,7 +5,10 @@ on:
     paths:
       - "build_aex_primary_technical_snapshot.py"
       - "build_aex_cross_market_confirmation.py"
+      - "build_aex_macro_snapshot.py"
       - "build_aex_option_surface_snapshot.py"
+      - "build_aex_structure_candidates.py"
+      - "refresh_aex_portfolio_and_risk_state.py"
       - "run_aex_snapshot_suite.py"
       - "generate_weekly_aex_option_review.py"
       - "validate_aex_trade_plan.py"
@@ -33,7 +36,13 @@ jobs:
       - name: Build live snapshots
         run: python run_aex_snapshot_suite.py
 
-      - name: Generate first weekly AEX review
+      - name: Build structure candidates
+        run: python build_aex_structure_candidates.py
+
+      - name: Refresh portfolio and Greeks state
+        run: python refresh_aex_portfolio_and_risk_state.py
+
+      - name: Generate weekly AEX review
         run: python generate_weekly_aex_option_review.py
 
       - name: Validate generated trade plan
@@ -49,4 +58,9 @@ jobs:
             output_aex/*_validation.json
             output_aex/aex_primary_technical_snapshot.json
             output_aex/aex_cross_market_confirmation.json
+            output_aex/aex_macro_snapshot.json
             output_aex/aex_option_surface_snapshot.json
+            output_aex/aex_structure_candidates.json
+            output_aex/aex_option_portfolio_state.json
+            output_aex/aex_option_risk_state.json
+            output_aex/aex_portfolio_refresh_manifest.json

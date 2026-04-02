@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 """
-Generate the first Weekly AEX Option Review from the three snapshot JSON inputs.
+Generate a Weekly AEX Option Review from the current snapshot and structure artifacts.
 
-This generator is intentionally conservative:
+This generator is still conservative, but it is no longer a pure placeholder:
+- it reads the macro snapshot
 - it reads the primary technical snapshot
 - it reads the cross-market confirmation snapshot
 - it reads the option-surface snapshot
-- it outputs a complete markdown review
-- it outputs a machine-readable trade plan
-- it defaults to NO_TRADE unless the evidence is unusually clean
-
-The goal of v1 is a deterministic first report generator, not a full structure optimizer.
+- it reads the strike-aware structure-candidate board
+- it reads the current portfolio / risk state when present
+- it can approve one top structure if the default gates are genuinely met
 """
 
 from __future__ import annotations
@@ -24,7 +23,11 @@ from typing import Any
 OUTPUT_DIR = Path("output_aex")
 PRIMARY_PATH = OUTPUT_DIR / "aex_primary_technical_snapshot.json"
 CROSS_PATH = OUTPUT_DIR / "aex_cross_market_confirmation.json"
+MACRO_PATH = OUTPUT_DIR / "aex_macro_snapshot.json"
 SURFACE_PATH = OUTPUT_DIR / "aex_option_surface_snapshot.json"
+STRUCTURES_PATH = OUTPUT_DIR / "aex_structure_candidates.json"
+PORTFOLIO_PATH = OUTPUT_DIR / "aex_option_portfolio_state.json"
+RISK_PATH = OUTPUT_DIR / "aex_option_risk_state.json"
 
 DISCLAIMER_LINE = "This report is for informational and educational purposes only; please see the disclaimer at the end."
 
@@ -40,12 +43,13 @@ def today_tokens() -> tuple[str, str]:
     return now.strftime("%Y-%m-%d"), now.strftime("%y%m%d")
 
 
-def derive_directional_regime(primary: dict[str, Any] | None, cross: dict[str, Any] | None, surface: dict[str, Any] | None) -> str:
+def derive_directional_regime(primary: dict[str, Any] | None, cross: dict[str, Any] | None, macro: dict[str, Any] | None, surface: dict[str, Any] | None) -> str:
     if surface and surface.get("event_distortion_flag"):
         return "unstable"
     trend = (primary or {}).get("trend_state", "unknown")
     cross_overall = (cross or {}).get("overall_confirmation", "unknown")
-    if trend == "bullish" and cross_overall == "supportive_risk":
+    macro_regime = (macro or {}).get("macro_regime", "unknown")
+    if trend == "bullish" and cross_overall == "supportive_risk" and macro_regime not in {"risk_defensive", "restrictive_with_inflation_reacceleration"}:
         return "bullish"
     if trend == "bearish" and cross_overall == "defensive_confirmation":
         return "bearish"
@@ -60,59 +64,57 @@ def derive_options_regime(surface: dict[str, Any] | None) -> str:
     return str(surface.get("surface_regime", "surface_unavailable"))
 
 
-def should_approve(primary: dict[str, Any] | None, cross: dict[str, Any] | None, surface: dict[str, Any] | None, directional: str, options_regime: str) -> bool:
-    if not primary or not cross or not surface:
-        return False
-    if primary.get("technical_confidence") != "high":
-        return False
+def choose_approved_structure(structures: dict[str, Any] | None, directional: str, options_regime: str) -> tuple[dict[str, Any] | None, str]:
+    if not structures:
+        return None, "structure_candidates_missing"
+    approved = list(structures.get("approved_candidates") or [])
+    if not approved:
+        return None, "no_candidates_passed_default_rules"
+    top = approved[0]
     if directional not in {"bullish", "bearish"}:
-        return False
+        return None, "directional_regime_not_clear"
     if options_regime not in {"long_premium_favorable", "financed_premium_favorable"}:
-        return False
-    if surface.get("provider_mode") == "unavailable":
-        return False
-    return False  # v1 intentionally stays conservative even when the setup looks clean
+        return None, f"options_regime_{options_regime}"
+    return top, "approved"
 
-
-def build_no_trade_reason(primary: dict[str, Any] | None, cross: dict[str, Any] | None, surface: dict[str, Any] | None, directional: str, options_regime: str) -> str:
+def build_no_trade_reason(primary: dict[str, Any] | None, cross: dict[str, Any] | None, macro: dict[str, Any] | None, surface: dict[str, Any] | None, structures: dict[str, Any] | None, directional: str, options_regime: str, approval_reason: str) -> str:
     reasons: list[str] = []
+    if not macro:
+        reasons.append("macro snapshot missing")
     if not primary:
         reasons.append("primary AEX technical snapshot missing")
     if not cross:
         reasons.append("cross-market confirmation snapshot missing")
     if not surface:
         reasons.append("option-surface snapshot missing")
+    if not structures:
+        reasons.append("structure-candidate board missing")
     if surface and surface.get("provider_mode") == "unavailable":
         reasons.append("option-surface data unavailable")
     if directional == "unstable":
         reasons.append("directional regime unstable")
     if options_regime in {"surface_unavailable", "surface_unattractive", "event_distorted"}:
         reasons.append(f"options regime {options_regime}")
-    if primary and primary.get("technical_confidence") != "high":
-        reasons.append("technical confidence not high")
-    reasons.append("v1 generator defaults to no-trade until a structure builder is added")
+    if approval_reason != "approved":
+        reasons.append(approval_reason)
     return "; ".join(dict.fromkeys(reasons))
 
 
-def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[str, Any] | None, surface: dict[str, Any] | None, directional: str, options_regime: str, no_trade_reason: str) -> str:
+def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[str, Any] | None, macro: dict[str, Any] | None, surface: dict[str, Any] | None, structures: dict[str, Any] | None, portfolio: dict[str, Any] | None, risk: dict[str, Any] | None, directional: str, options_regime: str, approved_structure: dict[str, Any] | None, no_trade_reason: str) -> str:
     primary_price = (primary or {}).get("reference_price")
     primary_trend = (primary or {}).get("trend_state", "unknown")
     cross_overall = (cross or {}).get("overall_confirmation", "unknown")
+    macro_regime = (macro or {}).get("macro_regime", "unknown")
+    dominant_driver = (macro or {}).get("dominant_driver", "unknown")
     provider_mode = (surface or {}).get("provider_mode", "unknown")
     implied_move = (surface or {}).get("implied_move_pct_next_expiry")
     rv20 = (((primary or {}).get("realized_vol_state") or {}).get("rv20_annualized"))
     atm_map = (surface or {}).get("atm_iv_by_expiry", {})
-
     top_expiry = next(iter(atm_map.items()), None)
     atm_line = f"{top_expiry[0]} ATM IV {top_expiry[1]}" if top_expiry else "no expiry IV available"
 
-    structures_considered = [
-        "overwrite_funded_hedge",
-        "collar_style_protection",
-        "defined_risk_bullish_financed_convexity",
-        "defined_risk_bearish_financed_convexity",
-        "range_defined_risk_premium_structure",
-    ]
+    structures_considered = list((structures or {}).get("candidates") or [])
+    approved_text = "**Decision: NO_TRADE**" if not approved_structure else f"**Decision: APPROVE {approved_structure['structure_name']}**"
 
     lines = [
         f"# Weekly AEX Option Review {report_date}",
@@ -121,24 +123,33 @@ def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[
         "",
         "## 1. Executive summary",
         f"The current generator classifies the directional regime as **{directional}** and the options regime as **{options_regime}**.",
-        f"The v1 output remains **NO_TRADE** because the burden of proof is not yet strong enough for automated structure approval. Main reason: {no_trade_reason}.",
+    ]
+    if approved_structure:
+        lines.append(
+            f"The top approved candidate is **{approved_structure['structure_name']}** in family **{approved_structure['family']}**, with estimated max loss **{approved_structure['max_loss']} EUR** and financing ratio **{approved_structure['financing_ratio']}**."
+        )
+    else:
+        lines.append(f"The output remains **NO_TRADE** because the burden of proof is not yet met. Main reason: {no_trade_reason}.")
+    lines += [
         "",
         "## 2. Portfolio action snapshot",
-        "- Primary decision: NO_TRADE",
+        f"- Primary decision: {'APPROVE' if approved_structure else 'NO_TRADE'}",
         "- Automation level: 1",
-        "- Position change: none",
-        "- Financing posture: preserve optionality; do not force premium harvesting",
+        f"- Position change: {'none (manual approval still required)' if approved_structure else 'none'}",
+        "- Financing posture: preserve optionality and keep defined risk explicit",
         "",
         "## 3. Macro / policy / geopolitical dashboard",
+        f"- Macro regime: {macro_regime}",
+        f"- Dominant driver: {dominant_driver}",
         f"- Cross-market confirmation: {cross_overall}",
-        "- ECB / Europe-sensitive context: placeholder in v1 generator; macro snapshot generator still to be added",
-        "- Geopolitical filter: not explicitly modeled in this first report generator",
-        "- Interpretation: use this review as a disciplined operating baseline, not as a fully mature macro engine yet",
+        f"- ECB deposit rate: {(((macro or {}).get('ecb') or {}).get('deposit_rate_pct'))}",
+        f"- Euro area inflation: {(((macro or {}).get('inflation') or {}).get('annual_inflation_pct'))}",
+        f"- Euro area unemployment: {(((macro or {}).get('unemployment') or {}).get('unemployment_rate_pct'))}",
+        f"- Euro area GDP q/q: {(((macro or {}).get('growth') or {}).get('gdp_qoq_pct'))}",
         "",
         "## 4. AEX composition and sector transmission map",
-        "- AEX composition module is not yet fully computed in v1",
-        "- Treat semiconductor concentration and Europe-sensitive cyclicality as unresolved concentration risk",
-        "- Do not over-generalize from generic Europe equity behavior to AEX-specific structure approval",
+        f"- AEX sector notes: {((macro or {}).get('aex_sector_notes') or {})}",
+        "- Concentration warning: AEX index-level approval should still be treated cautiously when macro narratives are broad but sector leadership is narrow",
         "",
         "## 5. Technical integrity and confirmation check",
         f"- Primary technical trend: {primary_trend}",
@@ -152,38 +163,52 @@ def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[
         f"- Surface regime: {options_regime}",
         f"- Front expiry read: {atm_line}",
         f"- Implied move next expiry: {implied_move}",
-        "- Surface interpretation: option-surface data is treated conservatively and may fall back to provider-fed input when public coverage is incomplete",
+        "- Surface interpretation: public chain coverage is treated conservatively and provider-fed input remains preferred when available",
         "",
         "## 7. Approved structure family or no-trade decision",
-        "**Decision: NO_TRADE**",
+        approved_text,
         "",
-        f"Reason: {no_trade_reason}.",
+    ]
+    if approved_structure:
+        lines += [
+            f"Approved family: {approved_structure['family']}",
+            f"Expiry: {approved_structure['expiry']}",
+            f"Long legs: {approved_structure['long_legs']}",
+            f"Short legs: {approved_structure['short_legs']}",
+            f"Break-even: {approved_structure['break_even']}",
+            f"Max gain / max loss: {approved_structure['max_gain']} / {approved_structure['max_loss']}",
+        ]
+    else:
+        lines += [f"Reason: {no_trade_reason}."]
+    lines += [
         "",
         "## 8. Structure ranking table",
-        "| Candidate family | Status | Reason |",
-        "|---|---|---|",
+        "| Candidate family | Status | Selection confidence | Notes |",
+        "|---|---|---:|---|",
     ]
-    for fam in structures_considered:
-        lines.append(f"| {fam} | reject in v1 | burden of proof not met |")
+    for cand in structures_considered:
+        status = "approved" if approved_structure and cand["structure_name"] == approved_structure["structure_name"] else ("watch" if cand.get("default_gate_passed") else "reject")
+        lines.append(f"| {cand['family']} | {status} | {cand.get('selection_confidence')} | {', '.join(cand.get('gate_notes', []))} |")
     lines += [
         "",
         "## 9. Calendar / timing gates and invalidators",
-        "- Do not force a financed structure inside event-distorted or surface-unavailable conditions",
-        "- Do not approve a structure while the generator still lacks a dedicated strike-selection engine",
-        "- Invalidator for no-trade: upgrade only after a structure builder and richer macro snapshot are added",
+        "- Do not force a financed structure inside event-distorted conditions",
+        "- Do not auto-execute approved structures at automation level 1",
+        "- Keep no-trade as the default whenever structure selection depends on incomplete chain coverage",
         "",
         "## 10. Position changes executed this run",
-        "- None",
+        "- None automatically. Portfolio changes require explicit execution confirmation.",
         "",
         "## 11. Current option portfolio, premium, and cash",
-        "- Portfolio state integration is not yet populated by the generator",
-        "- Premium collected this cycle: not updated here",
-        "- Premium spent this cycle: not updated here",
+        f"- Open structures: {len((portfolio or {}).get('open_structures', [])) if portfolio else 0}",
+        f"- Cash EUR: {((portfolio or {}).get('cash_eur')) if portfolio else 0}",
+        f"- Net delta / gamma / theta / vega: {((risk or {}).get('net_delta'), (risk or {}).get('net_gamma'), (risk or {}).get('net_theta'), (risk or {}).get('net_vega')) if risk else ('n/a', 'n/a', 'n/a', 'n/a')}",
+        f"- Max loss total: {((risk or {}).get('max_loss_total')) if risk else 'n/a'}",
         "",
         "## 12. Carry-forward input for next run",
-        "- Refresh the three snapshot JSON files",
-        "- Add a dedicated macro snapshot producer",
-        "- Add a structure builder with strikes, max loss, and financing metrics",
+        "- Refresh macro, technical, cross-market, and option-surface snapshots",
+        "- Rebuild structure candidates with the newest chain",
+        "- Refresh portfolio and Greeks state after any explicit execution events",
         "",
         "## 13. Disclaimer",
         DISCLAIMER_LINE,
@@ -192,15 +217,15 @@ def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[
     return "\n".join(lines)
 
 
-def build_trade_plan(report_date: str, directional: str, options_regime: str, no_trade_reason: str) -> dict[str, Any]:
+def build_trade_plan(report_date: str, directional: str, options_regime: str, approved_structure: dict[str, Any] | None, no_trade_reason: str) -> dict[str, Any]:
     return {
         "report_date": report_date,
-        "approval_status": "no_trade",
+        "approval_status": "approved" if approved_structure else "no_trade",
         "automation_level": 1,
         "directional_regime": directional,
         "options_regime": options_regime,
-        "primary_decision": "NO_TRADE",
-        "no_trade_reason": no_trade_reason,
+        "primary_decision": "APPROVE" if approved_structure else "NO_TRADE",
+        "no_trade_reason": None if approved_structure else no_trade_reason,
         "structures_considered": [
             "overwrite_funded_hedge",
             "collar_style_protection",
@@ -208,11 +233,11 @@ def build_trade_plan(report_date: str, directional: str, options_regime: str, no
             "defined_risk_bearish_financed_convexity",
             "range_defined_risk_premium_structure",
         ],
-        "approved_structures": [],
-        "portfolio_overlap_assessment": "not_applicable_no_trade",
-        "timing_gate_status": "pass_for_review_only_but_no_trade",
+        "approved_structures": [approved_structure] if approved_structure else [],
+        "portfolio_overlap_assessment": "manual_review_required_before_execution" if approved_structure else "not_applicable_no_trade",
+        "timing_gate_status": "manual_execution_required_after_validation" if approved_structure else "pass_for_review_only_but_no_trade",
         "freshness_summary": "derived from latest available snapshot files in output_aex",
-        "risk_budget_summary": "no new structure approved; risk budget preserved",
+        "risk_budget_summary": "proposal only at automation level 1" if approved_structure else "no new structure approved; risk budget preserved",
     }
 
 
@@ -226,18 +251,19 @@ def main() -> None:
 
     primary = load_json(PRIMARY_PATH)
     cross = load_json(CROSS_PATH)
+    macro = load_json(MACRO_PATH)
     surface = load_json(SURFACE_PATH)
+    structures = load_json(STRUCTURES_PATH)
+    portfolio = load_json(PORTFOLIO_PATH)
+    risk = load_json(RISK_PATH)
 
-    directional = derive_directional_regime(primary, cross, surface)
+    directional = derive_directional_regime(primary, cross, macro, surface)
     options_regime = derive_options_regime(surface)
+    approved_structure, approval_reason = choose_approved_structure(structures, directional, options_regime)
+    no_trade_reason = build_no_trade_reason(primary, cross, macro, surface, structures, directional, options_regime, approval_reason)
 
-    approved = should_approve(primary, cross, surface, directional, options_regime)
-    if approved:
-        directional = directional  # placeholder for future structure builder
-    no_trade_reason = build_no_trade_reason(primary, cross, surface, directional, options_regime)
-
-    report_md = render_report(report_date, primary, cross, surface, directional, options_regime, no_trade_reason)
-    trade_plan = build_trade_plan(report_date, directional, options_regime, no_trade_reason)
+    report_md = render_report(report_date, primary, cross, macro, surface, structures, portfolio, risk, directional, options_regime, approved_structure, no_trade_reason)
+    trade_plan = build_trade_plan(report_date, directional, options_regime, approved_structure, no_trade_reason)
 
     report_path = OUTPUT_DIR / f"weekly_aex_option_review_{token}_{args.suffix}.md"
     trade_plan_path = OUTPUT_DIR / f"aex_option_trade_plan_{token}_{args.suffix}.json"
