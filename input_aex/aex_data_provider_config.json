@@ -1,0 +1,5 @@
+{
+  "option_chain_source_policy": "provider_first",
+  "provider_input_path": "input_aex/aex_option_chain_provider.json",
+  "allow_yahoo_fallback": true
+}

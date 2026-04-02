@@ -2,18 +2,25 @@
 """
 Build output_aex/aex_option_surface_snapshot.json.
 
-Priority:
-1. Try a live public Yahoo Finance options-chain fetch for ^AEX.
-2. If the public chain is missing / incomplete, fall back to a provider-fed JSON file.
-3. If neither path is usable, write an explicit unavailable snapshot.
+Source policy is controlled by input_aex/aex_data_provider_config.json.
 
-This script is intentionally conservative: incomplete public chain coverage should not be mistaken for a valid surface.
+Default policy:
+- prefer provider input first
+- allow Yahoo fallback only when the provider input is missing or unusable
+
+Supported policies:
+- provider_first
+- yahoo_first
+- provider_only
+- yahoo_only
+
+This script is intentionally conservative: incomplete public chain coverage should
+not be mistaken for a valid surface.
 """
 
 from __future__ import annotations
 
 import json
-import math
 import statistics
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,9 +30,12 @@ import requests
 
 OUTPUT_PATH = Path("output_aex/aex_option_surface_snapshot.json")
 PRIMARY_TECH_PATH = Path("output_aex/aex_primary_technical_snapshot.json")
-PROVIDER_INPUT_PATH = Path("input_aex/aex_option_chain_provider.json")
+DEFAULT_PROVIDER_INPUT_PATH = Path("input_aex/aex_option_chain_provider.json")
+CONFIG_PATH = Path("input_aex/aex_data_provider_config.json")
 YAHOO_OPTIONS_URL = "https://query2.finance.yahoo.com/v7/finance/options/%5EAEX"
 USER_AGENT = "Mozilla/5.0 (compatible; DailyIndexOS/1.0)"
+
+ALLOWED_POLICIES = {"provider_first", "yahoo_first", "provider_only", "yahoo_only"}
 
 
 def load_primary_realized_vol() -> float | None:
@@ -36,6 +46,46 @@ def load_primary_realized_vol() -> float | None:
         return payload.get("realized_vol_state", {}).get("rv20_annualized")
     except Exception:
         return None
+
+
+def load_provider_config() -> dict[str, Any]:
+    default = {
+        "option_chain_source_policy": "provider_first",
+        "provider_input_path": str(DEFAULT_PROVIDER_INPUT_PATH),
+        "allow_yahoo_fallback": True,
+    }
+    if not CONFIG_PATH.exists():
+        return default
+    try:
+        payload = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+    config = dict(default)
+    if isinstance(payload, dict):
+        config.update(payload)
+
+    policy = str(config.get("option_chain_source_policy", default["option_chain_source_policy"]))
+    if policy not in ALLOWED_POLICIES:
+        policy = default["option_chain_source_policy"]
+    config["option_chain_source_policy"] = policy
+    config["allow_yahoo_fallback"] = bool(config.get("allow_yahoo_fallback", True))
+    config["provider_input_path"] = str(config.get("provider_input_path") or default["provider_input_path"])
+    return config
+
+
+def source_order(config: dict[str, Any]) -> list[str]:
+    policy = config["option_chain_source_policy"]
+    if policy == "provider_only":
+        return ["provider"]
+    if policy == "yahoo_only":
+        return ["yahoo"]
+    if policy == "yahoo_first":
+        return ["yahoo", "provider"]
+    order = ["provider", "yahoo"]
+    if not config.get("allow_yahoo_fallback", True):
+        order = ["provider"]
+    return order
 
 
 def try_fetch_yahoo_chain() -> dict[str, Any] | None:
@@ -53,10 +103,11 @@ def try_fetch_yahoo_chain() -> dict[str, Any] | None:
     return block
 
 
-def load_provider_chain() -> dict[str, Any] | None:
-    if not PROVIDER_INPUT_PATH.exists():
+def load_provider_chain(config: dict[str, Any]) -> dict[str, Any] | None:
+    provider_path = Path(str(config.get("provider_input_path") or DEFAULT_PROVIDER_INPUT_PATH))
+    if not provider_path.exists():
         return None
-    return json.loads(PROVIDER_INPUT_PATH.read_text(encoding="utf-8"))
+    return json.loads(provider_path.read_text(encoding="utf-8"))
 
 
 def clean_float(value: Any) -> float | None:
@@ -186,7 +237,7 @@ def analyze_single_expiry(expiry_ts: int, spot: float, calls: list[dict[str, Any
     }
 
 
-def build_from_yahoo(block: dict[str, Any], realized_vol: float | None) -> dict[str, Any] | None:
+def build_from_yahoo(block: dict[str, Any], realized_vol: float | None, config: dict[str, Any]) -> dict[str, Any] | None:
     quote = block.get("quote") or {}
     spot = clean_float(quote.get("regularMarketPrice"))
     if spot is None:
@@ -221,6 +272,8 @@ def build_from_yahoo(block: dict[str, Any], realized_vol: float | None) -> dict[
         "underlying": "AEX",
         "provider": "Yahoo Finance options chain",
         "provider_mode": "live_public_fetch",
+        "source_policy": config["option_chain_source_policy"],
+        "provider_input_path": config["provider_input_path"],
         "expiries": [a["expiry_date_utc"] for a in analyses],
         "atm_iv_by_expiry": {a["expiry_date_utc"]: a["atm_iv"] for a in analyses},
         "realized_vol_reference": {"rv20_annualized": realized_vol},
@@ -240,7 +293,7 @@ def build_from_yahoo(block: dict[str, Any], realized_vol: float | None) -> dict[
     }
 
 
-def build_from_provider(payload: dict[str, Any], realized_vol: float | None) -> dict[str, Any]:
+def build_from_provider(payload: dict[str, Any], realized_vol: float | None, config: dict[str, Any]) -> dict[str, Any]:
     spot = clean_float(payload.get("spot_price"))
     expiries = payload.get("expiries") or []
     if spot is None or not expiries:
@@ -267,6 +320,8 @@ def build_from_provider(payload: dict[str, Any], realized_vol: float | None) -> 
         "underlying": "AEX",
         "provider": payload.get("provider", "external_provider_file"),
         "provider_mode": "provider_input_file",
+        "source_policy": config["option_chain_source_policy"],
+        "provider_input_path": config["provider_input_path"],
         "expiries": [a["expiry_date_utc"] for a in analyses],
         "atm_iv_by_expiry": {a["expiry_date_utc"]: a["atm_iv"] for a in analyses},
         "realized_vol_reference": {"rv20_annualized": realized_vol},
@@ -287,12 +342,14 @@ def build_from_provider(payload: dict[str, Any], realized_vol: float | None) -> 
     }
 
 
-def unavailable_snapshot(reason: str, realized_vol: float | None) -> dict[str, Any]:
+def unavailable_snapshot(reason: str, realized_vol: float | None, config: dict[str, Any]) -> dict[str, Any]:
     return {
         "as_of": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "underlying": "AEX",
         "provider": "unavailable",
         "provider_mode": "unavailable",
+        "source_policy": config["option_chain_source_policy"],
+        "provider_input_path": config["provider_input_path"],
         "expiries": [],
         "atm_iv_by_expiry": {},
         "realized_vol_reference": {"rv20_annualized": realized_vol},
@@ -309,33 +366,46 @@ def unavailable_snapshot(reason: str, realized_vol: float | None) -> dict[str, A
     }
 
 
+def resolve_surface(config: dict[str, Any], realized_vol: float | None) -> dict[str, Any]:
+    errors: list[str] = []
+    for source in source_order(config):
+        if source == "provider":
+            try:
+                provider = load_provider_chain(config)
+                if provider is None:
+                    errors.append("provider_input_missing")
+                    continue
+                return build_from_provider(provider, realized_vol, config)
+            except Exception as exc:
+                errors.append(f"provider_failed: {exc}")
+                continue
+
+        if source == "yahoo":
+            try:
+                live = try_fetch_yahoo_chain()
+                if live is None:
+                    errors.append("yahoo_chain_missing")
+                    continue
+                built = build_from_yahoo(live, realized_vol, config)
+                if built is None:
+                    errors.append("yahoo_chain_incomplete")
+                    continue
+                return built
+            except Exception as exc:
+                errors.append(f"yahoo_failed: {exc}")
+                continue
+
+    reason = f"Option surface sources failed under policy {config['option_chain_source_policy']}: " + "; ".join(errors)
+    return unavailable_snapshot(reason, realized_vol, config)
+
+
 def main() -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     realized_vol = load_primary_realized_vol()
-
-    payload: dict[str, Any]
-    try:
-        live = try_fetch_yahoo_chain()
-        if live is not None:
-            built = build_from_yahoo(live, realized_vol)
-            if built is not None:
-                payload = built
-            else:
-                provider = load_provider_chain()
-                payload = build_from_provider(provider, realized_vol) if provider else unavailable_snapshot("Public options chain was incomplete and no provider input file was found.", realized_vol)
-        else:
-            provider = load_provider_chain()
-            payload = build_from_provider(provider, realized_vol) if provider else unavailable_snapshot("Public options chain was unavailable and no provider input file was found.", realized_vol)
-    except Exception as exc:
-        provider = load_provider_chain()
-        if provider is not None:
-            payload = build_from_provider(provider, realized_vol)
-            payload.setdefault("notes", []).append(f"Live public fetch failed; provider fallback used: {exc}")
-        else:
-            payload = unavailable_snapshot(f"Option surface build failed and no provider input file was found: {exc}", realized_vol)
-
+    config = load_provider_config()
+    payload = resolve_surface(config, realized_vol)
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    print(f"AEX_OPTION_SURFACE_OK | file={OUTPUT_PATH} | mode={payload.get('provider_mode')}")
+    print(f"AEX_OPTION_SURFACE_OK | file={OUTPUT_PATH} | mode={payload.get('provider_mode')} | policy={config['option_chain_source_policy']}")
 
 
 if __name__ == "__main__":

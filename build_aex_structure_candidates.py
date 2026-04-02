@@ -6,8 +6,10 @@ Purpose:
 - turn the current regime + option-surface state into actual strike-aware structure candidates
 - keep all proposed structures defined-risk
 - stay conservative by default
-- prefer provider-fed chain data when available
-- allow public live-chain fallback only when usable
+- resolve option-chain inputs using an explicit source policy
+
+Source policy is controlled by input_aex/aex_data_provider_config.json.
+Default policy prefers provider-fed input first, then Yahoo fallback only when allowed.
 
 The output is a candidate board, not an execution record.
 The report generator can decide whether one of the candidates earns approval.
@@ -16,8 +18,6 @@ The report generator can decide whether one of the candidates earns approval.
 from __future__ import annotations
 
 import json
-import math
-import statistics
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -32,11 +32,13 @@ CROSS_PATH = OUTPUT_DIR / "aex_cross_market_confirmation.json"
 SURFACE_PATH = OUTPUT_DIR / "aex_option_surface_snapshot.json"
 MACRO_PATH = OUTPUT_DIR / "aex_macro_snapshot.json"
 PORTFOLIO_PATH = OUTPUT_DIR / "aex_option_portfolio_state.json"
-PROVIDER_INPUT_PATH = Path("input_aex/aex_option_chain_provider.json")
+DEFAULT_PROVIDER_INPUT_PATH = Path("input_aex/aex_option_chain_provider.json")
+CONFIG_PATH = Path("input_aex/aex_data_provider_config.json")
 
 YAHOO_OPTIONS_URL = "https://query2.finance.yahoo.com/v7/finance/options/%5EAEX"
 USER_AGENT = "Mozilla/5.0 (compatible; DailyIndexOS/1.0)"
 
+ALLOWED_POLICIES = {"provider_first", "yahoo_first", "provider_only", "yahoo_only"}
 ALLOWED_FAMILIES = {
     "collar_style_protection",
     "defined_risk_bullish_financed_convexity",
@@ -50,6 +52,46 @@ def load_json(path: Path) -> dict[str, Any] | None:
     if not path.exists():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_provider_config() -> dict[str, Any]:
+    default = {
+        "option_chain_source_policy": "provider_first",
+        "provider_input_path": str(DEFAULT_PROVIDER_INPUT_PATH),
+        "allow_yahoo_fallback": True,
+    }
+    if not CONFIG_PATH.exists():
+        return default
+    try:
+        payload = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+    config = dict(default)
+    if isinstance(payload, dict):
+        config.update(payload)
+
+    policy = str(config.get("option_chain_source_policy", default["option_chain_source_policy"]))
+    if policy not in ALLOWED_POLICIES:
+        policy = default["option_chain_source_policy"]
+    config["option_chain_source_policy"] = policy
+    config["allow_yahoo_fallback"] = bool(config.get("allow_yahoo_fallback", True))
+    config["provider_input_path"] = str(config.get("provider_input_path") or default["provider_input_path"])
+    return config
+
+
+def source_order(config: dict[str, Any]) -> list[str]:
+    policy = config["option_chain_source_policy"]
+    if policy == "provider_only":
+        return ["provider"]
+    if policy == "yahoo_only":
+        return ["yahoo"]
+    if policy == "yahoo_first":
+        return ["yahoo", "provider"]
+    order = ["provider", "yahoo"]
+    if not config.get("allow_yahoo_fallback", True):
+        order = ["provider"]
+    return order
 
 
 def clean_float(value: Any) -> float | None:
@@ -112,17 +154,37 @@ def fetch_live_chain() -> dict[str, Any] | None:
     }
 
 
-def load_chain_payload() -> tuple[dict[str, Any] | None, str]:
-    provider = load_json(PROVIDER_INPUT_PATH)
-    if provider:
-        return provider, "provider_input_file"
-    try:
-        live = fetch_live_chain()
-        if live:
-            return live, "live_public_fetch"
-    except Exception:
-        pass
-    return None, "unavailable"
+def load_provider_chain(config: dict[str, Any]) -> dict[str, Any] | None:
+    provider_path = Path(str(config.get("provider_input_path") or DEFAULT_PROVIDER_INPUT_PATH))
+    if not provider_path.exists():
+        return None
+    return json.loads(provider_path.read_text(encoding="utf-8"))
+
+
+def load_chain_payload(config: dict[str, Any]) -> tuple[dict[str, Any] | None, str, list[str]]:
+    errors: list[str] = []
+    for source in source_order(config):
+        if source == "provider":
+            try:
+                provider = load_provider_chain(config)
+                if provider is None:
+                    errors.append("provider_input_missing")
+                    continue
+                return provider, "provider_input_file", errors
+            except Exception as exc:
+                errors.append(f"provider_failed: {exc}")
+                continue
+        if source == "yahoo":
+            try:
+                live = fetch_live_chain()
+                if not live:
+                    errors.append("yahoo_chain_missing")
+                    continue
+                return live, "live_public_fetch", errors
+            except Exception as exc:
+                errors.append(f"yahoo_failed: {exc}")
+                continue
+    return None, "unavailable", errors
 
 
 def derive_directional_regime(primary: dict[str, Any] | None, cross: dict[str, Any] | None, macro: dict[str, Any] | None, surface: dict[str, Any] | None) -> str:
@@ -144,15 +206,17 @@ def structure_score(base: float, *penalties: float) -> float:
     return max(0.0, min(10.0, base - sum(penalties)))
 
 
-def candidate_meta(surface: dict[str, Any] | None, chain_mode: str) -> dict[str, Any]:
+def candidate_meta(surface: dict[str, Any] | None, chain_mode: str, config: dict[str, Any]) -> dict[str, Any]:
     return {
         "provider_mode": chain_mode,
+        "source_policy": config["option_chain_source_policy"],
+        "provider_input_path": config["provider_input_path"],
         "surface_regime": (surface or {}).get("surface_regime", "surface_unavailable"),
         "event_distortion_flag": bool((surface or {}).get("event_distortion_flag", False)),
     }
 
 
-def build_bullish_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None) -> dict[str, Any] | None:
+def build_bullish_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
     long_call = nearest_strike(calls, spot, None)
     short_call = nearest_strike(calls, spot * 1.02, "above")
     short_put = nearest_strike(puts, spot * 0.98, "below")
@@ -213,11 +277,11 @@ def build_bullish_structure(spot: float, expiry_unix: int, calls: list[dict[str,
         "event_risk_note": "Use extra caution if front-expiry event premium is elevated.",
         "execution_status": "candidate_only",
         "selection_confidence": round(structure_score(6.6, *penalties), 2),
-        **candidate_meta(surface, chain_mode),
+        **candidate_meta(surface, chain_mode, config),
     }
 
 
-def build_bearish_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None) -> dict[str, Any] | None:
+def build_bearish_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
     long_put = nearest_strike(puts, spot, None)
     short_put = nearest_strike(puts, spot * 0.98, "below")
     short_call = nearest_strike(calls, spot * 1.02, "above")
@@ -278,11 +342,11 @@ def build_bearish_structure(spot: float, expiry_unix: int, calls: list[dict[str,
         "event_risk_note": "Use extra caution if front-expiry event premium is elevated.",
         "execution_status": "candidate_only",
         "selection_confidence": round(structure_score(6.6, *penalties), 2),
-        **candidate_meta(surface, chain_mode),
+        **candidate_meta(surface, chain_mode, config),
     }
 
 
-def build_range_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None) -> dict[str, Any] | None:
+def build_range_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
     short_put = nearest_strike(puts, spot * 0.98, "below")
     long_put = nearest_strike(puts, spot * 0.95, "below")
     short_call = nearest_strike(calls, spot * 1.02, "above")
@@ -338,7 +402,7 @@ def build_range_structure(spot: float, expiry_unix: int, calls: list[dict[str, A
         "event_risk_note": "Only appropriate in low-event, low-instability conditions.",
         "execution_status": "candidate_only",
         "selection_confidence": round(structure_score(4.2, *penalties), 2),
-        **candidate_meta(surface, chain_mode),
+        **candidate_meta(surface, chain_mode, config),
     }
 
 
@@ -348,7 +412,7 @@ def current_underlying_exposure(portfolio: dict[str, Any] | None) -> bool:
     return bool(portfolio.get("underlying_exposure", {}).get("long_aex_units", 0))
 
 
-def build_collar(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, portfolio: dict[str, Any] | None) -> dict[str, Any] | None:
+def build_collar(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, portfolio: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
     if not current_underlying_exposure(portfolio):
         return None
     long_put = nearest_strike(puts, spot * 0.98, "below")
@@ -386,7 +450,7 @@ def build_collar(spot: float, expiry_unix: int, calls: list[dict[str, Any]], put
         "event_risk_note": "Appropriate only if actual long AEX exposure exists in portfolio state.",
         "execution_status": "candidate_only",
         "selection_confidence": round(structure_score(6.0, *penalties), 2),
-        **candidate_meta(surface, chain_mode),
+        **candidate_meta(surface, chain_mode, config),
     }
 
 
@@ -415,20 +479,26 @@ def build_payload() -> dict[str, Any]:
     surface = load_json(SURFACE_PATH)
     macro = load_json(MACRO_PATH)
     portfolio = load_json(PORTFOLIO_PATH)
+    config = load_provider_config()
 
-    chain_payload, chain_mode = load_chain_payload()
+    chain_payload, chain_mode, source_errors = load_chain_payload(config)
     directional = derive_directional_regime(primary, cross, macro, surface)
 
     payload = {
         "as_of": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "directional_regime": directional,
         "provider_mode": chain_mode,
+        "source_policy": config["option_chain_source_policy"],
+        "provider_input_path": config["provider_input_path"],
         "underlying": "AEX",
         "candidates": [],
         "approved_candidates": [],
         "watch_candidates": [],
         "notes": [],
     }
+
+    if source_errors:
+        payload["notes"].append("chain source resolution notes: " + "; ".join(source_errors))
 
     if chain_payload is None:
         payload["notes"].append("No option-chain payload available; no strike-aware candidates could be built.")
@@ -458,9 +528,9 @@ def build_payload() -> dict[str, Any]:
 
     for builder in builders:
         if builder is build_collar:
-            candidate = builder(spot, expiry_unix, calls, puts, chain_mode, surface, portfolio)
+            candidate = builder(spot, expiry_unix, calls, puts, chain_mode, surface, portfolio, config)
         else:
-            candidate = builder(spot, expiry_unix, calls, puts, chain_mode, surface)
+            candidate = builder(spot, expiry_unix, calls, puts, chain_mode, surface, config)
         if not candidate:
             continue
         passes, reasons = candidate_passes_default_rules(candidate, directional, surface)
@@ -484,7 +554,7 @@ def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     payload = build_payload()
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    print(f"AEX_STRUCTURE_CANDIDATES_OK | file={OUTPUT_PATH}")
+    print(f"AEX_STRUCTURE_CANDIDATES_OK | file={OUTPUT_PATH} | mode={payload.get('provider_mode')} | policy={payload.get('source_policy')}")
 
 
 if __name__ == "__main__":
