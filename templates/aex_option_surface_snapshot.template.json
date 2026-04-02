@@ -1,0 +1,16 @@
+{
+  "as_of": "2026-04-02T00:00:00Z",
+  "underlying": "AEX",
+  "expiries": [],
+  "atm_iv_by_expiry": {},
+  "realized_vol_reference": {},
+  "skew_metrics": {},
+  "term_structure_metrics": {},
+  "liquidity_checks": {
+    "spread_status": "unknown",
+    "open_interest_status": "unknown"
+  },
+  "event_distortion_flag": false,
+  "surface_regime": "unknown",
+  "notes": []
+}
