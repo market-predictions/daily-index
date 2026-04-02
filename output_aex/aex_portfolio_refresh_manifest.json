@@ -1,0 +1,10 @@
+{
+  "refreshed_at": "2026-04-03T12:00:00Z",
+  "portfolio_file": "aex_option_portfolio_state.json",
+  "risk_file": "aex_option_risk_state.json",
+  "notes": [
+    "latest trade plan is proposal-only at automation level 1",
+    "no explicit execution events were present"
+  ],
+  "latest_trade_plan": "aex_option_trade_plan_260403_01.json"
+}

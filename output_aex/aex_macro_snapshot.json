@@ -1,0 +1,47 @@
+{
+  "as_of": "2026-04-03T12:00:00Z",
+  "regime_horizon_days": 5,
+  "macro_regime": "restrictive_with_inflation_reacceleration",
+  "dominant_driver": "inflation_reacceleration",
+  "ecb": {
+    "mro_rate_pct": 2.15,
+    "deposit_rate_pct": 2.0,
+    "marginal_lending_rate_pct": 2.4,
+    "source": "ECB Data Portal",
+    "status": "live_public_page_reference"
+  },
+  "inflation": {
+    "annual_inflation_pct": 2.5,
+    "source": "Eurostat flash estimate March 2026",
+    "status": "live_public_page_reference"
+  },
+  "unemployment": {
+    "unemployment_rate_pct": 6.2,
+    "source": "Eurostat February 2026 unemployment",
+    "status": "live_public_page_reference"
+  },
+  "growth": {
+    "gdp_qoq_pct": 0.2,
+    "employment_qoq_pct": 0.2,
+    "source": "Eurostat Q4 2025 GDP/employment estimate",
+    "status": "live_public_page_reference"
+  },
+  "geopolitical_flags": [],
+  "energy_flags": ["march_energy_reacceleration"],
+  "invalidators": [
+    "Provider-fed option chain becomes available and surface regime improves materially",
+    "Cross-market confirmation deteriorates sharply",
+    "ECB communication changes rate-path expectations materially"
+  ],
+  "aex_sector_notes": {
+    "semis_tech": "AEX remains concentration-sensitive; index-level decisions can be heavily influenced by narrow leadership.",
+    "energy_materials": "Energy inflation reacceleration matters for Europe risk sentiment.",
+    "financials": "Rates remain restrictive but not at an extreme level.",
+    "global_cyclicals": "Growth backdrop is positive but modest."
+  },
+  "macro_notes": [
+    "March 2026 euro-area flash inflation reaccelerated to 2.5% from 1.9% in February.",
+    "Euro-area unemployment rose to 6.2% in February 2026 from 6.1% in January.",
+    "Euro-area GDP and employment both rose 0.2% q/q in Q4 2025."
+  ]
+}

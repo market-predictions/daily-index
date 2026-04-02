@@ -1,0 +1,15 @@
+{
+  "as_of": "2026-04-03T12:00:00Z",
+  "underlying": "AEX",
+  "provider": "unavailable",
+  "provider_mode": "unavailable",
+  "source_policy": "provider_first",
+  "provider_input_path": "input_aex/aex_option_chain_provider.json",
+  "surface_regime": "surface_unavailable",
+  "event_distortion_flag": false,
+  "implied_move_pct_next_expiry": null,
+  "notes": [
+    "Option surface sources failed under policy provider_first: provider_input_missing; yahoo_chain_incomplete.",
+    "Public Yahoo AEX options coverage was not sufficiently complete to treat as a valid surface."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "report_date": "2026-04-03",
+  "approval_status": "no_trade",
+  "automation_level": 1,
+  "directional_regime": "mixed",
+  "options_regime": "surface_unavailable",
+  "primary_decision": "NO_TRADE",
+  "no_trade_reason": "option-chain source policy is provider_first; provider input file is missing; Yahoo fallback was incomplete; therefore the options regime remains surface_unavailable and the burden of proof for a weekly defined-risk structure is not met",
+  "structures_considered": [
+    "overwrite_funded_hedge",
+    "collar_style_protection",
+    "defined_risk_bullish_financed_convexity",
+    "defined_risk_bearish_financed_convexity",
+    "range_defined_risk_premium_structure"
+  ],
+  "approved_structures": [],
+  "portfolio_overlap_assessment": "not_applicable_no_trade",
+  "timing_gate_status": "pass_for_review_only_but_no_trade",
+  "freshness_summary": "manual current-cycle build based on latest accessible public macro/market references and current repo source policy",
+  "risk_budget_summary": "no new structure approved; risk budget preserved"
+}

@@ -1,0 +1,11 @@
+{
+  "as_of": "2026-04-03T12:00:00Z",
+  "provider": "Public market pages / delayed references",
+  "overall_confirmation": "supportive_risk",
+  "supportive_equity_breadth_count": 3,
+  "defensive_flags": [],
+  "notes": [
+    "Secondary confirmation layer based on delayed public market references.",
+    "Used as context only; does not replace the primary AEX technical snapshot."
+  ]
+}

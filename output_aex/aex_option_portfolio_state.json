@@ -1,0 +1,17 @@
+{
+  "as_of": "2026-04-03T12:00:00Z",
+  "base_currency": "EUR",
+  "cash_eur": 0.0,
+  "premium_collected_cycle": 0.0,
+  "premium_spent_cycle": 0.0,
+  "open_structures": [],
+  "expiration_ladder": {},
+  "underlying_exposure": {
+    "long_aex_units": 0
+  },
+  "last_trade_plan_observed": "aex_option_trade_plan_260403_01.json",
+  "last_valuation": {
+    "date": "2026-04-03",
+    "portfolio_value_eur": 0.0
+  }
+}

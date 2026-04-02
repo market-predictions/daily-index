@@ -1,0 +1,19 @@
+{
+  "as_of": "2026-04-03T12:00:00Z",
+  "underlying": "AEX",
+  "provider": "Euronext Amsterdam public page / Yahoo delayed reference",
+  "ticker": "AEX",
+  "reference_price": 1002.9,
+  "last_bar_date": "2026-03-11",
+  "trend_state": "mixed",
+  "realized_vol_state": {
+    "rv20_annualized": 0.182,
+    "rv60_annualized": 0.165
+  },
+  "technical_confidence": "medium",
+  "freshness_status": "manual_live_build_from_public_sources",
+  "notes": [
+    "Primary AEX technical snapshot is based on public AEX index references.",
+    "Breadth internals remain omitted until a dedicated breadth feed is added."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "as_of": "2026-04-03T12:00:00Z",
+  "directional_regime": "mixed",
+  "provider_mode": "unavailable",
+  "source_policy": "provider_first",
+  "provider_input_path": "input_aex/aex_option_chain_provider.json",
+  "underlying": "AEX",
+  "candidates": [],
+  "approved_candidates": [],
+  "watch_candidates": [],
+  "notes": [
+    "chain source resolution notes: provider_input_missing; yahoo_chain_incomplete",
+    "No option-chain payload available; no strike-aware candidates could be built."
+  ]
+}
