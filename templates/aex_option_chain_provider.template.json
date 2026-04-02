@@ -1,0 +1,31 @@
+{
+  "provider": "example_provider",
+  "spot_price": 995.35,
+  "expiries": [
+    {
+      "expiry_unix": 1771545600,
+      "calls": [
+        {
+          "strike": 1000,
+          "bid": 10.5,
+          "ask": 11.1,
+          "lastPrice": 10.8,
+          "impliedVolatility": 0.18,
+          "openInterest": 120,
+          "volume": 10
+        }
+      ],
+      "puts": [
+        {
+          "strike": 1000,
+          "bid": 12.0,
+          "ask": 12.7,
+          "lastPrice": 12.2,
+          "impliedVolatility": 0.21,
+          "openInterest": 140,
+          "volume": 12
+        }
+      ]
+    }
+  ]
+}
