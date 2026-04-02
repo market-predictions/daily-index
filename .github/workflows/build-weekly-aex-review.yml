@@ -1,4 +1,4 @@
-name: Refresh AEX snapshots
+name: Build weekly AEX review
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
       - "build_aex_cross_market_confirmation.py"
       - "build_aex_option_surface_snapshot.py"
       - "run_aex_snapshot_suite.py"
-      - ".github/workflows/refresh-aex-snapshots.yml"
+      - "generate_weekly_aex_option_review.py"
+      - "validate_aex_trade_plan.py"
+      - ".github/workflows/build-weekly-aex-review.yml"
   workflow_dispatch:
-  schedule:
-    - cron: "15 6 * * 1-5"
 
 jobs:
-  refresh-snapshots:
+  build-review:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,14 +30,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Run snapshot suite
+      - name: Build live snapshots
         run: python run_aex_snapshot_suite.py
 
-      - name: Upload snapshot artifacts
+      - name: Generate first weekly AEX review
+        run: python generate_weekly_aex_option_review.py
+
+      - name: Validate generated trade plan
+        run: python validate_aex_trade_plan.py
+
+      - name: Upload generated review artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: aex-snapshots
+          name: weekly-aex-review-build
           path: |
+            output_aex/weekly_aex_option_review_*.md
+            output_aex/aex_option_trade_plan_*.json
+            output_aex/*_validation.json
             output_aex/aex_primary_technical_snapshot.json
             output_aex/aex_cross_market_confirmation.json
             output_aex/aex_option_surface_snapshot.json

@@ -6,6 +6,7 @@ on:
       - "output_aex/weekly_aex_option_review_*.md"
       - "output_aex/aex_option_trade_plan_*.json"
       - "send_aex_options_report.py"
+      - "validate_aex_trade_plan.py"
       - ".github/workflows/send-weekly-aex-options.yml"
   workflow_dispatch:
 
@@ -39,6 +40,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install markdown weasyprint
+
+      - name: Validate latest trade plan before render/send
+        run: python validate_aex_trade_plan.py
 
       - name: Validate HTML/PDF render
         run: python send_aex_options_report.py --validate-only
