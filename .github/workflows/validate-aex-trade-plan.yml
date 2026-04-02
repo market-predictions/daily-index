@@ -1,0 +1,31 @@
+name: Validate AEX trade plan
+
+on:
+  push:
+    paths:
+      - "output_aex/aex_option_trade_plan_*.json"
+      - "validate_aex_trade_plan.py"
+      - ".github/workflows/validate-aex-trade-plan.yml"
+  workflow_dispatch:
+
+jobs:
+  validate-trade-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate latest trade plan
+        run: python validate_aex_trade_plan.py
+
+      - name: Upload validation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: aex-trade-plan-validation
+          path: output_aex/*_validation.json
