@@ -1,0 +1,13 @@
+{
+  "as_of": "2026-04-02T00:00:00Z",
+  "underlying": "AEX",
+  "reference_price": null,
+  "trend_state": "unknown",
+  "realized_vol_state": "unknown",
+  "support_levels": [],
+  "resistance_levels": [],
+  "breadth_context": "unknown",
+  "technical_confidence": "low",
+  "freshness_status": "template",
+  "notes": []
+}
