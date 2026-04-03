@@ -65,12 +65,27 @@ jobs:
       - name: Generate weekly AEX review
         run: python generate_weekly_aex_option_review.py --suffix "${{ inputs.suffix }}"
 
+      - name: Locate generated review files
+        id: locate_review
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPORT_PATH="$(find output_aex -maxdepth 1 -type f -name 'weekly_aex_option_review_*.md' | sort | tail -n 1)"
+          if [ -z "$REPORT_PATH" ]; then
+            echo "No weekly review markdown file found in output_aex"
+            ls -la output_aex || true
+            exit 1
+          fi
+          echo "report_path=$REPORT_PATH" >> "$GITHUB_OUTPUT"
+          echo "Selected report: $REPORT_PATH"
+          ls -la output_aex
+
       - name: Validate generated trade plan
         run: python validate_aex_trade_plan.py
 
       - name: Render HTML/PDF and write manifest only
         if: ${{ !inputs.send_email }}
-        run: python send_aex_options_report.py --validate-only
+        run: python send_aex_options_report.py --validate-only --report-path "${{ steps.locate_review.outputs.report_path }}"
 
       - name: Send email
         if: ${{ inputs.send_email }}
@@ -81,9 +96,10 @@ jobs:
           MRKT_RPRTS_SMTP_PASS: ${{ secrets.MRKT_RPRTS_SMTP_PASS }}
           MRKT_RPRTS_MAIL_FROM: ${{ secrets.MRKT_RPRTS_MAIL_FROM }}
           MRKT_RPRTS_MAIL_TO: ${{ secrets.MRKT_RPRTS_MAIL_TO }}
-        run: python send_aex_options_report.py
+        run: python send_aex_options_report.py --report-path "${{ steps.locate_review.outputs.report_path }}"
 
       - name: Upload publish artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: weekly-aex-report-publish

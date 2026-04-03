@@ -34,7 +34,7 @@ from weasyprint import HTML
 
 TITLE = "Weekly AEX Option Review"
 DISCLAIMER_LINE = "This report is for informational and educational purposes only; please see the disclaimer at the end."
-REPORT_RE = re.compile(r"^weekly_aex_option_review_(\\d{6})(?:_(\\d{2}))?\\.md$")
+REPORT_RE = re.compile(r"^weekly_aex_option_review_(\d{6})(?:_(\d{2}))?\.md$")
 
 REQUIRED_HEADINGS = [
     "# Weekly AEX Option Review",
@@ -91,7 +91,7 @@ def latest_report_file(output_dir: Path) -> Path:
 
 
 def parse_report_date(md_text: str, report_path: Optional[Path] = None) -> str:
-    match = re.search(r"^#\\s+Weekly AEX Option Review(?:\\s+(\\d{4}-\\d{2}-\\d{2}))?\\s*$", md_text, flags=re.MULTILINE)
+    match = re.search(r"^#\s+Weekly AEX Option Review(?:\s+(\d{4}-\d{2}-\d{2}))?\s*$", md_text, flags=re.MULTILINE)
     if match and match.group(1):
         return match.group(1)
     if report_path:
@@ -223,7 +223,7 @@ def write_manifest(path: Path, report_name: str, trade_plan_name: str, recipient
         f"pdf_attached={'yes' if any(a.lower().endswith('.pdf') for a in attachments) else 'no'}",
         "attachments=" + ", ".join(attachments),
     ]
-    path.write_text("\\n".join(lines) + "\\n", encoding="utf-8")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def generate_delivery_assets(output_dir: Path, report_path: Path) -> dict:
@@ -300,10 +300,13 @@ def maybe_send_email(assets: dict) -> tuple[bool, list[str], str]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument("--report-path", default=None, help="Optional explicit report markdown path")
     args = parser.parse_args()
 
     output_dir = Path("output_aex")
-    latest = latest_report_file(output_dir)
+    latest = Path(args.report_path) if args.report_path else latest_report_file(output_dir)
+    if not latest.exists():
+        raise FileNotFoundError(f"Explicit report path does not exist: {latest}")
     assets = generate_delivery_assets(output_dir, latest)
     manifest_path = latest.with_name(latest.stem + "_delivery_manifest.txt")
 
