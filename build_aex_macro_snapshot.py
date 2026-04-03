@@ -62,7 +62,6 @@ def parse_ecb_rates() -> dict[str, Any]:
         "status": "unavailable",
     }
 
-    # Robust enough for the public ECB key-rates page.
     patterns = [
         ("mro_rate_pct", r"Main refinancing operations .*? ([0-9]+(?:\.[0-9]+)?) ?%"),
         ("marginal_lending_rate_pct", r"Marginal lending facility .*? ([0-9]+(?:\.[0-9]+)?) ?%"),
@@ -101,11 +100,14 @@ def parse_inflation(url: str | None) -> dict[str, Any]:
     payload = {"annual_inflation_pct": None, "title": None, "source": url, "status": "unavailable"}
     if not url:
         return payload
-    text = collapse_ws(fetch_text(url))
-    payload["title"] = re.search(r"<title>(.*?)</title>", fetch_text(url), flags=re.IGNORECASE | re.DOTALL)
-    title_match = re.search(r"annual inflation .*? ([0-9]+(?:\.[0-9]+)?)%", text, flags=re.IGNORECASE)
+    raw = fetch_text(url)
+    text = collapse_ws(raw)
+    title_match = re.search(r"<title>(.*?)</title>", raw, flags=re.IGNORECASE | re.DOTALL)
     if title_match:
-        payload["annual_inflation_pct"] = float(title_match.group(1))
+        payload["title"] = collapse_ws(title_match.group(1))
+    inflation_match = re.search(r"annual inflation .*? ([0-9]+(?:\.[0-9]+)?)%", text, flags=re.IGNORECASE)
+    if inflation_match:
+        payload["annual_inflation_pct"] = float(inflation_match.group(1))
         payload["status"] = "live_public_scrape"
     return payload
 
