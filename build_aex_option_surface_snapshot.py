@@ -28,6 +28,8 @@ from typing import Any
 
 import requests
 
+from aex_option_chain_ingest import DEFAULT_DELAYED_SNAPSHOT_PATH, clean_float, load_normalized_chain_payload
+
 OUTPUT_PATH = Path("output_aex/aex_option_surface_snapshot.json")
 PRIMARY_TECH_PATH = Path("output_aex/aex_primary_technical_snapshot.json")
 DEFAULT_PROVIDER_INPUT_PATH = Path("input_aex/aex_option_chain_provider.json")
@@ -103,20 +105,29 @@ def try_fetch_yahoo_chain() -> dict[str, Any] | None:
     return block
 
 
-def load_provider_chain(config: dict[str, Any]) -> dict[str, Any] | None:
-    provider_path = Path(str(config.get("provider_input_path") or DEFAULT_PROVIDER_INPUT_PATH))
-    if not provider_path.exists():
-        return None
-    return json.loads(provider_path.read_text(encoding="utf-8"))
+def load_provider_chain(config: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
+    candidate_paths = [Path(str(config.get("provider_input_path") or DEFAULT_PROVIDER_INPUT_PATH)), DEFAULT_DELAYED_SNAPSHOT_PATH]
+    seen: set[str] = set()
+    last_error: Exception | None = None
 
+    for provider_path in candidate_paths:
+        path_key = str(provider_path)
+        if path_key in seen:
+            continue
+        seen.add(path_key)
+        if not provider_path.exists():
+            continue
+        try:
+            payload = load_normalized_chain_payload(provider_path)
+            if payload is not None:
+                return payload, str(provider_path)
+        except Exception as exc:
+            last_error = exc
+            continue
 
-def clean_float(value: Any) -> float | None:
-    try:
-        if value is None:
-            return None
-        return float(value)
-    except Exception:
-        return None
+    if last_error is not None:
+        raise last_error
+    return None, None
 
 
 def median_relative_spread(rows: list[dict[str, Any]]) -> float | None:
@@ -338,6 +349,7 @@ def build_from_provider(payload: dict[str, Any], realized_vol: float | None, con
         "surface_regime": analyses[0].get("surface_regime"),
         "notes": [
             "Provider file is preferred when institutional-grade chain data is available.",
+            "A simple delayed snapshot file is accepted when normalized into the provider schema.",
         ],
     }
 
@@ -371,11 +383,14 @@ def resolve_surface(config: dict[str, Any], realized_vol: float | None) -> dict[
     for source in source_order(config):
         if source == "provider":
             try:
-                provider = load_provider_chain(config)
+                provider, used_path = load_provider_chain(config)
                 if provider is None:
                     errors.append("provider_input_missing")
                     continue
-                return build_from_provider(provider, realized_vol, config)
+                resolved_config = dict(config)
+                if used_path:
+                    resolved_config["provider_input_path"] = used_path
+                return build_from_provider(provider, realized_vol, resolved_config)
             except Exception as exc:
                 errors.append(f"provider_failed: {exc}")
                 continue

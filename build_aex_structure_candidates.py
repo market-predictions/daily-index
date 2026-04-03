@@ -24,6 +24,8 @@ from typing import Any
 
 import requests
 
+from aex_option_chain_ingest import DEFAULT_DELAYED_SNAPSHOT_PATH, clean_float, load_normalized_chain_payload
+
 OUTPUT_DIR = Path("output_aex")
 OUTPUT_PATH = OUTPUT_DIR / "aex_structure_candidates.json"
 
@@ -94,15 +96,6 @@ def source_order(config: dict[str, Any]) -> list[str]:
     return order
 
 
-def clean_float(value: Any) -> float | None:
-    try:
-        if value is None:
-            return None
-        return float(value)
-    except Exception:
-        return None
-
-
 def nearest_strike(rows: list[dict[str, Any]], target: float, side: str | None = None) -> dict[str, Any] | None:
     filtered = []
     for row in rows:
@@ -154,23 +147,41 @@ def fetch_live_chain() -> dict[str, Any] | None:
     }
 
 
-def load_provider_chain(config: dict[str, Any]) -> dict[str, Any] | None:
-    provider_path = Path(str(config.get("provider_input_path") or DEFAULT_PROVIDER_INPUT_PATH))
-    if not provider_path.exists():
-        return None
-    return json.loads(provider_path.read_text(encoding="utf-8"))
+def load_provider_chain(config: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
+    candidate_paths = [Path(str(config.get("provider_input_path") or DEFAULT_PROVIDER_INPUT_PATH)), DEFAULT_DELAYED_SNAPSHOT_PATH]
+    seen: set[str] = set()
+    last_error: Exception | None = None
+
+    for provider_path in candidate_paths:
+        path_key = str(provider_path)
+        if path_key in seen:
+            continue
+        seen.add(path_key)
+        if not provider_path.exists():
+            continue
+        try:
+            payload = load_normalized_chain_payload(provider_path)
+            if payload is not None:
+                return payload, str(provider_path)
+        except Exception as exc:
+            last_error = exc
+            continue
+
+    if last_error is not None:
+        raise last_error
+    return None, None
 
 
-def load_chain_payload(config: dict[str, Any]) -> tuple[dict[str, Any] | None, str, list[str]]:
+def load_chain_payload(config: dict[str, Any]) -> tuple[dict[str, Any] | None, str, list[str], str | None]:
     errors: list[str] = []
     for source in source_order(config):
         if source == "provider":
             try:
-                provider = load_provider_chain(config)
+                provider, used_path = load_provider_chain(config)
                 if provider is None:
                     errors.append("provider_input_missing")
                     continue
-                return provider, "provider_input_file", errors
+                return provider, "provider_input_file", errors, used_path
             except Exception as exc:
                 errors.append(f"provider_failed: {exc}")
                 continue
@@ -180,11 +191,11 @@ def load_chain_payload(config: dict[str, Any]) -> tuple[dict[str, Any] | None, s
                 if not live:
                     errors.append("yahoo_chain_missing")
                     continue
-                return live, "live_public_fetch", errors
+                return live, "live_public_fetch", errors, None
             except Exception as exc:
                 errors.append(f"yahoo_failed: {exc}")
                 continue
-    return None, "unavailable", errors
+    return None, "unavailable", errors, None
 
 
 def derive_directional_regime(primary: dict[str, Any] | None, cross: dict[str, Any] | None, macro: dict[str, Any] | None, surface: dict[str, Any] | None) -> str:
@@ -266,7 +277,8 @@ def build_bullish_structure(spot: float, expiry_unix: int, calls: list[dict[str,
             {"type": "call", "action": "sell", "strike": sc_strike, "premium_est": round(sc_mid, 4)},
             {"type": "put", "action": "sell", "strike": sp_strike, "premium_est": round(sp_mid, 4)},
         ],
-        "net_debit_credit": round(-net_debit, 4) if net_debit < 0 else round(net_debit, 4),
+        "net_premium_type": "credit" if net_debit < 0 else "debit",
+        "net_debit_credit": round(abs(net_debit), 4),
         "max_gain": round(max_gain * 100.0, 2),
         "max_loss": round(max_loss * 100.0, 2),
         "break_even": round(lc_strike + max(0.0, net_debit), 4),
@@ -331,7 +343,8 @@ def build_bearish_structure(spot: float, expiry_unix: int, calls: list[dict[str,
             {"type": "put", "action": "sell", "strike": sp_strike, "premium_est": round(sp_mid, 4)},
             {"type": "call", "action": "sell", "strike": sc_strike, "premium_est": round(sc_mid, 4)},
         ],
-        "net_debit_credit": round(-net_debit, 4) if net_debit < 0 else round(net_debit, 4),
+        "net_premium_type": "credit" if net_debit < 0 else "debit",
+        "net_debit_credit": round(abs(net_debit), 4),
         "max_gain": round(max_gain * 100.0, 2),
         "max_loss": round(max_loss * 100.0, 2),
         "break_even": round(lp_strike - max(0.0, net_debit), 4),
@@ -391,7 +404,8 @@ def build_range_structure(spot: float, expiry_unix: int, calls: list[dict[str, A
             {"type": "put", "action": "sell", "strike": sp_strike, "premium_est": round(sp_mid, 4)},
             {"type": "call", "action": "sell", "strike": sc_strike, "premium_est": round(sc_mid, 4)},
         ],
-        "net_debit_credit": round(-net_credit, 4),
+        "net_premium_type": "credit",
+        "net_debit_credit": round(max(0.0, net_credit), 4),
         "max_gain": round(max(0.0, net_credit) * 100.0, 2),
         "max_loss": round(max_loss * 100.0, 2),
         "break_even": [round(sp_strike - max(0.0, net_credit), 4), round(sc_strike + max(0.0, net_credit), 4)],
@@ -439,7 +453,8 @@ def build_collar(spot: float, expiry_unix: int, calls: list[dict[str, Any]], put
         "expiry": datetime.fromtimestamp(expiry_unix, tz=timezone.utc).strftime("%Y-%m-%d"),
         "long_legs": [{"type": "put", "action": "buy", "strike": lp_strike, "premium_est": round(lp_mid, 4)}],
         "short_legs": [{"type": "call", "action": "sell", "strike": sc_strike, "premium_est": round(sc_mid, 4)}],
-        "net_debit_credit": round(net_cost, 4),
+        "net_premium_type": "credit" if net_cost < 0 else "debit",
+        "net_debit_credit": round(abs(net_cost), 4),
         "max_gain": "underlying_capped_above_short_call",
         "max_loss": "underlying_partially_buffered_by_long_put",
         "break_even": "depends_on_existing_underlying_cost_basis",
@@ -481,7 +496,11 @@ def build_payload() -> dict[str, Any]:
     portfolio = load_json(PORTFOLIO_PATH)
     config = load_provider_config()
 
-    chain_payload, chain_mode, source_errors = load_chain_payload(config)
+    chain_payload, chain_mode, source_errors, used_provider_path = load_chain_payload(config)
+    if used_provider_path:
+        config = dict(config)
+        config["provider_input_path"] = used_provider_path
+
     directional = derive_directional_regime(primary, cross, macro, surface)
 
     payload = {

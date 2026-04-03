@@ -1,0 +1,43 @@
+{
+  "provider": "manual_delayed_snapshot",
+  "underlying": "AEX",
+  "spot_price": 100.0,
+  "options": [
+    {
+      "expiry": "2026-04-10",
+      "option_type": "call",
+      "strike": 100.0,
+      "bid": null,
+      "ask": null,
+      "last": 2.5,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "call",
+      "strike": 102.0,
+      "bid": null,
+      "ask": null,
+      "last": 1.4,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "put",
+      "strike": 98.0,
+      "bid": null,
+      "ask": null,
+      "last": 1.8,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "put",
+      "strike": 95.0,
+      "bid": null,
+      "ask": null,
+      "last": 0.9,
+      "iv": null
+    }
+  ]
+}

@@ -77,6 +77,7 @@ def choose_approved_structure(structures: dict[str, Any] | None, directional: st
         return None, f"options_regime_{options_regime}"
     return top, "approved"
 
+
 def build_no_trade_reason(primary: dict[str, Any] | None, cross: dict[str, Any] | None, macro: dict[str, Any] | None, surface: dict[str, Any] | None, structures: dict[str, Any] | None, directional: str, options_regime: str, approval_reason: str) -> str:
     reasons: list[str] = []
     if not macro:
@@ -100,6 +101,29 @@ def build_no_trade_reason(primary: dict[str, Any] | None, cross: dict[str, Any] 
     return "; ".join(dict.fromkeys(reasons))
 
 
+def format_break_even(value: Any) -> str:
+    if isinstance(value, list):
+        return " / ".join(str(x) for x in value)
+    return str(value)
+
+
+def format_candidate_legs(candidate: dict[str, Any]) -> str:
+    legs: list[str] = []
+    for leg in candidate.get("long_legs", []):
+        legs.append(f"buy {leg.get('type')} {leg.get('strike')}")
+    for leg in candidate.get("short_legs", []):
+        legs.append(f"sell {leg.get('type')} {leg.get('strike')}")
+    return "; ".join(legs) if legs else "n/a"
+
+
+def format_premium(candidate: dict[str, Any]) -> str:
+    premium_type = candidate.get("net_premium_type", "premium")
+    premium_value = candidate.get("net_debit_credit")
+    if premium_value is None:
+        return "n/a"
+    return f"{premium_type} {premium_value} pts est"
+
+
 def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[str, Any] | None, macro: dict[str, Any] | None, surface: dict[str, Any] | None, structures: dict[str, Any] | None, portfolio: dict[str, Any] | None, risk: dict[str, Any] | None, directional: str, options_regime: str, approved_structure: dict[str, Any] | None, no_trade_reason: str) -> str:
     primary_price = (primary or {}).get("reference_price")
     primary_trend = (primary or {}).get("trend_state", "unknown")
@@ -114,6 +138,7 @@ def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[
     atm_line = f"{top_expiry[0]} ATM IV {top_expiry[1]}" if top_expiry else "no expiry IV available"
 
     structures_considered = list((structures or {}).get("candidates") or [])
+    watch_candidates = list((structures or {}).get("watch_candidates") or []) or structures_considered
     approved_text = "**Decision: NO_TRADE**" if not approved_structure else f"**Decision: APPROVE {approved_structure['structure_name']}**"
 
     lines = [
@@ -130,6 +155,8 @@ def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[
         )
     else:
         lines.append(f"The output remains **NO_TRADE** because the burden of proof is not yet met. Main reason: {no_trade_reason}.")
+        if watch_candidates:
+            lines.append("The system did still build priced provisional structures from the available chain; these remain watchlist ideas only and are not approved for execution.")
     lines += [
         "",
         "## 2. Portfolio action snapshot",
@@ -161,6 +188,7 @@ def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[
         "## 6. Options regime and surface conditions",
         f"- Surface provider mode: {provider_mode}",
         f"- Surface regime: {options_regime}",
+        f"- Structure input mode: {((structures or {}).get('provider_mode') or 'unknown')}",
         f"- Front expiry read: {atm_line}",
         f"- Implied move next expiry: {implied_move}",
         "- Surface interpretation: public chain coverage is treated conservatively and provider-fed input remains preferred when available",
@@ -175,20 +203,32 @@ def render_report(report_date: str, primary: dict[str, Any] | None, cross: dict[
             f"Expiry: {approved_structure['expiry']}",
             f"Long legs: {approved_structure['long_legs']}",
             f"Short legs: {approved_structure['short_legs']}",
-            f"Break-even: {approved_structure['break_even']}",
+            f"Estimated premium: {format_premium(approved_structure)}",
+            f"Break-even: {format_break_even(approved_structure['break_even'])}",
             f"Max gain / max loss: {approved_structure['max_gain']} / {approved_structure['max_loss']}",
         ]
     else:
         lines += [f"Reason: {no_trade_reason}."]
+        if watch_candidates:
+            lines += [
+                "",
+                "Priced provisional ideas from the available chain (watchlist only, not approved):",
+            ]
+            for candidate in watch_candidates[:3]:
+                lines.append(
+                    f"- **{candidate['structure_name']}** ({candidate['expiry']}): {format_premium(candidate)}; max gain {candidate['max_gain']} EUR; max loss {candidate['max_loss']} EUR; break-even {format_break_even(candidate['break_even'])}; legs {format_candidate_legs(candidate)}."
+                )
     lines += [
         "",
         "## 8. Structure ranking table",
-        "| Candidate family | Status | Selection confidence | Notes |",
-        "|---|---|---:|---|",
+        "| Structure | Family | Expiry | Status | Net premium est | Max gain EUR | Max loss EUR | Break-even | Confidence | Notes |",
+        "|---|---|---|---|---|---:|---:|---|---:|---|",
     ]
     for cand in structures_considered:
         status = "approved" if approved_structure and cand["structure_name"] == approved_structure["structure_name"] else ("watch" if cand.get("default_gate_passed") else "reject")
-        lines.append(f"| {cand['family']} | {status} | {cand.get('selection_confidence')} | {', '.join(cand.get('gate_notes', []))} |")
+        lines.append(
+            f"| {cand['structure_name']} | {cand['family']} | {cand['expiry']} | {status} | {format_premium(cand)} | {cand.get('max_gain')} | {cand.get('max_loss')} | {format_break_even(cand.get('break_even'))} | {cand.get('selection_confidence')} | {', '.join(cand.get('gate_notes', []))} |"
+        )
     lines += [
         "",
         "## 9. Calendar / timing gates and invalidators",
