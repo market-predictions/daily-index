@@ -113,6 +113,32 @@ def nearest_strike(rows: list[dict[str, Any]], target: float, side: str | None =
     return filtered[0][2]
 
 
+def first_strike_above(rows: list[dict[str, Any]], reference: float) -> dict[str, Any] | None:
+    filtered = []
+    for row in rows:
+        strike = clean_float(row.get("strike"))
+        if strike is None or strike <= reference:
+            continue
+        filtered.append((strike, row))
+    if not filtered:
+        return None
+    filtered.sort(key=lambda x: x[0])
+    return filtered[0][1]
+
+
+def first_strike_below(rows: list[dict[str, Any]], reference: float) -> dict[str, Any] | None:
+    filtered = []
+    for row in rows:
+        strike = clean_float(row.get("strike"))
+        if strike is None or strike >= reference:
+            continue
+        filtered.append((strike, row))
+    if not filtered:
+        return None
+    filtered.sort(key=lambda x: x[0], reverse=True)
+    return filtered[0][1]
+
+
 def row_mid(row: dict[str, Any]) -> float | None:
     bid = clean_float(row.get("bid"))
     ask = clean_float(row.get("ask"))
@@ -229,9 +255,11 @@ def candidate_meta(surface: dict[str, Any] | None, chain_mode: str, config: dict
 
 def build_bullish_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
     long_call = nearest_strike(calls, spot, None)
-    short_call = nearest_strike(calls, spot * 1.02, "above")
-    short_put = nearest_strike(puts, spot * 0.98, "below")
-    long_put = nearest_strike(puts, spot * 0.95, "below")
+    long_call_strike = clean_float((long_call or {}).get("strike")) if long_call else None
+    short_call = nearest_strike(calls, spot * 1.02, "above") or first_strike_above(calls, long_call_strike if long_call_strike is not None else spot)
+    short_put = nearest_strike(puts, spot * 0.98, "below") or first_strike_below(puts, spot)
+    short_put_strike = clean_float((short_put or {}).get("strike")) if short_put else None
+    long_put = nearest_strike(puts, spot * 0.95, "below") or first_strike_below(puts, short_put_strike if short_put_strike is not None else spot)
     if not all([long_call, short_call, short_put, long_put]):
         return None
 
@@ -295,9 +323,11 @@ def build_bullish_structure(spot: float, expiry_unix: int, calls: list[dict[str,
 
 def build_bearish_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
     long_put = nearest_strike(puts, spot, None)
-    short_put = nearest_strike(puts, spot * 0.98, "below")
-    short_call = nearest_strike(calls, spot * 1.02, "above")
-    long_call = nearest_strike(calls, spot * 1.05, "above")
+    long_put_strike = clean_float((long_put or {}).get("strike")) if long_put else None
+    short_put = nearest_strike(puts, spot * 0.98, "below") or first_strike_below(puts, long_put_strike if long_put_strike is not None else spot)
+    short_call = nearest_strike(calls, spot * 1.02, "above") or first_strike_above(calls, spot)
+    short_call_strike = clean_float((short_call or {}).get("strike")) if short_call else None
+    long_call = nearest_strike(calls, spot * 1.05, "above") or first_strike_above(calls, short_call_strike if short_call_strike is not None else spot)
     if not all([long_put, short_put, short_call, long_call]):
         return None
 
@@ -360,10 +390,12 @@ def build_bearish_structure(spot: float, expiry_unix: int, calls: list[dict[str,
 
 
 def build_range_structure(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
-    short_put = nearest_strike(puts, spot * 0.98, "below")
-    long_put = nearest_strike(puts, spot * 0.95, "below")
-    short_call = nearest_strike(calls, spot * 1.02, "above")
-    long_call = nearest_strike(calls, spot * 1.05, "above")
+    short_put = nearest_strike(puts, spot * 0.98, "below") or first_strike_below(puts, spot)
+    short_put_strike = clean_float((short_put or {}).get("strike")) if short_put else None
+    long_put = nearest_strike(puts, spot * 0.95, "below") or first_strike_below(puts, short_put_strike if short_put_strike is not None else spot)
+    short_call = nearest_strike(calls, spot * 1.02, "above") or first_strike_above(calls, spot)
+    short_call_strike = clean_float((short_call or {}).get("strike")) if short_call else None
+    long_call = nearest_strike(calls, spot * 1.05, "above") or first_strike_above(calls, short_call_strike if short_call_strike is not None else spot)
     if not all([short_put, long_put, short_call, long_call]):
         return None
 
@@ -429,8 +461,8 @@ def current_underlying_exposure(portfolio: dict[str, Any] | None) -> bool:
 def build_collar(spot: float, expiry_unix: int, calls: list[dict[str, Any]], puts: list[dict[str, Any]], chain_mode: str, surface: dict[str, Any] | None, portfolio: dict[str, Any] | None, config: dict[str, Any]) -> dict[str, Any] | None:
     if not current_underlying_exposure(portfolio):
         return None
-    long_put = nearest_strike(puts, spot * 0.98, "below")
-    short_call = nearest_strike(calls, spot * 1.03, "above")
+    long_put = nearest_strike(puts, spot * 0.98, "below") or first_strike_below(puts, spot)
+    short_call = nearest_strike(calls, spot * 1.03, "above") or first_strike_above(calls, spot)
     if not all([long_put, short_call]):
         return None
     lp_mid = row_mid(long_put)
@@ -543,7 +575,7 @@ def build_payload() -> dict[str, Any]:
     elif directional == "bearish":
         builders = [build_bearish_structure]
     else:
-        builders = [build_range_structure, build_collar]
+        builders = [build_range_structure, build_bullish_structure, build_bearish_structure, build_collar]
 
     for builder in builders:
         if builder is build_collar:
