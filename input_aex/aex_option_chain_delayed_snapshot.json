@@ -1,0 +1,89 @@
+{
+  "provider": "manual_delayed_snapshot_from_public_pages",
+  "underlying": "AEX",
+  "spot_price": 975.86,
+  "as_of": "2026-04-02T18:05:00Z",
+  "options": [
+    {
+      "expiry": "2026-04-10",
+      "option_type": "put",
+      "strike": 965.0,
+      "bid": null,
+      "ask": null,
+      "last": 7.75,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "call",
+      "strike": 970.0,
+      "bid": null,
+      "ask": null,
+      "last": 14.0,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "put",
+      "strike": 970.0,
+      "bid": null,
+      "ask": null,
+      "last": 9.15,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "call",
+      "strike": 975.0,
+      "bid": null,
+      "ask": null,
+      "last": 10.0,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "put",
+      "strike": 975.0,
+      "bid": null,
+      "ask": null,
+      "last": 10.6,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "call",
+      "strike": 980.0,
+      "bid": null,
+      "ask": null,
+      "last": 7.5,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "put",
+      "strike": 980.0,
+      "bid": null,
+      "ask": null,
+      "last": 13.25,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "call",
+      "strike": 985.0,
+      "bid": null,
+      "ask": null,
+      "last": 6.5,
+      "iv": null
+    },
+    {
+      "expiry": "2026-04-10",
+      "option_type": "call",
+      "strike": 990.0,
+      "bid": null,
+      "ask": null,
+      "last": 4.35,
+      "iv": null
+    }
+  ]
+}
