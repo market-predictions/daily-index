@@ -3,16 +3,6 @@
 send_aex_options_report.py
 
 Validation, rendering, and optional delivery script for the Weekly AEX Option Review.
-
-Current scope:
-- validate required markdown structure
-- validate presence of machine trade plan
-- render HTML
-- render PDF
-- optionally send email if SMTP environment variables are configured
-- write a manifest / receipt
-
-This script is intentionally conservative. It does not approve or execute trades.
 """
 
 from __future__ import annotations
@@ -39,18 +29,14 @@ REPORT_RE = re.compile(r"^weekly_aex_option_review_(\d{6})(?:_(\d{2}))?\.md$")
 REQUIRED_HEADINGS = [
     "# Weekly AEX Option Review",
     "## 1. Executive summary",
-    "## 2. Portfolio action snapshot",
-    "## 3. Macro / policy / geopolitical dashboard",
-    "## 4. AEX composition and sector transmission map",
-    "## 5. Technical integrity and confirmation check",
-    "## 6. Options regime and surface conditions",
-    "## 7. Approved structure family or no-trade decision",
-    "## 8. Structure ranking table",
-    "## 9. Calendar / timing gates and invalidators",
-    "## 10. Position changes executed this run",
-    "## 11. Current option portfolio, premium, and cash",
-    "## 12. Carry-forward input for next run",
-    "## 13. Disclaimer",
+    "## 2. Tradeable pricing snapshot",
+    "## 3. Primary decision",
+    "## 4. Watchlist and approved structures",
+    "## 5. Why the top structure is not yet approved",
+    "## 6. Market context appendix",
+    "## 7. Portfolio and risk appendix",
+    "## 8. Source receipt appendix",
+    "## 9. Disclaimer",
 ]
 
 BRAND = {
@@ -185,6 +171,7 @@ def html_shell(inner_html: str, date_str: str) -> str:
           .panel h1 {{ display: none; }}
           .panel h2 {{ color: {BRAND['muted']}; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; margin-top: 26px; }}
           .panel h2:first-of-type {{ margin-top: 0; }}
+          .panel h3 {{ color: {BRAND['ink']}; font-size: 15px; margin-top: 18px; }}
           .panel p, .panel li {{ line-height: 1.58; font-size: 14px; }}
           .panel table {{ width: 100%; border-collapse: collapse; margin: 12px 0 16px 0; font-size: 12px; }}
           .panel th, .panel td {{ border: 1px solid {BRAND['border']}; padding: 8px 10px; text-align: left; vertical-align: top; }}
