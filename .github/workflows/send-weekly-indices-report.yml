@@ -56,7 +56,7 @@ jobs:
           python -m pricing_indices.compose_final_report --in-place
 
       - name: Validate HTML/PDF render before send
-        run: python send_index_report.py --validate-only
+        run: python send_index_report_tv.py --validate-only
 
       - name: Send email if SMTP secrets are configured
         env:
@@ -67,4 +67,4 @@ jobs:
           MRKT_RPRTS_SMTP_PASS: ${{ secrets.MRKT_RPRTS_SMTP_PASS }}
           MRKT_RPRTS_MAIL_FROM: ${{ secrets.MRKT_RPRTS_MAIL_FROM }}
           MRKT_RPRTS_MAIL_TO: ${{ secrets.MRKT_RPRTS_MAIL_TO }}
-        run: python send_index_report.py
+        run: python send_index_report_tv.py
