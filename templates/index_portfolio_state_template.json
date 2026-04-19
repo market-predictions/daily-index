@@ -1,0 +1,22 @@
+{
+  "as_of": "YYYY-MM-DD",
+  "base_currency": "EUR",
+  "starting_capital_eur": 100000.0,
+  "total_portfolio_value_eur": 100000.0,
+  "cash_eur": 100000.0,
+  "pricing_basis": {
+    "requested_close_date": "YYYY-MM-DD",
+    "fx_basis": "",
+    "price_audit_file": ""
+  },
+  "constraints": {
+    "max_position_size_pct": 25.0,
+    "max_positions": 8,
+    "allow_leverage": false,
+    "allow_short": false,
+    "income_vs_growth_preference": "balanced growth with resilience bias",
+    "drawdown_tolerance": "moderate"
+  },
+  "positions": [],
+  "watchlist_memory": []
+}
