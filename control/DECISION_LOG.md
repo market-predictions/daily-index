@@ -105,3 +105,39 @@ Add a conservative macro snapshot producer, a first strike-aware structure build
 
 ### Why
 The repository needed real data depth and a path from regime assessment to structure candidates and live risk-state tracking without jumping to auto-execution.
+
+---
+
+## 2026-04-19
+### Decision
+Keep `daily-index` as the host repo and add **Weekly Indices Review** as the new primary active report product rather than replacing the repo with a blind ETF clone.
+
+### Why
+ETF provides the stronger production workflow and premium delivery pattern, while `daily-index` already provides the cleaner four-layer operating-system architecture and stronger machine-readable state mindset.
+
+---
+
+## 2026-04-19
+### Decision
+Preserve **AEX Weekly Options** as a parked but intact secondary product track.
+
+### Why
+The options-native work remains reusable later and should not be destroyed merely because the primary active report product has changed.
+
+---
+
+## 2026-04-19
+### Decision
+Use **benchmark index closes** for analysis and **tradable proxy closes** for implemented model-portfolio valuation in Weekly Indices Review.
+
+### Why
+The report should remain indices-first in analytical identity while the implemented model portfolio remains realistic and tradeable for NAV, holdings, and equity-curve calculations.
+
+---
+
+## 2026-04-19
+### Decision
+Port the ETF framework and workflow selectively into `daily-index` through new indices-native runtime, editorial, delivery, workflow, and state files.
+
+### Why
+A selective port gives speed and production realism without importing ETF-specific drift into the long-term architecture of `daily-index`.
