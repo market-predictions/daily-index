@@ -51,6 +51,10 @@ jobs:
         run: |
           python -m pricing_indices.assemble_report_sections
 
+      - name: Compose final report from assembled sections
+        run: |
+          python -m pricing_indices.compose_final_report --in-place
+
       - name: Validate HTML/PDF render before send
         run: python send_index_report.py --validate-only
 
