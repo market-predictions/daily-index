@@ -1,0 +1,55 @@
+{
+  "report_date": "YYYY-MM-DD",
+  "regional_group_status": [
+    {
+      "group": "U.S. core leadership",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    },
+    {
+      "group": "continental Europe",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    },
+    {
+      "group": "UK",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    },
+    {
+      "group": "North America ex-U.S.",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    },
+    {
+      "group": "developed Asia-Pacific",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    },
+    {
+      "group": "Greater China",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    },
+    {
+      "group": "India",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    },
+    {
+      "group": "EM broad",
+      "status": "considered",
+      "reason_if_ruled_out": ""
+    }
+  ],
+  "candidates": [
+    {
+      "public_index_name": "S&P 500",
+      "primary_proxy": "SPY",
+      "regional_group": "U.S. core leadership",
+      "score": 0.0,
+      "publish": false,
+      "reason_code_if_not_published": ""
+    }
+  ]
+}
