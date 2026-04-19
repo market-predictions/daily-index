@@ -1,0 +1,50 @@
+# Weekly Indices Review — Output Contract
+
+## Mission
+Every completed weekly cycle must produce:
+1. a **human-readable weekly report**
+2. machine-readable portfolio / recommendation state
+
+## Required report artifact
+Path:
+- `output_indices/weekly_indices_review_YYMMDD.md`
+- or same-day versioned equivalent
+
+## Planned state artifacts
+- `output_indices/index_portfolio_state.json`
+- `output_indices/index_trade_ledger.csv`
+- `output_indices/index_valuation_history.csv`
+- `output_indices/index_recommendation_scorecard.csv`
+- `output_indices/index_recommendation_plan_YYMMDD.json`
+- `output_indices/pricing/index_price_audit_YYYYMMDD.json`
+
+## Required report structure
+# Weekly Indices Review YYYY-MM-DD
+
+> *This report is for informational and educational purposes only; please see the disclaimer at the end.*
+
+## 1. Executive Summary
+## 2. Portfolio Action Snapshot
+## 3. Global Regime Dashboard
+## 4. Index Opportunity Board
+## 5. Key Risks / Invalidators
+## 6. Bottom Line
+## 7. Equity Curve and Portfolio Development
+## 8. Regional / Style Allocation Map
+## 9. Second-Order Effects Map
+## 10. Current Position Review
+## 11. Best New Index Opportunities
+## 12. Portfolio Rotation Plan
+## 13. Final Action Table
+## 14. Position Changes Executed This Run
+## 15. Current Portfolio Holdings and Cash
+## 16. Continuity Input for Next Run
+## 17. Disclaimer
+
+## Delivery rule
+A run is complete only if:
+1. the markdown report exists
+2. rendering validation passes
+3. if email delivery is enabled, a manifest / receipt is produced
+
+Do not claim completion without all applicable artifacts.
