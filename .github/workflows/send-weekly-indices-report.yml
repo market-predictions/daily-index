@@ -43,6 +43,10 @@ jobs:
         run: |
           python -m pricing_indices.run_pricing_pass
 
+      - name: Generate candidate ranking and discovery coverage artifacts
+        run: |
+          python -m pricing_indices.generate_candidate_artifacts
+
       - name: Validate HTML/PDF render before send
         run: python send_index_report.py --validate-only
 
