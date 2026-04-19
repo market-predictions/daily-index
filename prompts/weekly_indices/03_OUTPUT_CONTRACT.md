@@ -16,6 +16,8 @@ Path:
 - `output_indices/index_valuation_history.csv`
 - `output_indices/index_recommendation_scorecard.csv`
 - `output_indices/index_recommendation_plan_YYMMDD.json`
+- `output_indices/index_candidate_ranking_YYMMDD.json`
+- `output_indices/index_discovery_coverage_YYMMDD.json`
 - `output_indices/pricing/index_price_audit_YYYYMMDD.json`
 
 ## Required report structure
@@ -40,6 +42,14 @@ Path:
 ## 15. Current Portfolio Holdings and Cash
 ## 16. Continuity Input for Next Run
 ## 17. Disclaimer
+
+## Breadth visibility rule
+The final published report may remain compact, but broad internal discovery must remain visible in at least one of these ways:
+- a strongest omitted regional challenger in **Best New Index Opportunities**
+- a strongest omitted regional challenger in the continuity / watchlist section
+- or both
+
+This prevents the broader benchmark scan from disappearing in the final client-facing compression.
 
 ## Delivery rule
 A run is complete only if:
