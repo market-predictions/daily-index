@@ -30,3 +30,28 @@ Each exposure should map:
 - role in portfolio
 - thesis
 - timing state
+
+## Explicit regional benchmark families
+Discovery and ranking should explicitly consider, where relevant:
+- S&P 500
+- Nasdaq 100
+- Russell 2000
+- Euro Stoxx 50
+- DAX
+- CAC 40
+- IBEX 35
+- FTSE MIB
+- AEX
+- FTSE 100
+- S&P/TSX
+- ASX 200
+- Nikkei 225
+- Hang Seng
+- China large cap / CSI 300
+- India large cap / Nifty 50
+- Emerging Markets broad
+
+## Naming rule
+The decision framework should remain **public-index first**.
+Benchmark families are the primary analytical object.
+Proxy tickers are the implementation layer.
