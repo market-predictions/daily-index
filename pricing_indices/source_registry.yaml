@@ -1,0 +1,7 @@
+defaults:
+  proxy_source_order:
+    - yahoo_chart
+  benchmark_source_order:
+    - yahoo_chart
+  fx_source_order:
+    - ecb_reference
