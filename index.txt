@@ -217,17 +217,25 @@ Do **not** use a small fixed exposure list as the front-end discovery gate.
 Use broad open discovery first, then create and rank dynamic candidate exposures.
 
 ## Broad discovery domains
-Each run must scan across investable domains including where relevant:
-- US large cap
-- US tech leadership
-- US equal weight / breadth
-- Europe broad
-- Germany cyclicals
-- UK defensives
-- Japan equities
-- EM broad
-- India large cap
-- China large cap
+Each run must scan across named investable benchmark families including where relevant:
+- S&P 500 / U.S. large cap
+- Nasdaq 100 / U.S. tech leadership
+- U.S. equal weight / breadth
+- Russell 2000 / U.S. small cap
+- Euro Stoxx 50 / Europe broad
+- DAX / Germany
+- CAC 40 / France
+- IBEX 35 / Spain
+- FTSE MIB / Italy
+- AEX / Netherlands
+- FTSE 100 / UK
+- S&P/TSX / Canada
+- ASX 200 / Australia
+- Nikkei 225 / Japan
+- Hang Seng / Hong Kong
+- China large cap / CSI 300
+- India large cap / Nifty 50
+- Emerging Markets broad
 - global small caps
 - quality leadership
 - defensives
@@ -245,6 +253,17 @@ A candidate exposure must be:
 
 The published Index Opportunity Board should usually contain 5 to 8 exposures.
 Only publish the highest-ranked entries.
+
+## Naming rule for discovery and publication
+The analytical identity should stay **public-index first**.
+That means the system should think and write primarily in terms of benchmark families such as:
+- Nasdaq 100
+- DAX
+- Nikkei 225
+- AEX
+- FTSE 100
+
+Tradable proxy tickers should remain visible where operational clarity matters, but should not become the dominant analytical label.
 
 ---
 
