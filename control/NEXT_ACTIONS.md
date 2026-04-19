@@ -7,13 +7,15 @@
 
 ---
 
-## Phase 1 — verify the current workflow state
+## Phase 1 — establish the new primary product track
 
-### 1. Confirm the GitHub Actions results
-- Owner: `[USER]`
-- Action: inspect the Actions tab for the latest daily-index commits
-- Goal: confirm which workflows passed, failed, or were skipped
-- Why: the connector did not surface combined statuses yet
+### 1. Confirm product priority
+- Owner: `[JOINT]`
+- Action:
+  - treat **Weekly Indices Review** as the primary active reporting product
+  - keep **AEX Weekly Options** parked but preserved
+- Done when:
+  - control files, prompts, workflows, and outputs clearly reflect the new primary track
 
 ### 2. Keep using the control-layer read order
 1. `control/SYSTEM_INDEX.md`
@@ -21,76 +23,173 @@
 3. `control/NEXT_ACTIONS.md`
 4. only then the minimum relevant execution file(s)
 
----
-
-## Phase 2 — improve execution realism safely
-
-### 3. Decide the option-chain provider path
-Needed for:
-- AEX option chains
-- implied volatility / skew / term structure
-- spot / futures reference pricing
-- better strike selection
-
-### 4. Decide how execution events will be recorded
-Target input:
-- `input_aex/aex_execution_events.json`
-
-### 5. Confirm whether the model portfolio should carry explicit long AEX exposure
-Why:
-- collar / overwrite-style families should only activate when underlying exposure is real
+### 3. Add a dedicated architecture note
+- Owner: `[ASSISTANT]`
+- Target file:
+  - `control/INDICES_REVIEW_ARCHITECTURE.md`
+- Goal:
+  - define the benchmark/proxy model
+  - define state files
+  - define output contract
+  - define workflow boundaries
 
 ---
 
-## Phase 3 — move from structure scaffolding to structure quality
+## Phase 2 — port the ETF production framework into the repo safely
 
-### 6. Upgrade the first structure builder
-Target outcome:
-- wider strike search
-- better expiry selection
-- stronger candidate ranking
-- better financing and convexity scoring
+### 4. Create the production runtime prompt
+- Owner: `[ASSISTANT]`
+- Target file:
+  - `index.txt`
+- Goal:
+  - ETF-style production runtime for Weekly Indices Review
+  - preserve compact premium structure
+  - support portfolio continuity and pricing audits
+  - avoid ETF-specific object-model drift
 
-### 7. Deepen the macro producer
-Target outcome:
-- richer AEX composition notes
-- better Europe / ECB / energy classification
-- less placeholder use
+### 5. Create the premium editorial layer
+- Owner: `[ASSISTANT]`
+- Target file:
+  - `index-pro.txt`
+- Goal:
+  - preserve the premium ETF-like reading experience
+  - remove internal workflow language from the client-facing report
+  - keep the report selective, calm, and commercially credible
 
-### 8. Keep automation conservative
-Rule:
-- approved structures remain proposal-only until explicit execution confirmation arrives
-
----
-
-## Phase 4 — delivery hardening
-
-### 9. Add SMTP secrets to the repo if email delivery should be active
-Needed by workflow:
-- `MRKT_RPRTS_SMTP_HOST`
-- `MRKT_RPRTS_SMTP_PORT`
-- `MRKT_RPRTS_SMTP_USER`
-- `MRKT_RPRTS_SMTP_PASS`
-- `MRKT_RPRTS_MAIL_FROM`
-- `MRKT_RPRTS_MAIL_TO`
-
-### 10. Confirm recipient(s)
-Set the default recipient list for the AEX workflow.
+### 6. Create the split four-layer scaffold
+- Owner: `[ASSISTANT]`
+- Target path:
+  - `prompts/weekly_indices/`
+- Files:
+  - `01_DECISION_FRAMEWORK.md`
+  - `02_INPUT_STATE_CONTRACT.md`
+  - `03_OUTPUT_CONTRACT.md`
+  - `04_OPERATIONAL_RUNBOOK.md`
+- Goal:
+  - keep four-layer discipline explicit even if the production runtime remains more monolithic at first
 
 ---
 
-## Phase 5 — housekeeping
+## Phase 3 — define explicit indices state authority
 
-### 11. Delete temporary branch `tmp-tree-test`
+### 7. Create the canonical output/state path
+- Owner: `[ASSISTANT]`
+- Target path:
+  - `output_indices/`
+- Goal:
+  - separate the new product cleanly from `output_aex/`
+
+### 8. Create indices portfolio state files
+- Owner: `[ASSISTANT]`
+- Planned files:
+  - `output_indices/index_portfolio_state.json`
+  - `output_indices/index_trade_ledger.csv`
+  - `output_indices/index_valuation_history.csv`
+  - `output_indices/index_recommendation_scorecard.csv`
+  - `output_indices/index_recommendation_plan_YYMMDD.json`
+- Goal:
+  - reduce dependence on prior report parsing
+  - make continuity and valuation authority explicit
+
+### 9. Define benchmark / proxy authority rules
+- Owner: `[ASSISTANT]`
+- Goal:
+  - benchmark index closes govern analysis
+  - tradable proxy closes govern implemented portfolio valuation
+  - both are stored in state where relevant
+- Done when:
+  - conflict resolution is deterministic and documented
+
+### 10. Create indices pricing subsystem
+- Owner: `[ASSISTANT]`
+- Target path:
+  - `pricing_indices/`
+- Goal:
+  - adapt only the ETF pricing pieces needed for index/proxy valuation
+  - write machine-readable audits to `output_indices/pricing/`
+  - keep source hierarchy and rate-limit rules explicit
+
+---
+
+## Phase 4 — port delivery and workflow
+
+### 11. Create the delivery/render/send script
+- Owner: `[ASSISTANT]`
+- Target file:
+  - `send_index_report.py`
+- Goal:
+  - validate report structure
+  - render HTML
+  - render PDF
+  - send email
+  - write manifest / receipt
+
+### 12. Create the production GitHub Actions workflow
+- Owner: `[ASSISTANT]`
+- Target file:
+  - `.github/workflows/send-weekly-indices-report.yml`
+- Goal:
+  - trigger only on production indices report output pushes
+  - avoid resend on non-report code changes
+  - keep workflow operational, not editorial
+
+### 13. Add SMTP secrets if email delivery should be active
 - Owner: `[USER]`
-- Why: the connector exposed branch creation/search but not branch deletion
+- Needed:
+  - `MRKT_RPRTS_SMTP_HOST`
+  - `MRKT_RPRTS_SMTP_PORT`
+  - `MRKT_RPRTS_SMTP_USER`
+  - `MRKT_RPRTS_SMTP_PASS`
+  - `MRKT_RPRTS_MAIL_FROM`
+  - `MRKT_RPRTS_MAIL_TO`
 
-### 12. Keep the repo lean
-- remove temporary test artifacts when they no longer serve a workflow purpose
-- prefer canonical control filenames only
-- avoid reintroducing FX-only files into this repo
+---
+
+## Phase 5 — validate the new product end to end
+
+### 14. Run one inaugural Weekly Indices Review
+- Owner: `[ASSISTANT]`
+- Goal:
+  - confirm inaugural portfolio build works
+  - confirm report remains premium and compact
+  - confirm GitHub write path is correct
+
+### 15. Run one continuation Weekly Indices Review
+- Owner: `[ASSISTANT]`
+- Goal:
+  - confirm state carry-forward works
+  - confirm pricing audit consumption works
+  - confirm continuity section behaves cleanly
+
+### 16. Run one same-day rerun
+- Owner: `[ASSISTANT]`
+- Goal:
+  - confirm same-day versioning works
+  - confirm workflow trigger remains correct
+  - confirm no accidental overwrite
+
+### 17. Validate delivery workflow
+- Owner: `[JOINT]`
+- Goal:
+  - confirm render succeeds
+  - confirm email succeeds
+  - confirm manifest / receipt is produced
+  - confirm success is never claimed without evidence
+
+---
+
+## Phase 6 — keep AEX options preserved but parked
+
+### 18. Do not delete the AEX track
+- Owner: `[JOINT]`
+- Goal:
+  - preserve files
+  - preserve workflows
+  - avoid mixing product logic
+- Done when:
+  - the repo can support both tracks cleanly without ambiguity
 
 ---
 
 ## Current checkpoint
-**Macro snapshot, strike-aware structure candidates, and portfolio/Greeks refresh now exist; next priority is verifying workflow outcomes and improving the realism of chain data and execution ingestion.**
+**The next major implementation step is to stand up Weekly Indices Review inside `daily-index` as the new primary report product by adding `index.txt`, `index-pro.txt`, explicit indices state files, a pricing/audit path, and an ETF-style delivery workflow while keeping the AEX options track preserved but parked.**
