@@ -1,0 +1,81 @@
+{
+  "report_date": "2026-04-19",
+  "approval_status": "INAUGURAL_BUILD",
+  "primary_regime": "Policy Transition / Mixed Regime",
+  "secondary_cross_current": "Risk-on relief with selective breadth improvement",
+  "geopolitical_regime": "Elevated but localized",
+  "pricing_summary": {
+    "requested_close_date": "2026-04-17",
+    "fresh_holdings_count": 4,
+    "carried_forward_count": 0,
+    "coverage_count_pct": 100.0,
+    "invested_weight_coverage_pct": 84.43
+  },
+  "top_actions": [
+    "Establish the inaugural model portfolio with four funded index exposures and meaningful cash optionality.",
+    "Favor U.S. large-cap and tech leadership over a broader global build-out at inception.",
+    "Keep Japan and Germany on the live watchlist pending cleaner confirmation and fresher implementation verification."
+  ],
+  "recommended_changes": [
+    {
+      "exposure_id": "us_large_cap",
+      "action": "add",
+      "funding_source": "cash",
+      "reason": "Core U.S. large-cap exposure remains the cleanest starting anchor."
+    },
+    {
+      "exposure_id": "us_tech_leadership",
+      "action": "add",
+      "funding_source": "cash",
+      "reason": "Growth leadership remains a core engine in the current opportunity set."
+    },
+    {
+      "exposure_id": "us_small_cap",
+      "action": "add",
+      "funding_source": "cash",
+      "reason": "Domestic breadth improves diversification without dominating the book."
+    },
+    {
+      "exposure_id": "em_broad",
+      "action": "add",
+      "funding_source": "cash",
+      "reason": "Emerging markets add a measured non-U.S. risk sleeve while the dollar backdrop is less hostile."
+    }
+  ],
+  "best_new_opportunities": [
+    {
+      "exposure_id": "japan_equities",
+      "benchmark_symbol": "^N225",
+      "primary_proxy": "EWJ",
+      "score": 3.85,
+      "category": "macro-derived",
+      "beats_existing_holding": false,
+      "portfolio_gap_fill": true
+    },
+    {
+      "exposure_id": "germany_cyclicals",
+      "benchmark_symbol": "^GDAXI",
+      "primary_proxy": "EWG",
+      "score": 3.7,
+      "category": "macro-derived",
+      "beats_existing_holding": false,
+      "portfolio_gap_fill": true
+    }
+  ],
+  "continuity": {
+    "retained_entries": [],
+    "new_entries": [
+      "us_large_cap",
+      "us_tech_leadership",
+      "us_small_cap",
+      "em_broad"
+    ],
+    "dropped_entries": [],
+    "strong_challengers_not_published": [
+      "japan_equities",
+      "germany_cyclicals",
+      "europe_large_cap"
+    ],
+    "next_change_trigger": "Cleaner confirmation in Japan or Europe broadens the funded opportunity set next run."
+  }
+}
