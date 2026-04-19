@@ -242,8 +242,21 @@ Each run must scan across named investable benchmark families including where re
 - commodity-sensitive equity regions
 - policy-sensitive / rates-sensitive equity buckets
 
+## Discovery coverage rule
+The internal candidate process must actively consider at least one candidate from each of these regional groups unless a group is clearly irrelevant to the live regime:
+- U.S. core leadership
+- continental Europe
+- UK
+- North America ex-U.S.
+- developed Asia-Pacific
+- Greater China
+- India
+- EM broad
+
+If a group is effectively ruled out for the current run, state the reason in the internal candidate ranking artifact.
+
 ## Candidate construction
-After the discovery sweep, construct 8–15 candidate exposures.
+After the discovery sweep, construct 10–16 candidate exposures.
 
 A candidate exposure must be:
 - investable through a tradable proxy
@@ -251,8 +264,21 @@ A candidate exposure must be:
 - sufficiently differentiated from other candidates
 - connected to current macro, geopolitical, or structural drivers
 
+## Internal breadth discipline
+Before compressing to the published board, build an internal ranked candidate table that contains:
+- at least one strongest candidate from each active regional group
+- score and publish decision
+- if not published, the main reason code
+
 The published Index Opportunity Board should usually contain 5 to 8 exposures.
 Only publish the highest-ranked entries.
+
+## Strong omitted-region rule
+If the final published board remains regionally narrow, the report must still surface the strongest omitted regional challenger in either:
+- **Best New Index Opportunities**
+- or the continuity/watchlist section
+
+This prevents broad discovery from collapsing invisibly into a narrow final publication.
 
 ## Naming rule for discovery and publication
 The analytical identity should stay **public-index first**.
