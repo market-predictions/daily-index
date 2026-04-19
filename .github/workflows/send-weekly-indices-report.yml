@@ -37,7 +37,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install markdown weasyprint
+          pip install markdown weasyprint matplotlib
 
       - name: Run indices pricing pass dry run
         run: |
