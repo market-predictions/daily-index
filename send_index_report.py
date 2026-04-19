@@ -20,9 +20,13 @@ from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Optional
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+except Exception:  # noqa: BLE001
+    plt = None
+
 import markdown as mdlib
 from weasyprint import HTML
 
@@ -316,6 +320,9 @@ def write_manifest(path: Path, report_name: str, recipient: str, attachments: li
 
 
 def create_equity_curve_png(output_dir: Path, chart_path: Path, md_text: str | None = None) -> Path | None:
+    if plt is None:
+        return None
+
     points: list[tuple[str, float]] = []
     if md_text:
         points = parse_section7_equity_points(md_text)
