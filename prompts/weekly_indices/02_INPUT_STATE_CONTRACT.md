@@ -8,7 +8,8 @@ Define what data is authoritative and how conflicts are resolved.
 2. `output_indices/index_portfolio_state.json`
 3. Latest valid pricing audit in `output_indices/pricing/`
 4. Most recent stored report in `output_indices/`
-5. Deterministic assumptions
+5. Most recent candidate-ranking / discovery-coverage artifacts if they exist
+6. Deterministic assumptions
 
 ## Benchmark vs proxy rule
 ### Benchmark index closes govern
@@ -31,4 +32,24 @@ Define what data is authoritative and how conflicts are resolved.
 - `output_indices/index_valuation_history.csv`
 - `output_indices/index_recommendation_scorecard.csv`
 - `output_indices/index_recommendation_plan_YYMMDD.json`
+- `output_indices/index_candidate_ranking_YYMMDD.json`
+- `output_indices/index_discovery_coverage_YYMMDD.json`
 - `output_indices/pricing/index_price_audit_YYYYMMDD.json`
+
+## Candidate ranking artifact
+The candidate ranking artifact should record the internal ranked list before publication compression.
+It should include, at minimum:
+- public benchmark name
+- primary proxy
+- regional group
+- score
+- publish decision
+- if not published, the main reason code
+
+## Discovery coverage artifact
+The discovery coverage artifact should record whether each broad regional group was:
+- actively considered
+- ruled out
+- or surfaced as a near-miss
+
+This is the mechanism that makes broad discovery auditable rather than merely implied.
