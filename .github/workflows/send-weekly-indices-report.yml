@@ -39,6 +39,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install markdown weasyprint
 
+      - name: Run indices pricing pass dry run
+        run: |
+          python -m pricing_indices.run_pricing_pass
+
       - name: Validate HTML/PDF render before send
         run: python send_index_report.py --validate-only
 
