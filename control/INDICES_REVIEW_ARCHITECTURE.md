@@ -129,6 +129,36 @@ The report should remain **indices-first in identity**, but **proxy-based in imp
 
 ---
 
+## Broadened discovery taxonomy
+The discovery taxonomy must explicitly extend beyond:
+- Euro Stoxx 50 plus DAX for Europe
+- Nikkei 225 plus EM broad for Asia
+
+The named benchmark families should now include, where relevant:
+- S&P 500
+- Nasdaq 100
+- Russell 2000
+- Euro Stoxx 50
+- DAX
+- CAC 40
+- IBEX 35
+- FTSE MIB
+- AEX
+- FTSE 100
+- S&P/TSX
+- ASX 200
+- Nikkei 225
+- Hang Seng
+- China large cap / CSI 300
+- India large cap / Nifty 50
+- Emerging Markets broad
+
+This broader taxonomy improves both:
+- top-down discovery breadth
+- the ability to explain regional leadership in recognisable public-index language
+
+---
+
 ## Proposed output artifacts
 
 ### Human-readable report
