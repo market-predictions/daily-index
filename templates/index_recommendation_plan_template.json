@@ -1,0 +1,24 @@
+{
+  "report_date": "YYYY-MM-DD",
+  "approval_status": "",
+  "primary_regime": "",
+  "secondary_cross_current": "",
+  "geopolitical_regime": "",
+  "pricing_summary": {
+    "requested_close_date": "YYYY-MM-DD",
+    "fresh_holdings_count": 0,
+    "carried_forward_count": 0,
+    "coverage_count_pct": 0.0,
+    "invested_weight_coverage_pct": 0.0
+  },
+  "top_actions": [],
+  "recommended_changes": [],
+  "best_new_opportunities": [],
+  "continuity": {
+    "retained_entries": [],
+    "new_entries": [],
+    "dropped_entries": [],
+    "strong_challengers_not_published": [],
+    "next_change_trigger": ""
+  }
+}
