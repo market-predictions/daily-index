@@ -150,9 +150,17 @@ Recognize:
 ## No-manual-input fallback hierarchy
 1. explicit portfolio data in the current chat
 2. `output_indices/index_portfolio_state.json`
-3. Section `## 16. Continuity Input for Next Run` from the most recent stored report
-4. Section `## 15. Current Portfolio Holdings and Cash`
-5. deterministic assumptions
+3. matching `output_indices/index_candidate_ranking_YYMMDD.json` if it exists for the run date
+4. matching `output_indices/index_discovery_coverage_YYMMDD.json` if it exists for the run date
+5. Section `## 16. Continuity Input for Next Run` from the most recent stored report
+6. Section `## 15. Current Portfolio Holdings and Cash`
+7. deterministic assumptions
+
+## Artifact preference rule
+If matching candidate artifacts exist for the current report date, treat them as the preferred internal source of truth for:
+- which regional groups were actually considered
+- which candidate exposures scored highest internally
+- which omitted regional challengers deserve visibility in the client report
 
 ## Inaugural build rule
 If no prior report or state exists and no portfolio is provided:
@@ -320,6 +328,10 @@ Use exactly one label:
 ## STEP 3 — Build the second-order effects map
 ## STEP 4 — Derive the regional / style allocation map
 ## STEP 5 — Run open discovery and rank dynamic candidate exposures
+## STEP 5A — Resolve candidate artifacts for publication
+If matching `index_candidate_ranking_YYMMDD.json` and `index_discovery_coverage_YYMMDD.json` exist, read them and use them by default for publication compression.
+If they do not exist, generate the equivalent internal ranking logic during the run.
+
 ## STEP 6 — Score current positions
 ## STEP 7 — Generate new opportunity set
 ## STEP 8 — Implement the model portfolio
@@ -353,6 +365,19 @@ Use exactly this structure.
 ## 16. Continuity Input for Next Run
 ## 17. Disclaimer
 
+## Section source-of-truth rules
+### Section 4 — Index Opportunity Board
+This section should, by default, be built from the highest-ranked published entries in `index_candidate_ranking_YYMMDD.json` if that artifact exists.
+
+### Section 11 — Best New Index Opportunities
+This section should, by default, surface the strongest non-published challengers from `index_candidate_ranking_YYMMDD.json`, especially where they improve regional breadth or represent the strongest omitted regional challenger.
+
+### Section 16 — Continuity Input for Next Run
+This section should, by default, use `index_discovery_coverage_YYMMDD.json` and `index_candidate_ranking_YYMMDD.json` to populate:
+- watchlist / dynamic radar memory
+- strong challengers not published
+- what would most likely change the board next run
+
 ---
 
 # 11. DUAL OUTPUT + GITHUB WRITE REQUIREMENT
@@ -384,4 +409,5 @@ Silently verify:
 8. Did I produce both chat output and GitHub output?
 9. Did I run the email-delivery step?
 10. Did I avoid asking the user for manual input if prior state existed?
-11. Did I preserve executive readability and report discipline?
+11. Did I consume candidate artifacts by default when they existed?
+12. Did I preserve executive readability and report discipline?
