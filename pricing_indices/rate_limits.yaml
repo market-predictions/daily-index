@@ -1,0 +1,5 @@
+policy:
+  max_positions: 8
+  allow_bootstrap_if_missing: true
+  minimum_fresh_coverage_count_pct: 75.0
+  minimum_fresh_invested_weight_pct: 85.0
