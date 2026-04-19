@@ -1,0 +1,367 @@
+{
+  "report_date_token": "260419",
+  "report_file": "weekly_indices_review_260419_02.md",
+  "regional_group_status": [
+    {
+      "group": "U.S. core leadership",
+      "status": "surfaced",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "us_tech_leadership",
+        "public_index_name": "Nasdaq 100",
+        "primary_proxy": "QQQ",
+        "score": 4.4,
+        "publish": true,
+        "reason_code_if_not_published": ""
+      }
+    },
+    {
+      "group": "continental Europe",
+      "status": "near_miss",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "germany_cyclicals",
+        "public_index_name": "DAX",
+        "primary_proxy": "EWG",
+        "score": 3.8,
+        "publish": false,
+        "reason_code_if_not_published": "strong_challenger_not_published"
+      }
+    },
+    {
+      "group": "UK",
+      "status": "considered",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "uk_large_cap",
+        "public_index_name": "FTSE 100",
+        "primary_proxy": "EWU",
+        "score": 3.1,
+        "publish": false,
+        "reason_code_if_not_published": "below_board_cutoff"
+      }
+    },
+    {
+      "group": "North America ex-U.S.",
+      "status": "considered",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "canada_large_cap",
+        "public_index_name": "S&P/TSX 60",
+        "primary_proxy": "EWC",
+        "score": 3.05,
+        "publish": false,
+        "reason_code_if_not_published": "below_board_cutoff"
+      }
+    },
+    {
+      "group": "developed Asia-Pacific",
+      "status": "surfaced",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "japan_equities",
+        "public_index_name": "Nikkei 225",
+        "primary_proxy": "EWJ",
+        "score": 3.95,
+        "publish": true,
+        "reason_code_if_not_published": ""
+      }
+    },
+    {
+      "group": "Greater China",
+      "status": "considered",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "china_large_cap",
+        "public_index_name": "China large cap",
+        "primary_proxy": "FXI",
+        "score": 3.0,
+        "publish": false,
+        "reason_code_if_not_published": "below_board_cutoff"
+      }
+    },
+    {
+      "group": "India",
+      "status": "considered",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "india_large_cap",
+        "public_index_name": "Nifty 50",
+        "primary_proxy": "INDA",
+        "score": 3.25,
+        "publish": false,
+        "reason_code_if_not_published": "below_board_cutoff"
+      }
+    },
+    {
+      "group": "EM broad",
+      "status": "surfaced",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "em_broad",
+        "public_index_name": "Emerging Markets",
+        "primary_proxy": "EEM",
+        "score": 3.85,
+        "publish": true,
+        "reason_code_if_not_published": ""
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "exposure_id": "us_tech_leadership",
+      "public_index_name": "Nasdaq 100",
+      "benchmark_symbol": "^NDX",
+      "primary_proxy": "QQQ",
+      "alternative_proxy": "QQQM",
+      "regional_group": "U.S. core leadership",
+      "region": "US",
+      "style": "large-cap growth",
+      "currently_held": true,
+      "weight_pct": 24.86,
+      "score": 4.4,
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "us_small_cap",
+      "public_index_name": "Russell 2000",
+      "benchmark_symbol": "^RUT",
+      "primary_proxy": "IWM",
+      "alternative_proxy": "VTWO",
+      "regional_group": "U.S. core leadership",
+      "region": "US",
+      "style": "small cap",
+      "currently_held": true,
+      "weight_pct": 19.97,
+      "score": 4.4,
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "us_large_cap",
+      "public_index_name": "S&P 500",
+      "benchmark_symbol": "^GSPC",
+      "primary_proxy": "SPY",
+      "alternative_proxy": "VOO",
+      "regional_group": "U.S. core leadership",
+      "region": "US",
+      "style": "large cap",
+      "currently_held": true,
+      "weight_pct": 24.61,
+      "score": 4.4,
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "japan_equities",
+      "public_index_name": "Nikkei 225",
+      "benchmark_symbol": "^N225",
+      "primary_proxy": "EWJ",
+      "alternative_proxy": "DXJ",
+      "regional_group": "developed Asia-Pacific",
+      "region": "Japan",
+      "style": "broad equity",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.95,
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "em_broad",
+      "public_index_name": "Emerging Markets",
+      "benchmark_symbol": "EEM",
+      "primary_proxy": "EEM",
+      "alternative_proxy": "VWO",
+      "regional_group": "EM broad",
+      "region": "Emerging Markets",
+      "style": "broad equity",
+      "currently_held": true,
+      "weight_pct": 14.99,
+      "score": 3.85,
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "germany_cyclicals",
+      "public_index_name": "DAX",
+      "benchmark_symbol": "^GDAXI",
+      "primary_proxy": "EWG",
+      "alternative_proxy": "EXS1.DE",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "cyclical",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.8,
+      "publish": false,
+      "reason_code_if_not_published": "strong_challenger_not_published"
+    },
+    {
+      "exposure_id": "europe_large_cap",
+      "public_index_name": "Euro Stoxx 50",
+      "benchmark_symbol": "^STOXX50E",
+      "primary_proxy": "FEZ",
+      "alternative_proxy": "VGK",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.45,
+      "publish": false,
+      "reason_code_if_not_published": "strong_challenger_not_published"
+    },
+    {
+      "exposure_id": "australia_large_cap",
+      "public_index_name": "ASX 200",
+      "benchmark_symbol": "^AXJO",
+      "primary_proxy": "EWA",
+      "alternative_proxy": "STW.AX",
+      "regional_group": "developed Asia-Pacific",
+      "region": "Australia",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.45,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "france_large_cap",
+      "public_index_name": "CAC 40",
+      "benchmark_symbol": "^FCHI",
+      "primary_proxy": "EWQ",
+      "alternative_proxy": "CAC.PA",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.35,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "italy_large_cap",
+      "public_index_name": "FTSE MIB",
+      "benchmark_symbol": "FTSEMIB.MI",
+      "primary_proxy": "EWI",
+      "alternative_proxy": "IMIB.MI",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.35,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "spain_large_cap",
+      "public_index_name": "IBEX 35",
+      "benchmark_symbol": "^IBEX",
+      "primary_proxy": "EWP",
+      "alternative_proxy": "IBEX.MC",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.35,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "netherlands_large_cap",
+      "public_index_name": "AEX",
+      "benchmark_symbol": "^AEX",
+      "primary_proxy": "EWN",
+      "alternative_proxy": "IAEX.AS",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.35,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "india_large_cap",
+      "public_index_name": "Nifty 50",
+      "benchmark_symbol": "^NSEI",
+      "primary_proxy": "INDA",
+      "alternative_proxy": "INDY",
+      "regional_group": "India",
+      "region": "India",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.25,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "uk_large_cap",
+      "public_index_name": "FTSE 100",
+      "benchmark_symbol": "^FTSE",
+      "primary_proxy": "EWU",
+      "alternative_proxy": "ISF.L",
+      "regional_group": "UK",
+      "region": "UK",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.1,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "canada_large_cap",
+      "public_index_name": "S&P/TSX 60",
+      "benchmark_symbol": "^GSPTSE",
+      "primary_proxy": "EWC",
+      "alternative_proxy": "XIU.TO",
+      "regional_group": "North America ex-U.S.",
+      "region": "Canada",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.05,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "china_large_cap",
+      "public_index_name": "China large cap",
+      "benchmark_symbol": "000300.SS",
+      "primary_proxy": "FXI",
+      "alternative_proxy": "MCHI",
+      "regional_group": "Greater China",
+      "region": "China",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.0,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    },
+    {
+      "exposure_id": "hong_kong_equities",
+      "public_index_name": "Hang Seng",
+      "benchmark_symbol": "^HSI",
+      "primary_proxy": "EWH",
+      "alternative_proxy": "2800.HK",
+      "regional_group": "Greater China",
+      "region": "Hong Kong",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 3.0,
+      "publish": false,
+      "reason_code_if_not_published": "below_board_cutoff"
+    }
+  ]
+}
