@@ -43,6 +43,27 @@ Path:
 ## 16. Continuity Input for Next Run
 ## 17. Disclaimer
 
+## Section source rules
+### Section 4 — Index Opportunity Board
+Default source of truth:
+- highest-ranked published entries from `index_candidate_ranking_YYMMDD.json`
+
+### Section 11 — Best New Index Opportunities
+Default source of truth:
+- strongest non-published challengers from `index_candidate_ranking_YYMMDD.json`
+- especially the strongest omitted regional challenger when the final board remains narrow
+
+### Section 16 — Continuity Input for Next Run
+Default source of truth:
+- `index_discovery_coverage_YYMMDD.json`
+- `index_candidate_ranking_YYMMDD.json`
+- portfolio state and recommendation plan where relevant
+
+This section should use those artifacts to populate:
+- watchlist / dynamic radar memory
+- strong challengers not published
+- what would most likely change the board next run
+
 ## Breadth visibility rule
 The final published report may remain compact, but broad internal discovery must remain visible in at least one of these ways:
 - a strongest omitted regional challenger in **Best New Index Opportunities**
