@@ -55,13 +55,6 @@ def _read_valuation_history(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(fh))
 
 
-def _fmt_num(value: Any, digits: int = 2) -> str:
-    try:
-        return f"{float(value):.{digits}f}"
-    except Exception:  # noqa: BLE001
-        return "—"
-
-
 def build_section4(candidate_ranking: dict[str, Any], plan: dict[str, Any]) -> str:
     published = [c for c in candidate_ranking.get("candidates", []) if c.get("publish")]
     published = sorted(published, key=lambda x: (-float(x.get("board_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))[:6]
@@ -91,9 +84,7 @@ def build_section4(candidate_ranking: dict[str, Any], plan: dict[str, Any]) -> s
 def build_section7(state: dict[str, Any], valuation_rows: list[dict[str, str]]) -> str:
     requested_close = ((state.get("pricing_basis") or {}).get("requested_close_date")) or "unknown"
     total_value = float(state.get("total_portfolio_value_eur") or 0.0)
-    cash_eur = float(state.get("cash_eur") or 0.0)
     starting_capital = float(state.get("starting_capital_eur") or 100000.0)
-    invested_eur = total_value - cash_eur
     ret_pct = ((total_value / starting_capital) - 1.0) * 100.0 if starting_capital else 0.0
     fx_date = ((state.get("pricing_basis") or {}).get("fx_date")) or requested_close
 
@@ -121,43 +112,14 @@ def build_section7(state: dict[str, Any], valuation_rows: list[dict[str, str]]) 
     return "\n".join(lines)
 
 
-def _breadth_rows(candidate_ranking: dict[str, Any], exposure_ids: list[str]) -> list[dict[str, Any]]:
-    rows = []
-    by_id = {row.get("exposure_id"): row for row in candidate_ranking.get("candidates", [])}
-    for exposure_id in exposure_ids:
-        row = by_id.get(exposure_id)
-        if row:
-            rows.append(row)
-    return rows
-
-
 def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any], plan: dict[str, Any]) -> str:
-    candidates = [c for c in candidate_ranking.get("candidates", []) if not c.get("publish")]
-    candidates = sorted(candidates, key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))
+    all_candidates = candidate_ranking.get("candidates", [])
+    unpublished = [c for c in all_candidates if not c.get("publish")]
+    unpublished = sorted(unpublished, key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))
     coverage_groups = coverage.get("groups") or []
-    strongest_omitted = None
-    for group in coverage_groups:
-        cand = group.get("strongest_candidate") or {}
-        if cand and not cand.get("publish"):
-            strongest_omitted = cand
-            break
+    strongest_omitted = unpublished[0] if unpublished else None
 
-    picked: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    if strongest_omitted and strongest_omitted.get("exposure_id"):
-        for row in candidates:
-            if row.get("exposure_id") == strongest_omitted.get("exposure_id"):
-                picked.append(row)
-                seen.add(str(row.get("exposure_id")))
-                break
-    for row in candidates:
-        eid = str(row.get("exposure_id"))
-        if eid in seen:
-            continue
-        picked.append(row)
-        seen.add(eid)
-        if len(picked) >= 4:
-            break
+    picked: list[dict[str, Any]] = unpublished[:4]
 
     lines = [f"## 11. {SECTION11_NAME}", ""]
     if strongest_omitted:
@@ -179,7 +141,7 @@ def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
         ]
 
     lines += [
-        "### Breadth checkpoint by region",
+        "### Breadth checkpoint by regional bucket",
         "| Regional bucket | Strongest candidate | Proxy | Challenger score | Current status |",
         "|---|---|---|---:|---|",
     ]
@@ -192,31 +154,18 @@ def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
             f"| {group.get('group')} | {cand.get('public_index_name')} | {cand.get('primary_proxy')} | {float(cand.get('challenger_score') or cand.get('score') or 0.0):.2f} | {status} |"
         )
 
-    europe_rows = _breadth_rows(candidate_ranking, ["germany_cyclicals", "france_large_cap", "italy_large_cap", "spain_large_cap", "netherlands_large_cap"])
-    if europe_rows:
-        lines += [
-            "",
-            "### Continental Europe breadth checkpoint",
-            "| Market | Proxy | Challenger score | Why not on the board yet |",
-            "|---|---|---:|---|",
-        ]
-        for row in sorted(europe_rows, key=lambda x: (-float(x.get('challenger_score') or 0.0), x.get('public_index_name') or '')):
-            lines.append(
-                f"| {row.get('public_index_name')} | {row.get('primary_proxy')} | {float(row.get('challenger_score') or 0.0):.2f} | {row.get('reason_code_if_not_published') or 'published'} |"
-            )
-
-    asia_rows = _breadth_rows(candidate_ranking, ["china_large_cap", "india_large_cap", "australia_large_cap"])
-    if asia_rows:
-        lines += [
-            "",
-            "### Asia / EM breadth checkpoint",
-            "| Market | Proxy | Challenger score | Why not on the board yet |",
-            "|---|---|---:|---|",
-        ]
-        for row in sorted(asia_rows, key=lambda x: (-float(x.get('challenger_score') or 0.0), x.get('public_index_name') or '')):
-            lines.append(
-                f"| {row.get('public_index_name')} | {row.get('primary_proxy')} | {float(row.get('challenger_score') or 0.0):.2f} | {row.get('reason_code_if_not_published') or 'published'} |"
-            )
+    lines += [
+        "",
+        "### Universe scan checkpoint",
+        "| Exposure | Regional group | Proxy | Published? | Challenger score | Why not on the board yet |",
+        "|---|---|---|---|---:|---|",
+    ]
+    for row in sorted(all_candidates, key=lambda x: (-float(x.get('challenger_score') or x.get('score') or 0.0), x.get('public_index_name') or '')):
+        published = "Yes" if row.get("publish") else "No"
+        reason = "published" if row.get("publish") else (row.get("reason_code_if_not_published") or "below_board_cutoff")
+        lines.append(
+            f"| {row.get('public_index_name')} | {row.get('regional_group')} | {row.get('primary_proxy')} | {published} | {float(row.get('challenger_score') or row.get('score') or 0.0):.2f} | {reason} |"
+        )
 
     return "\n".join(lines).rstrip()
 
@@ -262,7 +211,7 @@ def build_section16(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
     watch_candidates = sorted(
         [c for c in candidate_ranking.get("candidates", []) if not c.get("publish")],
         key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""),
-    )[:6]
+    )[:8]
     for row in watch_candidates:
         status = "Strong challenger" if row.get("reason_code_if_not_published") == "strong_challenger_not_published" else "Watchlist"
         why = exposure_reason(str(row.get("exposure_id")), plan, "Broad discovery keeps it visible even though it did not make the compact board.")
