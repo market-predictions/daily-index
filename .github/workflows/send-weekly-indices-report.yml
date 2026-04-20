@@ -8,6 +8,9 @@ on:
       - "output_indices/weekly_indices_review_*.md"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   render-and-send:
     runs-on: ubuntu-latest
@@ -15,6 +18,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -80,3 +85,16 @@ jobs:
           MRKT_RPRTS_MAIL_FROM: ${{ secrets.MRKT_RPRTS_MAIL_FROM }}
           MRKT_RPRTS_MAIL_TO: ${{ secrets.MRKT_RPRTS_MAIL_TO }}
         run: python send_index_report_tv.py
+
+      - name: Commit research and candidate artifacts back to main
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output_indices/research/*.json output_indices/index_candidate_ranking_*.json output_indices/index_discovery_coverage_*.json || true
+          if git diff --cached --quiet; then
+            echo "No research or candidate artifact changes to commit."
+            exit 0
+          fi
+          git commit -m "Persist Weekly Indices research artifacts [skip ci]"
+          git push origin HEAD:main
