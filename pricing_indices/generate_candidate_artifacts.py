@@ -34,9 +34,6 @@ GROUP_BASE_SCORE = {
 }
 
 
-# Fallback scores above remain for resilience if research artifacts are missing.
-
-
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -193,16 +190,15 @@ def assign_publish_flags(candidates: list[dict[str, Any]]) -> list[dict[str, Any
             group = candidate["regional_group"]
             if group in unique_groups:
                 continue
-            duplicate_indexes = [idx for idx, row in enumerate(selected) if row["regional_group"] in unique_groups and list(unique_groups).count(row["regional_group"]) if False]
             replacement_idx = None
             for idx in range(len(selected) - 1, -1, -1):
-                if selected[idx]["regional_group"] in unique_groups and sum(1 for row in selected if row["regional_group"] == selected[idx]["regional_group"]) > 1:
+                duplicate_count = sum(1 for row in selected if row["regional_group"] == selected[idx]["regional_group"])
+                if duplicate_count > 1:
                     replacement_idx = idx
                     break
             if replacement_idx is not None and float(candidate["score"]) >= float(selected[replacement_idx]["score"]) - 0.45:
-                unique_groups.discard(selected[replacement_idx]["regional_group"])
                 selected[replacement_idx] = candidate
-                unique_groups.add(group)
+                unique_groups = {row["regional_group"] for row in selected}
             if len(unique_groups) >= 3:
                 break
 
