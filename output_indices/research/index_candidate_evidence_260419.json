@@ -1,131 +1,31 @@
 {
   "report_date_token": "260419",
-  "report_file": "weekly_indices_review_260419_06.md",
-  "evidence_file": "index_candidate_evidence_260419.json",
-  "regional_group_status": [
-    {
-      "group": "U.S. core leadership",
-      "status": "surfaced",
-      "reason_if_ruled_out": "",
-      "strongest_candidate": {
-        "exposure_id": "us_small_cap",
-        "public_index_name": "Russell 2000",
-        "primary_proxy": "IWM",
-        "score": 2.81,
-        "publish": true,
-        "reason_code_if_not_published": ""
-      }
-    },
-    {
-      "group": "continental Europe",
-      "status": "surfaced",
-      "reason_if_ruled_out": "",
-      "strongest_candidate": {
-        "exposure_id": "italy_large_cap",
-        "public_index_name": "FTSE MIB",
-        "primary_proxy": "EWI",
-        "score": 3.0,
-        "publish": true,
-        "reason_code_if_not_published": ""
-      }
-    },
-    {
-      "group": "UK",
-      "status": "considered",
-      "reason_if_ruled_out": "",
-      "strongest_candidate": {
-        "exposure_id": "uk_large_cap",
-        "public_index_name": "FTSE 100",
-        "primary_proxy": "EWU",
-        "score": 1.96,
-        "publish": false,
-        "reason_code_if_not_published": "board_capacity"
-      }
-    },
-    {
-      "group": "North America ex-U.S.",
-      "status": "near_miss",
-      "reason_if_ruled_out": "",
-      "strongest_candidate": {
-        "exposure_id": "canada_large_cap",
-        "public_index_name": "S&P/TSX 60",
-        "primary_proxy": "EWC",
-        "score": 2.43,
-        "publish": false,
-        "reason_code_if_not_published": "strong_challenger_not_published"
-      }
-    },
-    {
-      "group": "developed Asia-Pacific",
-      "status": "surfaced",
-      "reason_if_ruled_out": "",
-      "strongest_candidate": {
-        "exposure_id": "japan_equities",
-        "public_index_name": "Nikkei 225",
-        "primary_proxy": "EWJ",
-        "score": 3.43,
-        "publish": true,
-        "reason_code_if_not_published": ""
-      }
-    },
-    {
-      "group": "Greater China",
-      "status": "considered",
-      "reason_if_ruled_out": "",
-      "strongest_candidate": {
-        "exposure_id": "china_large_cap",
-        "public_index_name": "China large cap",
-        "primary_proxy": "FXI",
-        "score": 2.09,
-        "publish": false,
-        "reason_code_if_not_published": "weak_relative_strength"
-      }
-    },
-    {
-      "group": "India",
-      "status": "ruled_out",
-      "reason_if_ruled_out": "score_below_relevance_threshold",
-      "strongest_candidate": {
-        "exposure_id": "india_large_cap",
-        "public_index_name": "Nifty 50",
-        "primary_proxy": "INDA",
-        "score": 1.62,
-        "publish": false,
-        "reason_code_if_not_published": "weak_relative_strength"
-      }
-    },
-    {
-      "group": "EM broad",
-      "status": "surfaced",
-      "reason_if_ruled_out": "",
-      "strongest_candidate": {
-        "exposure_id": "em_broad",
-        "public_index_name": "Emerging Markets",
-        "primary_proxy": "EEM",
-        "score": 3.15,
-        "publish": true,
-        "reason_code_if_not_published": ""
-      }
-    }
-  ],
-  "candidates": [
+  "macro_snapshot_file": "index_macro_snapshot_260419.json",
+  "relative_strength_snapshot_file": "index_relative_strength_snapshot_260419.json",
+  "positions_state_file": "index_portfolio_state.json",
+  "rows": [
     {
       "exposure_id": "japan_equities",
       "public_index_name": "Nikkei 225",
       "benchmark_symbol": "^N225",
       "primary_proxy": "EWJ",
       "alternative_proxy": "DXJ",
-      "regional_group": "developed Asia-Pacific",
       "region": "Japan",
       "style": "broad equity",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 3.43,
       "relative_strength_score": 1.88,
       "regime_alignment_score": 0.85,
       "diversification_score": 0.55,
       "continuity_bonus": 0.15,
       "fragility_penalty": 0.0,
+      "final_score": 3.43,
+      "relative_strength_metrics": {
+        "return_20d": 0.095618,
+        "return_60d": 0.103504,
+        "return_120d": 0.188885,
+        "drawdown_from_120d_high": -0.017515,
+        "analysis_symbol": "^N225"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -138,10 +38,7 @@
           "already surfaced as a strong challenger"
         ],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": true,
-      "reason_code_if_not_published": ""
+      }
     },
     {
       "exposure_id": "em_broad",
@@ -149,17 +46,22 @@
       "benchmark_symbol": "EEM",
       "primary_proxy": "EEM",
       "alternative_proxy": "VWO",
-      "regional_group": "EM broad",
       "region": "Emerging Markets",
       "style": "broad equity",
       "currently_held": true,
-      "weight_pct": 15.62,
-      "score": 3.15,
       "relative_strength_score": 2.0,
       "regime_alignment_score": 0.95,
       "diversification_score": 0.1,
       "continuity_bonus": 0.1,
       "fragility_penalty": 0.0,
+      "final_score": 3.15,
+      "relative_strength_metrics": {
+        "return_20d": 0.135784,
+        "return_60d": 0.076576,
+        "return_120d": 0.146915,
+        "drawdown_from_120d_high": -0.006992,
+        "analysis_symbol": "EEM"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -173,10 +75,7 @@
           "new entry in continuity memory"
         ],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": true,
-      "reason_code_if_not_published": ""
+      }
     },
     {
       "exposure_id": "italy_large_cap",
@@ -184,17 +83,22 @@
       "benchmark_symbol": "FTSEMIB.MI",
       "primary_proxy": "EWI",
       "alternative_proxy": "IMIB.MI",
-      "regional_group": "continental Europe",
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 3.0,
       "relative_strength_score": 1.65,
       "regime_alignment_score": 0.8,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 3.0,
+      "relative_strength_metrics": {
+        "return_20d": 0.10311,
+        "return_60d": 0.069105,
+        "return_120d": 0.137441,
+        "drawdown_from_120d_high": -0.013546,
+        "analysis_symbol": "FTSEMIB.MI"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -205,10 +109,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": true,
-      "reason_code_if_not_published": ""
+      }
     },
     {
       "exposure_id": "us_small_cap",
@@ -216,17 +117,22 @@
       "benchmark_symbol": "^RUT",
       "primary_proxy": "IWM",
       "alternative_proxy": "VTWO",
-      "regional_group": "U.S. core leadership",
       "region": "US",
       "style": "small cap",
       "currently_held": true,
-      "weight_pct": 19.99,
-      "score": 2.81,
       "relative_strength_score": 1.76,
       "regime_alignment_score": 0.85,
       "diversification_score": 0.1,
       "continuity_bonus": 0.1,
       "fragility_penalty": 0.0,
+      "final_score": 2.81,
+      "relative_strength_metrics": {
+        "return_20d": 0.146395,
+        "return_60d": 0.028195,
+        "return_120d": 0.112178,
+        "drawdown_from_120d_high": 0.0,
+        "analysis_symbol": "^RUT"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -239,10 +145,7 @@
           "new entry in continuity memory"
         ],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": true,
-      "reason_code_if_not_published": ""
+      }
     },
     {
       "exposure_id": "spain_large_cap",
@@ -250,17 +153,22 @@
       "benchmark_symbol": "^IBEX",
       "primary_proxy": "EWP",
       "alternative_proxy": "IBEX.MC",
-      "regional_group": "continental Europe",
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 2.64,
       "relative_strength_score": 1.29,
       "regime_alignment_score": 0.8,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 2.64,
+      "relative_strength_metrics": {
+        "return_20d": 0.08015,
+        "return_60d": 0.033827,
+        "return_120d": 0.141292,
+        "drawdown_from_120d_high": -0.012743,
+        "analysis_symbol": "^IBEX"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -271,10 +179,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": true,
-      "reason_code_if_not_published": ""
+      }
     },
     {
       "exposure_id": "us_tech_leadership",
@@ -282,17 +187,22 @@
       "benchmark_symbol": "^NDX",
       "primary_proxy": "QQQ",
       "alternative_proxy": "QQQM",
-      "regional_group": "U.S. core leadership",
       "region": "US",
       "style": "large-cap growth",
       "currently_held": true,
-      "weight_pct": 24.83,
-      "score": 2.51,
       "relative_strength_score": 1.41,
       "regime_alignment_score": 0.9,
       "diversification_score": 0.1,
       "continuity_bonus": 0.1,
       "fragility_penalty": 0.0,
+      "final_score": 2.51,
+      "relative_strength_metrics": {
+        "return_20d": 0.112087,
+        "return_60d": 0.041479,
+        "return_120d": 0.048058,
+        "drawdown_from_120d_high": -0.003584,
+        "analysis_symbol": "^NDX"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -305,10 +215,7 @@
           "new entry in continuity memory"
         ],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "held_but_not_board_named"
+      }
     },
     {
       "exposure_id": "europe_large_cap",
@@ -316,17 +223,22 @@
       "benchmark_symbol": "^STOXX50E",
       "primary_proxy": "FEZ",
       "alternative_proxy": "VGK",
-      "regional_group": "continental Europe",
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 2.44,
       "relative_strength_score": 0.94,
       "regime_alignment_score": 0.8,
       "diversification_score": 0.55,
       "continuity_bonus": 0.15,
       "fragility_penalty": 0.0,
+      "final_score": 2.44,
+      "relative_strength_metrics": {
+        "return_20d": 0.065695,
+        "return_60d": 0.004442,
+        "return_120d": 0.060899,
+        "drawdown_from_120d_high": -0.030889,
+        "analysis_symbol": "^STOXX50E"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -339,10 +251,7 @@
           "already surfaced as a strong challenger"
         ],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "strong_challenger_not_published"
+      }
     },
     {
       "exposure_id": "canada_large_cap",
@@ -350,17 +259,22 @@
       "benchmark_symbol": "^GSPTSE",
       "primary_proxy": "EWC",
       "alternative_proxy": "XIU.TO",
-      "regional_group": "North America ex-U.S.",
       "region": "Canada",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 2.43,
       "relative_strength_score": 1.53,
       "regime_alignment_score": 0.35,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 2.43,
+      "relative_strength_metrics": {
+        "return_20d": 0.095765,
+        "return_60d": 0.039809,
+        "return_120d": 0.133463,
+        "drawdown_from_120d_high": -0.006508,
+        "analysis_symbol": "^GSPTSE"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive"
@@ -370,10 +284,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "strong_challenger_not_published"
+      }
     },
     {
       "exposure_id": "netherlands_large_cap",
@@ -381,17 +292,22 @@
       "benchmark_symbol": "^AEX",
       "primary_proxy": "EWN",
       "alternative_proxy": "IAEX.AS",
-      "regional_group": "continental Europe",
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 2.17,
       "relative_strength_score": 0.82,
       "regime_alignment_score": 0.8,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 2.17,
+      "relative_strength_metrics": {
+        "return_20d": 0.045344,
+        "return_60d": 0.021735,
+        "return_120d": 0.040692,
+        "drawdown_from_120d_high": -0.007864,
+        "analysis_symbol": "^AEX"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -402,10 +318,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "board_capacity"
+      }
     },
     {
       "exposure_id": "germany_cyclicals",
@@ -413,17 +326,22 @@
       "benchmark_symbol": "^GDAXI",
       "primary_proxy": "EWG",
       "alternative_proxy": "EXS1.DE",
-      "regional_group": "continental Europe",
       "region": "Europe",
       "style": "cyclical",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 2.17,
       "relative_strength_score": 0.47,
       "regime_alignment_score": 0.8,
       "diversification_score": 0.75,
       "continuity_bonus": 0.15,
       "fragility_penalty": 0.0,
+      "final_score": 2.17,
+      "relative_strength_metrics": {
+        "return_20d": 0.069101,
+        "return_60d": -0.017648,
+        "return_120d": 0.008675,
+        "drawdown_from_120d_high": -0.039451,
+        "analysis_symbol": "^GDAXI"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -437,10 +355,7 @@
           "already surfaced as a strong challenger"
         ],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "weak_relative_strength"
+      }
     },
     {
       "exposure_id": "china_large_cap",
@@ -448,17 +363,22 @@
       "benchmark_symbol": "000300.SS",
       "primary_proxy": "FXI",
       "alternative_proxy": "MCHI",
-      "regional_group": "Greater China",
       "region": "China",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 2.09,
       "relative_strength_score": 0.59,
       "regime_alignment_score": 0.95,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 2.09,
+      "relative_strength_metrics": {
+        "return_20d": 0.031729,
+        "return_60d": -0.002796,
+        "return_120d": 0.041966,
+        "drawdown_from_120d_high": -0.012946,
+        "analysis_symbol": "000300.SS"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -470,10 +390,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "weak_relative_strength"
+      }
     },
     {
       "exposure_id": "france_large_cap",
@@ -481,17 +398,22 @@
       "benchmark_symbol": "^FCHI",
       "primary_proxy": "EWQ",
       "alternative_proxy": "CAC.PA",
-      "regional_group": "continental Europe",
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 2.06,
       "relative_strength_score": 0.71,
       "regime_alignment_score": 0.8,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 2.06,
+      "relative_strength_metrics": {
+        "return_20d": 0.067007,
+        "return_60d": 0.022354,
+        "return_120d": 0.01115,
+        "drawdown_from_120d_high": -0.033625,
+        "analysis_symbol": "^FCHI"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -502,10 +424,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "weak_relative_strength"
+      }
     },
     {
       "exposure_id": "uk_large_cap",
@@ -513,17 +432,22 @@
       "benchmark_symbol": "^FTSE",
       "primary_proxy": "EWU",
       "alternative_proxy": "ISF.L",
-      "regional_group": "UK",
       "region": "UK",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 1.96,
       "relative_strength_score": 1.06,
       "regime_alignment_score": 0.35,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 1.96,
+      "relative_strength_metrics": {
+        "return_20d": 0.054214,
+        "return_60d": 0.045219,
+        "return_120d": 0.098954,
+        "drawdown_from_120d_high": -0.027635,
+        "analysis_symbol": "^FTSE"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive"
@@ -533,10 +457,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "board_capacity"
+      }
     },
     {
       "exposure_id": "hong_kong_equities",
@@ -544,17 +465,22 @@
       "benchmark_symbol": "^HSI",
       "primary_proxy": "EWH",
       "alternative_proxy": "2800.HK",
-      "regional_group": "Greater China",
       "region": "Hong Kong",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 1.74,
       "relative_strength_score": 0.24,
       "regime_alignment_score": 0.95,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 1.74,
+      "relative_strength_metrics": {
+        "return_20d": 0.01128,
+        "return_60d": -0.02835,
+        "return_120d": 0.036172,
+        "drawdown_from_120d_high": -0.064637,
+        "analysis_symbol": "^HSI"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -566,10 +492,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "weak_relative_strength"
+      }
     },
     {
       "exposure_id": "us_large_cap",
@@ -577,17 +500,22 @@
       "benchmark_symbol": "^GSPC",
       "primary_proxy": "SPY",
       "alternative_proxy": "VOO",
-      "regional_group": "U.S. core leadership",
       "region": "US",
       "style": "large cap",
       "currently_held": true,
-      "weight_pct": 24.94,
-      "score": 1.73,
       "relative_strength_score": 1.18,
       "regime_alignment_score": 0.35,
       "diversification_score": 0.1,
       "continuity_bonus": 0.1,
       "fragility_penalty": 0.0,
+      "final_score": 1.73,
+      "relative_strength_metrics": {
+        "return_20d": 0.092371,
+        "return_60d": 0.028082,
+        "return_120d": 0.046498,
+        "drawdown_from_120d_high": -0.002606,
+        "analysis_symbol": "^GSPC"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive"
@@ -599,10 +527,7 @@
           "new entry in continuity memory"
         ],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "held_but_not_board_named"
+      }
     },
     {
       "exposure_id": "india_large_cap",
@@ -610,17 +535,22 @@
       "benchmark_symbol": "^NSEI",
       "primary_proxy": "INDA",
       "alternative_proxy": "INDY",
-      "regional_group": "India",
       "region": "India",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 1.62,
       "relative_strength_score": 0.12,
       "regime_alignment_score": 0.95,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 1.62,
+      "relative_strength_metrics": {
+        "return_20d": 0.040359,
+        "return_60d": -0.051121,
+        "return_120d": -0.052754,
+        "drawdown_from_120d_high": -0.075014,
+        "analysis_symbol": "^NSEI"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive",
@@ -632,10 +562,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "weak_relative_strength"
+      }
     },
     {
       "exposure_id": "australia_large_cap",
@@ -643,17 +570,22 @@
       "benchmark_symbol": "^AXJO",
       "primary_proxy": "EWA",
       "alternative_proxy": "STW.AX",
-      "regional_group": "developed Asia-Pacific",
       "region": "Australia",
       "style": "large cap",
       "currently_held": false,
-      "weight_pct": null,
-      "score": 1.25,
       "relative_strength_score": 0.35,
       "regime_alignment_score": 0.35,
       "diversification_score": 0.55,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
+      "final_score": 1.25,
+      "relative_strength_metrics": {
+        "return_20d": 0.035449,
+        "return_60d": 0.01486,
+        "return_120d": -0.00951,
+        "drawdown_from_120d_high": -0.027363,
+        "analysis_symbol": "^AXJO"
+      },
       "evidence_notes": {
         "regime_alignment": [
           "broad equity risk appetite is supportive"
@@ -663,10 +595,7 @@
         ],
         "continuity": [],
         "fragility": []
-      },
-      "evidence_source": "candidate_evidence_artifact",
-      "publish": false,
-      "reason_code_if_not_published": "weak_relative_strength"
+      }
     }
   ]
 }
