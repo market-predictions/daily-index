@@ -14,14 +14,19 @@ This is an **analysis-to-allocation** system first, not a blind execution engine
 
 ### Step 2 — resolve latest portfolio and state
 ### Step 3 — run pricing pass
-### Step 4 — classify macro regime
-### Step 5 — classify geopolitical regime
-### Step 6 — build second-order effects map
-### Step 7 — run open discovery across candidate exposures
-### Step 8 — score current positions and new challengers
-### Step 9 — implement updated model portfolio
-### Step 10 — write report and state artifacts
-### Step 11 — render and deliver
+### Step 4 — build Phase 1 research snapshots
+- macro regime snapshot
+- relative strength snapshot
+- candidate evidence packs
+
+### Step 5 — classify macro regime
+### Step 6 — classify geopolitical regime
+### Step 7 — build second-order effects map
+### Step 8 — run open discovery across candidate exposures
+### Step 9 — score current positions and new challengers
+### Step 10 — implement updated model portfolio
+### Step 11 — write report and state artifacts
+### Step 12 — render and deliver
 Use `send_index_report.py` to:
 - validate structure
 - render HTML
