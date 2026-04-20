@@ -25,11 +25,28 @@ def requested_close_from_today(today: date) -> str:
     return d.isoformat()
 
 
-def fetch_yahoo_close(symbol: str, requested_close_date: str | None = None) -> dict[str, Any]:
+def _select_history_row(rows: list[dict[str, Any]], requested_close_date: str | None = None) -> dict[str, Any]:
+    if not rows:
+        raise RuntimeError("No usable Yahoo history rows were available")
+    selected = rows[-1]
+    if requested_close_date:
+        eligible = [row for row in rows if row["date"] <= requested_close_date]
+        if eligible:
+            selected = eligible[-1]
+    return selected
+
+
+def fetch_yahoo_history(
+    symbol: str,
+    *,
+    requested_close_date: str | None = None,
+    range_period: str = "6mo",
+    interval: str = "1d",
+) -> dict[str, Any]:
     encoded = quote(symbol, safe="")
     url = (
         f"https://query1.finance.yahoo.com/v8/finance/chart/{encoded}"
-        f"?interval=1d&range=3mo&includePrePost=false&events=div%2Csplits"
+        f"?interval={interval}&range={range_period}&includePrePost=false&events=div%2Csplits"
     )
     payload = _json_get(url)
     result = payload.get("chart", {}).get("result", [])
@@ -43,6 +60,7 @@ def fetch_yahoo_close(symbol: str, requested_close_date: str | None = None) -> d
     opens = quote_block.get("open") or []
     highs = quote_block.get("high") or []
     lows = quote_block.get("low") or []
+    volumes = quote_block.get("volume") or []
     currency = block.get("meta", {}).get("currency") or "USD"
 
     rows: list[dict[str, Any]] = []
@@ -59,20 +77,30 @@ def fetch_yahoo_close(symbol: str, requested_close_date: str | None = None) -> d
                 "open": opens[idx] if idx < len(opens) else None,
                 "high": highs[idx] if idx < len(highs) else None,
                 "low": lows[idx] if idx < len(lows) else None,
-                "close": close_value,
+                "close": float(close_value),
+                "volume": volumes[idx] if idx < len(volumes) else None,
                 "currency": currency,
             }
         )
 
     if not rows:
-        raise RuntimeError(f"No usable Yahoo close rows for symbol: {symbol}")
+        raise RuntimeError(f"No usable Yahoo history rows for symbol: {symbol}")
 
-    selected = rows[-1]
-    if requested_close_date:
-        eligible = [row for row in rows if row["date"] <= requested_close_date]
-        if eligible:
-            selected = eligible[-1]
+    selected = _select_history_row(rows, requested_close_date)
+    return {
+        "symbol": symbol,
+        "selected": selected,
+        "rows": rows,
+        "currency": currency,
+        "source": "yahoo_chart",
+        "range": range_period,
+        "interval": interval,
+    }
 
+
+def fetch_yahoo_close(symbol: str, requested_close_date: str | None = None) -> dict[str, Any]:
+    history = fetch_yahoo_history(symbol, requested_close_date=requested_close_date, range_period="3mo", interval="1d")
+    selected = history["selected"]
     return {
         "symbol": symbol,
         "date": selected["date"],
@@ -81,7 +109,7 @@ def fetch_yahoo_close(symbol: str, requested_close_date: str | None = None) -> d
         "low": selected["low"],
         "close": float(selected["close"]),
         "currency": selected["currency"],
-        "source": "yahoo_chart",
+        "source": history["source"],
     }
 
 
