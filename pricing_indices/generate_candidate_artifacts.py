@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .catalog import ALL_EXPOSURES, BY_EXPOSURE_ID
+from .catalog import ALL_EXPOSURES
 
 REPORT_RE = re.compile(r"weekly_indices_review_(\d{6})(?:_(\d{2}))?\.md$")
 PLAN_RE = re.compile(r"index_recommendation_plan_(\d{6})(?:_(\d{2}))?\.json$")
@@ -32,6 +32,9 @@ GROUP_BASE_SCORE = {
     "India": 3.25,
     "EM broad": 3.20,
 }
+
+
+# Fallback scores above remain for resilience if research artifacts are missing.
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -64,21 +67,17 @@ def report_date_token(output_dir: Path) -> tuple[str, Path]:
     return match.group(1), latest_report
 
 
-def parse_report_board_text(report_path: Path) -> str:
-    text = report_path.read_text(encoding="utf-8")
-    start = text.find("## 4. Index Opportunity Board")
-    if start == -1:
-        return text
-    end = text.find("## 5. Key Risks", start)
-    return text[start:end if end != -1 else None]
-
-
 def plan_for_token(output_dir: Path, token: str) -> dict[str, Any]:
     exact = output_dir / f"index_recommendation_plan_{token}.json"
     if exact.exists():
         return _read_json(exact)
     latest_plan = latest_path(output_dir, PLAN_RE, "index_recommendation_plan_*.json")
     return _read_json(latest_plan) if latest_plan else {}
+
+
+def evidence_for_token(output_dir: Path, token: str) -> dict[str, Any]:
+    evidence_path = output_dir / "research" / f"index_candidate_evidence_{token}.json"
+    return _read_json(evidence_path) if evidence_path.exists() else {}
 
 
 def regional_group(exposure_id: str) -> str:
@@ -88,7 +87,7 @@ def regional_group(exposure_id: str) -> str:
     return "Other"
 
 
-def build_candidates(state: dict[str, Any], plan: dict[str, Any], board_text: str) -> list[dict[str, Any]]:
+def fallback_candidates(state: dict[str, Any], plan: dict[str, Any]) -> list[dict[str, Any]]:
     positions = {p.get("exposure_id"): p for p in (state.get("positions") or [])}
     best_new = {item.get("exposure_id"): item for item in (plan.get("best_new_opportunities") or [])}
     strong_challengers = set((plan.get("continuity") or {}).get("strong_challengers_not_published") or [])
@@ -96,7 +95,6 @@ def build_candidates(state: dict[str, Any], plan: dict[str, Any], board_text: st
     continuity_retained = set((plan.get("continuity") or {}).get("retained_entries") or [])
 
     candidates: list[dict[str, Any]] = []
-    board_lower = board_text.lower()
     for exposure in ALL_EXPOSURES:
         exposure_id = exposure["exposure_id"]
         group = regional_group(exposure_id)
@@ -113,28 +111,13 @@ def build_candidates(state: dict[str, Any], plan: dict[str, Any], board_text: st
         if exposure_id in strong_challengers:
             score += 0.10
 
-        display_name = exposure["display_name"]
-        proxy = exposure["primary_proxy"]
-        publish = (display_name.lower() in board_lower) or (proxy.lower() in board_lower)
-
-        if publish:
-            reason_code = "published_on_board"
-        elif exposure_id in strong_challengers:
-            reason_code = "strong_challenger_not_published"
-        elif exposure_id in best_new:
-            reason_code = "best_new_not_on_board"
-        elif held:
-            reason_code = "held_but_not_board_named"
-        else:
-            reason_code = "below_board_cutoff"
-
         position = positions.get(exposure_id, {})
         candidates.append(
             {
                 "exposure_id": exposure_id,
-                "public_index_name": display_name,
+                "public_index_name": exposure["display_name"],
                 "benchmark_symbol": exposure["benchmark_symbol"],
-                "primary_proxy": proxy,
+                "primary_proxy": exposure["primary_proxy"],
                 "alternative_proxy": exposure.get("alternative_proxy"),
                 "regional_group": group,
                 "region": exposure.get("region"),
@@ -142,12 +125,108 @@ def build_candidates(state: dict[str, Any], plan: dict[str, Any], board_text: st
                 "currently_held": held,
                 "weight_pct": position.get("weight_pct"),
                 "score": round(min(score, 4.60), 2),
-                "publish": publish,
-                "reason_code_if_not_published": "" if publish else reason_code,
+                "relative_strength_score": None,
+                "regime_alignment_score": None,
+                "diversification_score": None,
+                "continuity_bonus": None,
+                "fragility_penalty": None,
+                "evidence_source": "fallback_regional_base_scores",
+                "publish": False,
+                "reason_code_if_not_published": "",
             }
         )
-
     candidates.sort(key=lambda item: (-float(item["score"]), item["public_index_name"]))
+    return candidates
+
+
+def evidence_candidates(state: dict[str, Any], evidence: dict[str, Any]) -> list[dict[str, Any]]:
+    positions = {p.get("exposure_id"): p for p in (state.get("positions") or [])}
+    rows = evidence.get("rows") or []
+    candidates: list[dict[str, Any]] = []
+    for row in rows:
+        exposure_id = row["exposure_id"]
+        position = positions.get(exposure_id, {})
+        candidates.append(
+            {
+                "exposure_id": exposure_id,
+                "public_index_name": row["public_index_name"],
+                "benchmark_symbol": row["benchmark_symbol"],
+                "primary_proxy": row["primary_proxy"],
+                "alternative_proxy": row.get("alternative_proxy"),
+                "regional_group": regional_group(exposure_id),
+                "region": row.get("region"),
+                "style": row.get("style"),
+                "currently_held": bool(row.get("currently_held")),
+                "weight_pct": position.get("weight_pct"),
+                "score": round(float(row.get("final_score") or 0.0), 2),
+                "relative_strength_score": row.get("relative_strength_score"),
+                "regime_alignment_score": row.get("regime_alignment_score"),
+                "diversification_score": row.get("diversification_score"),
+                "continuity_bonus": row.get("continuity_bonus"),
+                "fragility_penalty": row.get("fragility_penalty"),
+                "evidence_notes": row.get("evidence_notes") or {},
+                "evidence_source": "candidate_evidence_artifact",
+                "publish": False,
+                "reason_code_if_not_published": "",
+            }
+        )
+    candidates.sort(key=lambda item: (-float(item["score"]), item["public_index_name"]))
+    return candidates
+
+
+def assign_publish_flags(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    selected: list[dict[str, Any]] = []
+    group_counts: dict[str, int] = {}
+    for candidate in candidates:
+        group = str(candidate["regional_group"])
+        limit = 3 if group == "U.S. core leadership" else 2
+        if group_counts.get(group, 0) >= limit:
+            continue
+        selected.append(candidate)
+        group_counts[group] = group_counts.get(group, 0) + 1
+        if len(selected) >= 5:
+            break
+
+    unique_groups = {row["regional_group"] for row in selected}
+    if len(unique_groups) < 3:
+        for candidate in candidates:
+            group = candidate["regional_group"]
+            if group in unique_groups:
+                continue
+            duplicate_indexes = [idx for idx, row in enumerate(selected) if row["regional_group"] in unique_groups and list(unique_groups).count(row["regional_group"]) if False]
+            replacement_idx = None
+            for idx in range(len(selected) - 1, -1, -1):
+                if selected[idx]["regional_group"] in unique_groups and sum(1 for row in selected if row["regional_group"] == selected[idx]["regional_group"]) > 1:
+                    replacement_idx = idx
+                    break
+            if replacement_idx is not None and float(candidate["score"]) >= float(selected[replacement_idx]["score"]) - 0.45:
+                unique_groups.discard(selected[replacement_idx]["regional_group"])
+                selected[replacement_idx] = candidate
+                unique_groups.add(group)
+            if len(unique_groups) >= 3:
+                break
+
+    selected_ids = {row["exposure_id"] for row in selected}
+    published_scores = [float(row["score"]) for row in selected]
+    publish_cutoff = min(published_scores) if published_scores else 0.0
+
+    for candidate in candidates:
+        candidate["publish"] = candidate["exposure_id"] in selected_ids
+        if candidate["publish"]:
+            candidate["reason_code_if_not_published"] = ""
+            continue
+        if candidate.get("currently_held"):
+            candidate["reason_code_if_not_published"] = "held_but_not_board_named"
+        elif float(candidate["score"]) >= publish_cutoff - 0.30:
+            candidate["reason_code_if_not_published"] = "strong_challenger_not_published"
+        elif float(candidate.get("relative_strength_score") or 0.0) < 0.80:
+            candidate["reason_code_if_not_published"] = "weak_relative_strength"
+        elif float(candidate.get("regime_alignment_score") or 0.0) < 0.10:
+            candidate["reason_code_if_not_published"] = "fragile_macro_alignment"
+        elif float(candidate.get("diversification_score") or 0.0) < 0.20:
+            candidate["reason_code_if_not_published"] = "insufficient_diversification_value"
+        else:
+            candidate["reason_code_if_not_published"] = "board_capacity"
     return candidates
 
 
@@ -157,23 +236,27 @@ def build_coverage(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
         group_candidates = [c for c in candidates if c["exposure_id"] in ids]
         strongest = group_candidates[0] if group_candidates else None
         if strongest is None:
-            coverage.append({
-                "group": group,
-                "status": "ruled_out",
-                "reason_if_ruled_out": "no_candidate_available",
-                "strongest_candidate": None,
-            })
+            coverage.append(
+                {
+                    "group": group,
+                    "status": "ruled_out",
+                    "reason_if_ruled_out": "no_candidate_available",
+                    "strongest_candidate": None,
+                }
+            )
             continue
         status = "considered"
         if strongest["publish"]:
             status = "surfaced"
-        elif strongest["reason_code_if_not_published"] in {"strong_challenger_not_published", "best_new_not_on_board"}:
+        elif strongest["reason_code_if_not_published"] == "strong_challenger_not_published":
             status = "near_miss"
+        elif float(strongest["score"]) < 1.75:
+            status = "ruled_out"
         coverage.append(
             {
                 "group": group,
                 "status": status,
-                "reason_if_ruled_out": "",
+                "reason_if_ruled_out": "score_below_relevance_threshold" if status == "ruled_out" else "",
                 "strongest_candidate": {
                     "exposure_id": strongest["exposure_id"],
                     "public_index_name": strongest["public_index_name"],
@@ -201,20 +284,23 @@ def main() -> None:
     token, latest_report = report_date_token(output_dir)
     state = _read_json(state_path)
     plan = plan_for_token(output_dir, token)
-    board_text = parse_report_board_text(latest_report)
+    evidence = evidence_for_token(output_dir, token)
 
-    candidates = build_candidates(state, plan, board_text)
+    candidates = evidence_candidates(state, evidence) if evidence else fallback_candidates(state, plan)
+    candidates = assign_publish_flags(candidates)
     coverage = build_coverage(candidates)
 
     ranking_payload = {
         "report_date_token": token,
         "report_file": latest_report.name,
+        "evidence_file": f"index_candidate_evidence_{token}.json" if evidence else None,
         "regional_group_status": coverage,
         "candidates": candidates,
     }
     coverage_payload = {
         "report_date_token": token,
         "report_file": latest_report.name,
+        "evidence_file": f"index_candidate_evidence_{token}.json" if evidence else None,
         "groups": coverage,
     }
 
@@ -225,9 +311,10 @@ def main() -> None:
 
     surfaced = sum(1 for row in coverage if row["status"] == "surfaced")
     near_miss = sum(1 for row in coverage if row["status"] == "near_miss")
+    evidence_mode = "candidate_evidence_artifact" if evidence else "fallback_regional_base_scores"
     print(
-        f"CANDIDATE_ARTIFACTS_OK | report={latest_report.name} | ranking={ranking_path.name} | "
-        f"coverage={coverage_path.name} | surfaced_groups={surfaced} | near_miss_groups={near_miss}"
+        f"CANDIDATE_ARTIFACTS_OK | report={latest_report.name} | ranking={ranking_path.name} | coverage={coverage_path.name} | "
+        f"surfaced_groups={surfaced} | near_miss_groups={near_miss} | mode={evidence_mode}"
     )
 
 
