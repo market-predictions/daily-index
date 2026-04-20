@@ -4,13 +4,12 @@ import argparse
 import json
 import re
 from pathlib import Path
-from typing import Any
 
 REPORT_RE = re.compile(r"weekly_indices_review_(\d{6})(?:_(\d{2}))?\.md$")
 SECTION_RE = re.compile(r"^##\s+(\d+)\.\s+(.*)$", flags=re.MULTILINE)
 
 
-def _read_json(path: Path) -> dict[str, Any]:
+def _read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -68,6 +67,19 @@ def extract_first_table_first_column(section_text: str) -> list[str]:
     return values
 
 
+def _find_numeric_label(section_text: str, label: str) -> float:
+    pattern = re.compile(rf"^-\s+{re.escape(label)}:\s*([0-9][0-9,.]*)", flags=re.MULTILINE)
+    match = pattern.search(section_text)
+    if not match:
+        raise RuntimeError(f"Missing numeric label in report section: {label}")
+    return float(match.group(1).replace(",", ""))
+
+
+def _ensure_contains(section_text: str, required: str, context: str) -> None:
+    if required not in section_text:
+        raise RuntimeError(f"{context} does not contain required value: {required}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", default="output_indices")
@@ -77,14 +89,20 @@ def main() -> None:
     report_path = latest_report_path(output_dir)
     token = token_from_report(report_path)
     ranking_path = output_dir / f"index_candidate_ranking_{token}.json"
+    state_path = output_dir / "index_portfolio_state.json"
     if not ranking_path.exists():
         raise FileNotFoundError(f"Missing ranking artifact: {ranking_path}")
+    if not state_path.exists():
+        raise FileNotFoundError(f"Missing portfolio state artifact: {state_path}")
 
     report_text = report_path.read_text(encoding="utf-8")
     ranking = _read_json(ranking_path)
+    state = _read_json(state_path)
 
     section4 = extract_section(report_text, 4)
+    section7 = extract_section(report_text, 7)
     section11 = extract_section(report_text, 11)
+    section15 = extract_section(report_text, 15)
     section16 = extract_section(report_text, 16)
 
     report_board_names = {normalize_name(name) for name in extract_first_table_first_column(section4)}
@@ -113,8 +131,27 @@ def main() -> None:
                 f"candidate={strongest.get('public_index_name')} proxy={strongest.get('primary_proxy')}"
             )
 
+    requested_close_date = str(((state.get("pricing_basis") or {}).get("requested_close_date")) or "")
+    total_portfolio_value = float(state.get("total_portfolio_value_eur") or 0.0)
+    if not requested_close_date:
+        raise RuntimeError("State file is missing pricing_basis.requested_close_date")
+
+    _ensure_contains(section7, requested_close_date, "Section 7")
+    _ensure_contains(section15, requested_close_date, "Section 15")
+
+    section7_total = _find_numeric_label(section7, "Current portfolio value (EUR)")
+    section15_total = _find_numeric_label(section15, "Total portfolio value (EUR)")
+    if round(section7_total, 2) != round(total_portfolio_value, 2):
+        raise RuntimeError(
+            f"Section 7 current portfolio value does not reconcile with state file. section7={section7_total:.2f} state={total_portfolio_value:.2f}"
+        )
+    if round(section15_total, 2) != round(total_portfolio_value, 2):
+        raise RuntimeError(
+            f"Section 15 total portfolio value does not reconcile with state file. section15={section15_total:.2f} state={total_portfolio_value:.2f}"
+        )
+
     print(
-        f"REPORT_ARTIFACT_ALIGNMENT_OK | report={report_path.name} | ranking={ranking_path.name} | token={token}"
+        f"REPORT_ARTIFACT_ALIGNMENT_OK | report={report_path.name} | ranking={ranking_path.name} | state={state_path.name} | token={token}"
     )
 
 
