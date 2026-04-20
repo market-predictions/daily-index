@@ -9,7 +9,9 @@ SECTION_HEADER_RE = re.compile(r"^##\s+(\d+)\.\s+.*$", flags=re.MULTILINE)
 
 TARGET_SECTION_FILES = {
     4: "section4_index_opportunity_board_{token}.md",
+    7: "section7_equity_curve_{token}.md",
     11: "section11_best_new_index_opportunities_{token}.md",
+    15: "section15_holdings_and_cash_{token}.md",
     16: "section16_continuity_input_{token}.md",
 }
 
