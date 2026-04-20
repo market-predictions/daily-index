@@ -90,15 +90,21 @@ jobs:
           MRKT_RPRTS_MAIL_TO: ${{ secrets.MRKT_RPRTS_MAIL_TO }}
         run: python send_index_report_tv.py
 
-      - name: Commit research and candidate artifacts back to main
+      - name: Commit research, pricing state, and candidate artifacts back to main
         if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add output_indices/research/*.json output_indices/index_candidate_ranking_*.json output_indices/index_discovery_coverage_*.json || true
+          git add \
+            output_indices/research/*.json \
+            output_indices/index_candidate_ranking_*.json \
+            output_indices/index_discovery_coverage_*.json \
+            output_indices/index_portfolio_state.json \
+            output_indices/index_valuation_history.csv \
+            output_indices/pricing/*.json || true
           if git diff --cached --quiet; then
-            echo "No research or candidate artifact changes to commit."
+            echo "No research, pricing, or candidate artifact changes to commit."
             exit 0
           fi
-          git commit -m "Persist Weekly Indices research artifacts [skip ci]"
+          git commit -m "Persist Weekly Indices research and pricing artifacts [skip ci]"
           git push origin HEAD:main
