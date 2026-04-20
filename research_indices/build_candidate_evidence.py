@@ -34,7 +34,6 @@ def _continuity_sets(plan: dict[str, Any]) -> tuple[set[str], set[str], set[str]
 def _regime_alignment(exposure: dict[str, Any], macro: dict[str, Any]) -> tuple[float, list[str]]:
     region = exposure.get("region")
     exposure_id = exposure["exposure_id"]
-    style = str(exposure.get("style") or "").lower()
     signals = macro.get("market_signals") or {}
     score = 0.0
     reasons: list[str] = []
@@ -92,6 +91,17 @@ def _regime_alignment(exposure: dict[str, Any], macro: dict[str, Any]) -> tuple[
         if exposure_id == "germany_cyclicals" and signals.get("breadth_confirmation") == "supportive":
             score += 0.05
             reasons.append("cyclical breadth helps Europe’s higher-beta sleeve")
+
+    if region == "Switzerland":
+        if signals.get("credit_support") == "supportive":
+            score += 0.10
+            reasons.append("credit support helps high-quality defensives")
+        if signals.get("europe_confirmation") == "supportive":
+            score += 0.12
+            reasons.append("Europe confirmation supports Switzerland’s global exporters")
+        if signals.get("equity_risk_appetite") == "headwind":
+            score += 0.08
+            reasons.append("defensive quality can hold up better in weaker equity appetite")
 
     if region == "Japan":
         if signals.get("japan_confirmation") == "supportive":
@@ -203,6 +213,9 @@ def _fragility_penalty(exposure: dict[str, Any], macro: dict[str, Any]) -> tuple
     if region == "Europe" and signals.get("commodity_pressure") == "supportive":
         penalty += 0.15
         reasons.append("commodity pressure adds European fragility")
+    if region == "Switzerland" and signals.get("commodity_pressure") == "supportive":
+        penalty += 0.05
+        reasons.append("commodity pressure modestly affects Swiss exporters")
 
     return round(penalty, 3), reasons
 
