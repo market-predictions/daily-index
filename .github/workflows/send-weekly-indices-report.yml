@@ -72,6 +72,10 @@ jobs:
         run: |
           python -m pricing_indices.compose_final_report --in-place
 
+      - name: Validate report-vs-ranking reconciliation
+        run: |
+          python -m pricing_indices.validate_report_artifact_alignment
+
       - name: Validate HTML/PDF render before send
         run: python send_index_report_tv.py --validate-only
 
