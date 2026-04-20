@@ -47,7 +47,7 @@ def exposure_reason(exposure_id: str, plan: dict[str, Any], fallback: str) -> st
 
 def build_section4(candidate_ranking: dict[str, Any], plan: dict[str, Any]) -> str:
     published = [c for c in candidate_ranking.get("candidates", []) if c.get("publish")]
-    published = sorted(published, key=lambda x: (-float(x.get("score") or 0.0), x.get("public_index_name") or ""))[:6]
+    published = sorted(published, key=lambda x: (-float(x.get("board_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))[:6]
 
     lines = [f"## 4. {SECTION4_NAME}", ""]
     lines.append("| Exposure | Benchmark / public index | Implementation proxy | Regional group | Score | Status | Why it is on the board |")
@@ -57,7 +57,7 @@ def build_section4(candidate_ranking: dict[str, Any], plan: dict[str, Any]) -> s
         fallback_reason = "Ranks high enough internally to remain on the compact published board."
         why = exposure_reason(str(row.get("exposure_id")), plan, fallback_reason)
         lines.append(
-            f"| {row.get('public_index_name')} | {row.get('public_index_name')} | {row.get('primary_proxy')} | {row.get('regional_group')} | {float(row.get('score') or 0.0):.2f} | {status} | {why} |"
+            f"| {row.get('public_index_name')} | {row.get('public_index_name')} | {row.get('primary_proxy')} | {row.get('regional_group')} | {float(row.get('board_score') or row.get('score') or 0.0):.2f} | {status} | {why} |"
         )
 
     near_miss_groups = [g for g in candidate_ranking.get("regional_group_status", []) if g.get("status") == "near_miss"]
@@ -73,7 +73,7 @@ def build_section4(candidate_ranking: dict[str, Any], plan: dict[str, Any]) -> s
 
 def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any], plan: dict[str, Any]) -> str:
     candidates = [c for c in candidate_ranking.get("candidates", []) if not c.get("publish")]
-    candidates = sorted(candidates, key=lambda x: (-float(x.get("score") or 0.0), x.get("public_index_name") or ""))
+    candidates = sorted(candidates, key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))
     coverage_groups = coverage.get("groups") or []
     strongest_omitted = None
     for group in coverage_groups:
@@ -111,7 +111,8 @@ def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
         lines += [
             f"### {idx}. {row.get('public_index_name')} ({row.get('primary_proxy')})",
             f"- Regional group: {row.get('regional_group')}",
-            f"- Internal score: {float(row.get('score') or 0.0):.2f}",
+            f"- Challenger score: {float(row.get('challenger_score') or row.get('score') or 0.0):.2f}",
+            f"- Board score: {float(row.get('board_score') or row.get('score') or 0.0):.2f}",
             f"- Why it matters: {reason}",
             f"- Why not on the board yet: {row.get('reason_code_if_not_published') or 'below_board_cutoff'}",
             "",
@@ -127,7 +128,10 @@ def build_section16(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
         "| Theme | Regional group | Primary Proxy | Status | Why it stays visible |",
         "|---|---|---|---|---|",
     ]
-    watch_candidates = [c for c in candidate_ranking.get("candidates", []) if not c.get("publish")][:6]
+    watch_candidates = sorted(
+        [c for c in candidate_ranking.get("candidates", []) if not c.get("publish")],
+        key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""),
+    )[:6]
     for row in watch_candidates:
         status = "Strong challenger" if row.get("reason_code_if_not_published") == "strong_challenger_not_published" else "Watchlist"
         why = exposure_reason(str(row.get("exposure_id")), plan, "Broad discovery keeps it visible even though it did not make the compact board.")
@@ -144,7 +148,7 @@ def build_section16(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
     for group in coverage.get("groups") or []:
         cand = group.get("strongest_candidate") or {}
         lines.append(
-            f"| {group.get('group')} | {group.get('status')} | {cand.get('public_index_name', '—')} | {cand.get('primary_proxy', '—')} | {float(cand.get('score') or 0.0):.2f} |"
+            f"| {group.get('group')} | {group.get('status')} | {cand.get('public_index_name', '—')} | {cand.get('primary_proxy', '—')} | {float(cand.get('board_score') or cand.get('score') or 0.0):.2f} |"
         )
 
     lines += [
