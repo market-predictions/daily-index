@@ -6,7 +6,7 @@ import json
 import math
 import re
 from copy import deepcopy
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +14,7 @@ from .catalog import BY_PROXY, DEFAULT_EXPOSURES
 from .data_sources import fetch_ecb_usd_per_eur, fetch_yahoo_close
 
 REPORT_RE = re.compile(r"weekly_indices_review_(\d{6})(?:_(\d{2}))?\.md$")
+US_REGULAR_CLOSE_UTC = time(hour=20, minute=15)  # conservative buffer after 16:00 ET during DST season
 
 
 def latest_report_file(output_dir: Path) -> Path | None:
@@ -26,6 +27,22 @@ def latest_report_file(output_dir: Path) -> Path | None:
         return None
     files.sort(key=lambda x: (x[0], x[1]))
     return files[-1][2]
+
+
+def previous_business_day(d: date) -> date:
+    while d.weekday() >= 5:
+        d -= timedelta(days=1)
+    return d
+
+
+def latest_completed_us_close_date(now_utc: datetime | None = None) -> str:
+    now_utc = now_utc or datetime.now(timezone.utc)
+    today = now_utc.date()
+    if today.weekday() >= 5:
+        return previous_business_day(today).isoformat()
+    if now_utc.time() >= US_REGULAR_CLOSE_UTC:
+        return today.isoformat()
+    return previous_business_day(today - timedelta(days=1) if today.weekday() == 0 else today - timedelta(days=1)).isoformat() if today.weekday() == 0 else previous_business_day(today - timedelta(days=1)).isoformat()
 
 
 def requested_close_from_today(today: date) -> str:
@@ -214,7 +231,7 @@ def main() -> None:
     args = parser.parse_args()
 
     today = date.today()
-    requested_close_date = args.requested_close_date or requested_close_from_today(today)
+    requested_close_date = args.requested_close_date or latest_completed_us_close_date()
     run_date = today.isoformat()
     output_dir = Path(args.output_dir)
     pricing_dir = Path(args.pricing_dir)
