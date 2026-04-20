@@ -19,6 +19,9 @@ Path:
 - `output_indices/index_candidate_ranking_YYMMDD.json`
 - `output_indices/index_discovery_coverage_YYMMDD.json`
 - `output_indices/pricing/index_price_audit_YYYYMMDD.json`
+- `output_indices/research/index_macro_snapshot_YYMMDD.json`
+- `output_indices/research/index_relative_strength_snapshot_YYMMDD.json`
+- `output_indices/research/index_candidate_evidence_YYMMDD.json`
 
 ## Required report structure
 # Weekly Indices Review YYYY-MM-DD
@@ -44,14 +47,20 @@ Path:
 ## 17. Disclaimer
 
 ## Section source rules
+### Section 3 — Global Regime Dashboard
+Default structured support source:
+- `index_macro_snapshot_YYMMDD.json`
+
 ### Section 4 — Index Opportunity Board
 Default source of truth:
 - highest-ranked published entries from `index_candidate_ranking_YYMMDD.json`
+- backed by `index_candidate_evidence_YYMMDD.json`
 
 ### Section 11 — Best New Index Opportunities
 Default source of truth:
 - strongest non-published challengers from `index_candidate_ranking_YYMMDD.json`
 - especially the strongest omitted regional challenger when the final board remains narrow
+- backed by `index_candidate_evidence_YYMMDD.json`
 
 ### Section 16 — Continuity Input for Next Run
 Default source of truth:
