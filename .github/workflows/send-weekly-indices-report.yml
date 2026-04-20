@@ -43,6 +43,18 @@ jobs:
         run: |
           python -m pricing_indices.run_pricing_pass
 
+      - name: Build macro regime research snapshot
+        run: |
+          python -m research_indices.build_macro_regime_snapshot
+
+      - name: Build relative strength research snapshot
+        run: |
+          python -m research_indices.build_relative_strength_snapshot
+
+      - name: Build candidate evidence packs
+        run: |
+          python -m research_indices.build_candidate_evidence
+
       - name: Generate candidate ranking and discovery coverage artifacts
         run: |
           python -m pricing_indices.generate_candidate_artifacts
