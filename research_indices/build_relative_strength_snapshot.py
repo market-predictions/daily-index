@@ -2,32 +2,17 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
-import re
 from pathlib import Path
 from typing import Any
 
 from pricing_indices.catalog import ALL_EXPOSURES
 from pricing_indices.data_sources import fetch_yahoo_history
-
-REPORT_RE = re.compile(r"weekly_indices_review_(\d{6})(?:_(\d{2}))?\.md$")
+from .common import latest_report_token, resolve_requested_close_date
 
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-
-def latest_report_token(output_dir: Path) -> str:
-    hits: list[tuple[str, int]] = []
-    for path in output_dir.glob("weekly_indices_review_*.md"):
-        match = REPORT_RE.match(path.name)
-        if match:
-            hits.append((match.group(1), int(match.group(2) or "0")))
-    if not hits:
-        raise FileNotFoundError("No weekly_indices_review_*.md file found")
-    hits.sort(key=lambda x: (x[0], x[1]))
-    return hits[-1][0]
 
 
 def _pct_return(rows: list[dict[str, Any]], lookback: int) -> float | None:
@@ -66,7 +51,7 @@ def _score_0_2(percentile: float) -> float:
     return round(max(0.0, min(2.0, percentile * 2.0)), 2)
 
 
-def _fetch_history_with_fallback(exposure: dict[str, Any], requested_close_date: str | None) -> dict[str, Any]:
+def _fetch_history_with_fallback(exposure: dict[str, Any], requested_close_date: str) -> dict[str, Any]:
     attempts = [
         ("benchmark", exposure["benchmark_symbol"]),
         ("proxy", exposure["primary_proxy"]),
@@ -75,20 +60,25 @@ def _fetch_history_with_fallback(exposure: dict[str, Any], requested_close_date:
     for source_type, symbol in attempts:
         try:
             history = fetch_yahoo_history(symbol, requested_close_date=requested_close_date, range_period="1y", interval="1d")
+            rows = [row for row in history["rows"] if row["date"] <= requested_close_date]
+            if not rows:
+                raise RuntimeError(f"No usable rows for {symbol} on or before {requested_close_date}")
             history["analysis_symbol"] = symbol
             history["analysis_source_type"] = source_type
+            history["analysis_rows"] = rows
+            history["selected_data_date"] = rows[-1]["date"]
             return history
         except Exception as exc:  # noqa: BLE001
             last_error = str(exc)
     raise RuntimeError(last_error or f"Unable to fetch history for {exposure['exposure_id']}")
 
 
-def build_snapshot(output_dir: Path, requested_close_date: str | None = None) -> dict[str, Any]:
+def build_snapshot(requested_close_date: str) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     for exposure in ALL_EXPOSURES:
         try:
             history = _fetch_history_with_fallback(exposure, requested_close_date=requested_close_date)
-            price_rows = history["rows"]
+            price_rows = history["analysis_rows"]
             r20 = _pct_return(price_rows, 20)
             r60 = _pct_return(price_rows, 60)
             r120 = _pct_return(price_rows, 120)
@@ -100,6 +90,8 @@ def build_snapshot(output_dir: Path, requested_close_date: str | None = None) ->
                     "public_index_name": exposure["display_name"],
                     "analysis_symbol": history["analysis_symbol"],
                     "analysis_source_type": history["analysis_source_type"],
+                    "requested_close_date": requested_close_date,
+                    "selected_data_date": history["selected_data_date"],
                     "primary_proxy": exposure["primary_proxy"],
                     "region": exposure.get("region"),
                     "regional_group": exposure.get("region"),
@@ -119,6 +111,8 @@ def build_snapshot(output_dir: Path, requested_close_date: str | None = None) ->
                     "public_index_name": exposure["display_name"],
                     "analysis_symbol": None,
                     "analysis_source_type": None,
+                    "requested_close_date": requested_close_date,
+                    "selected_data_date": None,
                     "primary_proxy": exposure["primary_proxy"],
                     "region": exposure.get("region"),
                     "regional_group": exposure.get("region"),
@@ -168,11 +162,14 @@ def main() -> None:
 
     output_dir = Path(args.output_dir)
     token = args.token or latest_report_token(output_dir)
-    payload = build_snapshot(output_dir, requested_close_date=args.requested_close_date)
+    requested_close_date = args.requested_close_date or resolve_requested_close_date(output_dir)
+    payload = build_snapshot(requested_close_date=requested_close_date)
     path = output_dir / "research" / f"index_relative_strength_snapshot_{token}.json"
     _write_json(path, payload)
     top = payload["rows"][0]["public_index_name"] if payload["rows"] else "none"
-    print(f"RELATIVE_STRENGTH_SNAPSHOT_OK | token={token} | file={path.name} | top={top}")
+    print(
+        f"RELATIVE_STRENGTH_SNAPSHOT_OK | token={token} | file={path.name} | requested_close={requested_close_date} | top={top}"
+    )
 
 
 if __name__ == "__main__":
