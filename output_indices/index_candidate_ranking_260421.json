@@ -1,0 +1,825 @@
+{
+  "report_date_token": "260421",
+  "report_file": "weekly_indices_review_260421_02.md",
+  "requested_close_date": "2026-04-21",
+  "evidence_file": "index_candidate_evidence_260421.json",
+  "regional_group_status": [
+    {
+      "group": "U.S. core leadership",
+      "status": "surfaced",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "us_small_cap",
+        "public_index_name": "Russell 2000",
+        "primary_proxy": "IWM",
+        "score": 3.13,
+        "board_score": 3.13,
+        "challenger_score": 2.43,
+        "publish": true,
+        "reason_code_if_not_published": ""
+      }
+    },
+    {
+      "group": "continental Europe",
+      "status": "near_miss",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "italy_large_cap",
+        "public_index_name": "FTSE MIB",
+        "primary_proxy": "EWI",
+        "score": 2.06,
+        "board_score": 2.06,
+        "challenger_score": 2.19,
+        "publish": false,
+        "reason_code_if_not_published": "strong_challenger_not_published"
+      }
+    },
+    {
+      "group": "UK",
+      "status": "near_miss",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "uk_large_cap",
+        "public_index_name": "FTSE 100",
+        "primary_proxy": "EWU",
+        "score": 1.6,
+        "board_score": 1.6,
+        "challenger_score": 1.73,
+        "publish": false,
+        "reason_code_if_not_published": "strong_challenger_not_published"
+      }
+    },
+    {
+      "group": "Switzerland",
+      "status": "ruled_out",
+      "reason_if_ruled_out": "score_below_relevance_threshold",
+      "strongest_candidate": {
+        "exposure_id": "switzerland_large_cap",
+        "public_index_name": "SMI",
+        "primary_proxy": "EWL",
+        "score": 1.09,
+        "board_score": 1.09,
+        "challenger_score": 1.27,
+        "publish": false,
+        "reason_code_if_not_published": "weak_relative_strength"
+      }
+    },
+    {
+      "group": "North America ex-U.S.",
+      "status": "near_miss",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "canada_large_cap",
+        "public_index_name": "S&P/TSX 60",
+        "primary_proxy": "EWC",
+        "score": 1.61,
+        "board_score": 1.61,
+        "challenger_score": 1.74,
+        "publish": false,
+        "reason_code_if_not_published": "strong_challenger_not_published"
+      }
+    },
+    {
+      "group": "developed Asia-Pacific",
+      "status": "surfaced",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "japan_equities",
+        "public_index_name": "Nikkei 225",
+        "primary_proxy": "EWJ",
+        "score": 2.57,
+        "board_score": 2.57,
+        "challenger_score": 2.7,
+        "publish": true,
+        "reason_code_if_not_published": ""
+      }
+    },
+    {
+      "group": "Greater China",
+      "status": "ruled_out",
+      "reason_if_ruled_out": "score_below_relevance_threshold",
+      "strongest_candidate": {
+        "exposure_id": "china_large_cap",
+        "public_index_name": "China large cap",
+        "primary_proxy": "FXI",
+        "score": 0.96,
+        "board_score": 0.96,
+        "challenger_score": 1.09,
+        "publish": false,
+        "reason_code_if_not_published": "weak_relative_strength"
+      }
+    },
+    {
+      "group": "India",
+      "status": "ruled_out",
+      "reason_if_ruled_out": "score_below_relevance_threshold",
+      "strongest_candidate": {
+        "exposure_id": "india_large_cap",
+        "public_index_name": "Nifty 50",
+        "primary_proxy": "INDA",
+        "score": 0.51,
+        "board_score": 0.51,
+        "challenger_score": 0.64,
+        "publish": false,
+        "reason_code_if_not_published": "weak_relative_strength"
+      }
+    },
+    {
+      "group": "EM broad",
+      "status": "surfaced",
+      "reason_if_ruled_out": "",
+      "strongest_candidate": {
+        "exposure_id": "em_broad",
+        "public_index_name": "Emerging Markets",
+        "primary_proxy": "EEM",
+        "score": 2.77,
+        "board_score": 2.77,
+        "challenger_score": 2.12,
+        "publish": true,
+        "reason_code_if_not_published": ""
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "exposure_id": "us_small_cap",
+      "public_index_name": "Russell 2000",
+      "benchmark_symbol": "^RUT",
+      "primary_proxy": "IWM",
+      "alternative_proxy": "VTWO",
+      "regional_group": "U.S. core leadership",
+      "region": "US",
+      "style": "small cap",
+      "currently_held": true,
+      "weight_pct": 19.91,
+      "score": 3.13,
+      "board_score": 3.13,
+      "challenger_score": 2.43,
+      "relative_strength_score": 1.78,
+      "regime_alignment_score": 0.65,
+      "implementation_priority_score": 0.7,
+      "diversification_score": 0.0,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "small-cap breadth is confirming",
+          "credit support helps domestic cyclicality"
+        ],
+        "implementation_priority": [
+          "already implemented in the live model portfolio",
+          "adds funded breadth diversification"
+        ],
+        "diversification": [],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "us_tech_leadership",
+      "public_index_name": "Nasdaq 100",
+      "benchmark_symbol": "^NDX",
+      "primary_proxy": "QQQ",
+      "alternative_proxy": "QQQM",
+      "regional_group": "U.S. core leadership",
+      "region": "US",
+      "style": "large-cap growth",
+      "currently_held": true,
+      "weight_pct": 24.93,
+      "score": 2.79,
+      "board_score": 2.79,
+      "challenger_score": 1.99,
+      "relative_strength_score": 1.44,
+      "regime_alignment_score": 0.55,
+      "implementation_priority_score": 0.8,
+      "diversification_score": 0.0,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "growth leadership is supportive"
+        ],
+        "implementation_priority": [
+          "already implemented in the live model portfolio",
+          "functions as a growth engine in the current portfolio"
+        ],
+        "diversification": [],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "em_broad",
+      "public_index_name": "Emerging Markets",
+      "benchmark_symbol": "EEM",
+      "primary_proxy": "EEM",
+      "alternative_proxy": "VWO",
+      "regional_group": "EM broad",
+      "region": "Emerging Markets",
+      "style": "broad equity",
+      "currently_held": true,
+      "weight_pct": 15.5,
+      "score": 2.77,
+      "board_score": 2.77,
+      "challenger_score": 2.12,
+      "relative_strength_score": 1.67,
+      "regime_alignment_score": 0.45,
+      "implementation_priority_score": 0.65,
+      "diversification_score": 0.0,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "EM confirmation is supportive"
+        ],
+        "implementation_priority": [
+          "already implemented in the live model portfolio",
+          "already serves as the funded non-U.S. sleeve"
+        ],
+        "diversification": [],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "japan_equities",
+      "public_index_name": "Nikkei 225",
+      "benchmark_symbol": "^N225",
+      "primary_proxy": "EWJ",
+      "alternative_proxy": "DXJ",
+      "regional_group": "developed Asia-Pacific",
+      "region": "Japan",
+      "style": "broad equity",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 2.57,
+      "board_score": 2.57,
+      "challenger_score": 2.7,
+      "relative_strength_score": 2.0,
+      "regime_alignment_score": 0.5,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Japan confirmation is supportive"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "us_large_cap",
+      "public_index_name": "S&P 500",
+      "benchmark_symbol": "^GSPC",
+      "primary_proxy": "SPY",
+      "alternative_proxy": "VOO",
+      "regional_group": "U.S. core leadership",
+      "region": "US",
+      "style": "large cap",
+      "currently_held": true,
+      "weight_pct": 24.97,
+      "score": 2.36,
+      "board_score": 2.36,
+      "challenger_score": 1.56,
+      "relative_strength_score": 1.11,
+      "regime_alignment_score": 0.45,
+      "implementation_priority_score": 0.8,
+      "diversification_score": 0.0,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "credit conditions support core U.S. equity risk",
+          "breadth confirmation supports the core U.S. anchor"
+        ],
+        "implementation_priority": [
+          "already implemented in the live model portfolio",
+          "holds a core portfolio role"
+        ],
+        "diversification": [],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": true,
+      "reason_code_if_not_published": ""
+    },
+    {
+      "exposure_id": "italy_large_cap",
+      "public_index_name": "FTSE MIB",
+      "benchmark_symbol": "FTSEMIB.MI",
+      "primary_proxy": "EWI",
+      "alternative_proxy": "IMIB.MI",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 2.06,
+      "board_score": 2.06,
+      "challenger_score": 2.19,
+      "relative_strength_score": 1.89,
+      "regime_alignment_score": 0.25,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "strong_challenger_not_published"
+    },
+    {
+      "exposure_id": "spain_large_cap",
+      "public_index_name": "IBEX 35",
+      "benchmark_symbol": "^IBEX",
+      "primary_proxy": "EWP",
+      "alternative_proxy": "IBEX.MC",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 1.73,
+      "board_score": 1.73,
+      "challenger_score": 1.86,
+      "relative_strength_score": 1.56,
+      "regime_alignment_score": 0.25,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "strong_challenger_not_published"
+    },
+    {
+      "exposure_id": "canada_large_cap",
+      "public_index_name": "S&P/TSX 60",
+      "benchmark_symbol": "^GSPTSE",
+      "primary_proxy": "EWC",
+      "alternative_proxy": "XIU.TO",
+      "regional_group": "North America ex-U.S.",
+      "region": "Canada",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 1.61,
+      "board_score": 1.61,
+      "challenger_score": 1.74,
+      "relative_strength_score": 1.22,
+      "regime_alignment_score": 0.32,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "commodity-linked markets can benefit from firmer resource pressure",
+          "global equity appetite helps developed resource markets"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "strong_challenger_not_published"
+    },
+    {
+      "exposure_id": "uk_large_cap",
+      "public_index_name": "FTSE 100",
+      "benchmark_symbol": "^FTSE",
+      "primary_proxy": "EWU",
+      "alternative_proxy": "ISF.L",
+      "regional_group": "UK",
+      "region": "UK",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 1.6,
+      "board_score": 1.6,
+      "challenger_score": 1.73,
+      "relative_strength_score": 1.33,
+      "regime_alignment_score": 0.2,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "risk appetite modestly supports the UK large-cap sleeve"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "strong_challenger_not_published"
+    },
+    {
+      "exposure_id": "europe_large_cap",
+      "public_index_name": "Euro Stoxx 50",
+      "benchmark_symbol": "^STOXX50E",
+      "primary_proxy": "FEZ",
+      "alternative_proxy": "VGK",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 1.17,
+      "board_score": 1.17,
+      "challenger_score": 1.3,
+      "relative_strength_score": 1.0,
+      "regime_alignment_score": 0.25,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "board_capacity"
+    },
+    {
+      "exposure_id": "switzerland_large_cap",
+      "public_index_name": "SMI",
+      "benchmark_symbol": "^SSMI",
+      "primary_proxy": "EWL",
+      "alternative_proxy": "CSSMI.SW",
+      "regional_group": "Switzerland",
+      "region": "Switzerland",
+      "style": "large cap defensive quality",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 1.09,
+      "board_score": 1.09,
+      "challenger_score": 1.27,
+      "relative_strength_score": 0.67,
+      "regime_alignment_score": 0.37,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.28,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.05,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "credit support helps high-quality defensives",
+          "Europe confirmation supports Switzerland’s global exporters"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve",
+          "adds a differentiated style bucket"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure modestly affects Swiss exporters"
+        ]
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "weak_relative_strength"
+    },
+    {
+      "exposure_id": "netherlands_large_cap",
+      "public_index_name": "AEX",
+      "benchmark_symbol": "^AEX",
+      "primary_proxy": "EWN",
+      "alternative_proxy": "IAEX.AS",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 1.06,
+      "board_score": 1.06,
+      "challenger_score": 1.19,
+      "relative_strength_score": 0.89,
+      "regime_alignment_score": 0.25,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "board_capacity"
+    },
+    {
+      "exposure_id": "china_large_cap",
+      "public_index_name": "China large cap",
+      "benchmark_symbol": "000300.SS",
+      "primary_proxy": "FXI",
+      "alternative_proxy": "MCHI",
+      "regional_group": "Greater China",
+      "region": "China",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 0.96,
+      "board_score": 0.96,
+      "challenger_score": 1.09,
+      "relative_strength_score": 0.56,
+      "regime_alignment_score": 0.33,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "broader EM confirmation is supportive"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "weak_relative_strength"
+    },
+    {
+      "exposure_id": "france_large_cap",
+      "public_index_name": "CAC 40",
+      "benchmark_symbol": "^FCHI",
+      "primary_proxy": "EWQ",
+      "alternative_proxy": "CAC.PA",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 0.95,
+      "board_score": 0.95,
+      "challenger_score": 1.08,
+      "relative_strength_score": 0.78,
+      "regime_alignment_score": 0.25,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "weak_relative_strength"
+    },
+    {
+      "exposure_id": "australia_large_cap",
+      "public_index_name": "ASX 200",
+      "benchmark_symbol": "^AXJO",
+      "primary_proxy": "EWA",
+      "alternative_proxy": "STW.AX",
+      "regional_group": "developed Asia-Pacific",
+      "region": "Australia",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 0.83,
+      "board_score": 0.83,
+      "challenger_score": 0.96,
+      "relative_strength_score": 0.44,
+      "regime_alignment_score": 0.32,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "commodity-linked markets can benefit from firmer resource pressure",
+          "global equity appetite helps developed resource markets"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "weak_relative_strength"
+    },
+    {
+      "exposure_id": "hong_kong_equities",
+      "public_index_name": "Hang Seng",
+      "benchmark_symbol": "^HSI",
+      "primary_proxy": "EWH",
+      "alternative_proxy": "2800.HK",
+      "regional_group": "Greater China",
+      "region": "Hong Kong",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 0.62,
+      "board_score": 0.62,
+      "challenger_score": 0.75,
+      "relative_strength_score": 0.22,
+      "regime_alignment_score": 0.33,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "broader EM confirmation is supportive"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "weak_relative_strength"
+    },
+    {
+      "exposure_id": "germany_cyclicals",
+      "public_index_name": "DAX",
+      "benchmark_symbol": "^GDAXI",
+      "primary_proxy": "EWG",
+      "alternative_proxy": "EXS1.DE",
+      "regional_group": "continental Europe",
+      "region": "Europe",
+      "style": "cyclical",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 0.58,
+      "board_score": 0.58,
+      "challenger_score": 0.76,
+      "relative_strength_score": 0.33,
+      "regime_alignment_score": 0.3,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.28,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe",
+          "cyclical breadth helps Europe’s higher-beta sleeve"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve",
+          "adds a differentiated style bucket"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "weak_relative_strength"
+    },
+    {
+      "exposure_id": "india_large_cap",
+      "public_index_name": "Nifty 50",
+      "benchmark_symbol": "^NSEI",
+      "primary_proxy": "INDA",
+      "alternative_proxy": "INDY",
+      "regional_group": "India",
+      "region": "India",
+      "style": "large cap",
+      "currently_held": false,
+      "weight_pct": null,
+      "score": 0.51,
+      "board_score": 0.51,
+      "challenger_score": 0.64,
+      "relative_strength_score": 0.11,
+      "regime_alignment_score": 0.33,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "broader EM confirmation is supportive"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      },
+      "evidence_source": "candidate_evidence_artifact",
+      "publish": false,
+      "reason_code_if_not_published": "weak_relative_strength"
+    }
+  ]
+}
