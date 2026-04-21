@@ -13,6 +13,7 @@ SECTION11_NAME = "Best New Index Opportunities"
 SECTION15_NAME = "Current Portfolio Holdings and Cash"
 SECTION16_NAME = "Continuity Input for Next Run"
 REPORT_RE = re.compile(r"weekly_indices_review_(\d{6})(?:_(\d{2}))?\.md$")
+PLAN_RE = re.compile(r"index_recommendation_plan_(\d{6})(?:_(\d{2}))?\.json$")
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -34,6 +35,28 @@ def latest_report_token(output_dir: Path) -> str:
         raise FileNotFoundError("No weekly_indices_review_*.md file found")
     hits.sort(key=lambda x: (x[0], x[1]))
     return hits[-1][0]
+
+
+def _latest_plan_path(output_dir: Path) -> Path | None:
+    hits: list[tuple[str, int, Path]] = []
+    for path in output_dir.glob("index_recommendation_plan_*.json"):
+        match = PLAN_RE.match(path.name)
+        if match:
+            hits.append((match.group(1), int(match.group(2) or "0"), path))
+    if not hits:
+        return None
+    hits.sort(key=lambda x: (x[0], x[1]))
+    return hits[-1][2]
+
+
+def _load_plan(output_dir: Path, token: str) -> tuple[dict[str, Any], str]:
+    exact = output_dir / f"index_recommendation_plan_{token}.json"
+    if exact.exists():
+        return _read_json(exact), exact.name
+    latest = _latest_plan_path(output_dir)
+    if latest and latest.exists():
+        return _read_json(latest), latest.name
+    return {"recommended_changes": [], "best_new_opportunities": [], "continuity": {}}, "fallback_empty_plan"
 
 
 def exposure_reason(exposure_id: str, plan: dict[str, Any], fallback: str) -> str:
@@ -254,7 +277,6 @@ def main() -> None:
 
     ranking_path = output_dir / f"index_candidate_ranking_{token}.json"
     coverage_path = output_dir / f"index_discovery_coverage_{token}.json"
-    plan_path = output_dir / f"index_recommendation_plan_{token}.json"
     state_path = output_dir / "index_portfolio_state.json"
     valuation_path = output_dir / "index_valuation_history.csv"
 
@@ -262,14 +284,12 @@ def main() -> None:
         raise FileNotFoundError(f"Missing ranking artifact: {ranking_path}")
     if not coverage_path.exists():
         raise FileNotFoundError(f"Missing discovery coverage artifact: {coverage_path}")
-    if not plan_path.exists():
-        raise FileNotFoundError(f"Missing recommendation plan artifact: {plan_path}")
     if not state_path.exists():
         raise FileNotFoundError(f"Missing portfolio state artifact: {state_path}")
 
     candidate_ranking = _read_json(ranking_path)
     coverage = _read_json(coverage_path)
-    plan = _read_json(plan_path)
+    plan, plan_source = _load_plan(output_dir, token)
     state = _read_json(state_path)
     valuation_rows = _read_valuation_history(valuation_path)
 
@@ -295,7 +315,7 @@ def main() -> None:
     _write_text(combined_path, "\n\n".join([sec4, sec7, sec11, sec15, sec16]))
 
     print(
-        f"ASSEMBLY_BLOCKS_OK | token={token} | section4={section4_path.name} | section7={section7_path.name} | "
+        f"ASSEMBLY_BLOCKS_OK | token={token} | plan_source={plan_source} | section4={section4_path.name} | section7={section7_path.name} | "
         f"section11={section11_path.name} | section15={section15_path.name} | section16={section16_path.name} | combined={combined_path.name}"
     )
 
