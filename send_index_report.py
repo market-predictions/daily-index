@@ -8,6 +8,7 @@ Validation, rendering, and optional delivery script for the Weekly Indices Revie
 from __future__ import annotations
 
 import argparse
+import base64
 import os
 import re
 import smtplib
@@ -352,11 +353,22 @@ def create_equity_curve_png(output_dir: Path, chart_path: Path, md_text: str | N
     return chart_path
 
 
+def png_to_data_uri(path: Path) -> str:
+    b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{b64}"
+
+
 def render_markdown_block(text: str, image_src: str | None = None) -> str:
     text = strip_citations(text)
     if image_src:
-        text = text.replace("`EQUITY_CURVE_CHART_PLACEHOLDER`", f"![Equity curve]({image_src})")
-        text = text.replace("EQUITY_CURVE_CHART_PLACEHOLDER", f"![Equity curve]({image_src})")
+        replacement = (
+            '<div class="chart-wrap">'
+            '<div class="chart-label">Equity curve</div>'
+            f'<img src="{image_src}" alt="Equity curve" />'
+            '</div>'
+        )
+        text = text.replace("`EQUITY_CURVE_CHART_PLACEHOLDER`", replacement)
+        text = text.replace("EQUITY_CURVE_CHART_PLACEHOLDER", replacement)
     else:
         text = text.replace("`EQUITY_CURVE_CHART_PLACEHOLDER`", "_Equity curve chart unavailable for this delivery._")
         text = text.replace("EQUITY_CURVE_CHART_PLACEHOLDER", "_Equity curve chart unavailable for this delivery._")
@@ -607,6 +619,8 @@ def build_report_html(md_text: str, report_date_str: str, image_src: str | None 
     .position-card {{ margin: 0 0 16px 0; padding: 14px 16px; border: 1px solid {BRAND['border']}; background: #FBF7F0; border-radius: 14px; }}
     .position-card-title {{ font-size: 17px; font-weight: 700; color: {BRAND['ink']}; margin: 0 0 10px 0; }}
     .position-card-body table {{ margin-top: 10px; }}
+    .chart-wrap {{ margin: 12px 0 18px 0; padding: 12px 14px; background: #FBF7F0; border: 1px solid {BRAND['border']}; border-radius: 14px; }}
+    .chart-label {{ color: {BRAND['muted']}; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin: 0 0 8px 0; }}
     a {{ color: #315F8B; text-decoration: underline; }}
     """
 
@@ -682,11 +696,14 @@ def generate_delivery_assets(output_dir: Path, report_path: Path) -> dict:
 
     equity_curve_png = report_path.with_name(report_path.stem + "_equity_curve.png")
     create_equity_curve_png(output_dir, equity_curve_png, md_text=md_text_clean)
-    image_src_pdf = equity_curve_png.resolve().as_uri() if equity_curve_png.exists() else None
+    image_src_pdf = png_to_data_uri(equity_curve_png) if equity_curve_png.exists() else None
     image_src_email = "cid:equitycurve" if equity_curve_png.exists() else None
 
     html_email = build_report_html(md_text_clean, report_date, image_src=image_src_email, render_mode="email")
     html_pdf = build_report_html(md_text_clean, report_date, image_src=image_src_pdf, render_mode="pdf")
+
+    if equity_curve_png.exists() and 'data:image/png;base64,' not in html_pdf:
+        raise RuntimeError("Indices equity curve image was not embedded into PDF HTML.")
 
     validate_email_body(html_email, md_text_clean)
 
