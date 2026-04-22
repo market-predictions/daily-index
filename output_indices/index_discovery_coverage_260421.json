@@ -1,6 +1,6 @@
 {
   "report_date_token": "260421",
-  "report_file": "weekly_indices_review_260421_03.md",
+  "report_file": "weekly_indices_review_260421_04.md",
   "requested_close_date": "2026-04-22",
   "evidence_file": "index_candidate_evidence_260421.json",
   "groups": [
@@ -36,17 +36,17 @@
     },
     {
       "group": "UK",
-      "status": "ruled_out",
-      "reason_if_ruled_out": "score_below_relevance_threshold",
+      "status": "near_miss",
+      "reason_if_ruled_out": "",
       "strongest_candidate": {
         "exposure_id": "uk_large_cap",
         "public_index_name": "FTSE 100",
         "primary_proxy": "EWU",
-        "score": 1.27,
-        "board_score": 1.27,
-        "challenger_score": 1.4,
+        "score": 1.38,
+        "board_score": 1.38,
+        "challenger_score": 1.51,
         "publish": false,
-        "reason_code_if_not_published": "board_capacity"
+        "reason_code_if_not_published": "strong_challenger_not_published"
       }
     },
     {
@@ -102,9 +102,9 @@
         "exposure_id": "china_large_cap",
         "public_index_name": "China large cap",
         "primary_proxy": "FXI",
-        "score": 1.51,
-        "board_score": 1.51,
-        "challenger_score": 1.64,
+        "score": 1.4,
+        "board_score": 1.4,
+        "challenger_score": 1.53,
         "publish": false,
         "reason_code_if_not_published": "strong_challenger_not_published"
       }
