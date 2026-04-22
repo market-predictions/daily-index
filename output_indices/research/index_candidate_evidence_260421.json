@@ -1,6 +1,6 @@
 {
   "report_date_token": "260421",
-  "requested_close_date": "2026-04-21",
+  "requested_close_date": "2026-04-22",
   "macro_snapshot_file": "index_macro_snapshot_260421.json",
   "relative_strength_snapshot_file": "index_relative_strength_snapshot_260421.json",
   "positions_state_file": "index_portfolio_state.json",
@@ -14,22 +14,22 @@
       "region": "US",
       "style": "small cap",
       "currently_held": true,
-      "relative_strength_score": 1.78,
+      "relative_strength_score": 1.67,
       "regime_alignment_score": 0.65,
       "implementation_priority_score": 0.7,
       "diversification_score": 0.0,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
-      "board_score": 3.13,
-      "challenger_score": 2.43,
-      "final_score": 3.13,
+      "board_score": 3.02,
+      "challenger_score": 2.32,
+      "final_score": 3.02,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-21",
-        "return_20d": 0.108547,
-        "return_60d": 0.035895,
-        "return_120d": 0.097019,
-        "drawdown_from_120d_high": -0.010021,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-22",
+        "return_20d": 0.111732,
+        "return_60d": 0.047264,
+        "return_120d": 0.111195,
+        "drawdown_from_120d_high": -0.002715,
         "analysis_symbol": "^RUT"
       },
       "evidence_notes": {
@@ -48,47 +48,6 @@
       }
     },
     {
-      "exposure_id": "us_tech_leadership",
-      "public_index_name": "Nasdaq 100",
-      "benchmark_symbol": "^NDX",
-      "primary_proxy": "QQQ",
-      "alternative_proxy": "QQQM",
-      "region": "US",
-      "style": "large-cap growth",
-      "currently_held": true,
-      "relative_strength_score": 1.44,
-      "regime_alignment_score": 0.55,
-      "implementation_priority_score": 0.8,
-      "diversification_score": 0.0,
-      "continuity_bonus": 0.0,
-      "fragility_penalty": 0.0,
-      "board_score": 2.79,
-      "challenger_score": 1.99,
-      "final_score": 2.79,
-      "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-21",
-        "return_20d": 0.094709,
-        "return_60d": 0.034133,
-        "return_120d": 0.025479,
-        "drawdown_from_120d_high": -0.007234,
-        "analysis_symbol": "^NDX"
-      },
-      "evidence_notes": {
-        "regime_alignment": [
-          "broad equity risk appetite is supportive",
-          "growth leadership is supportive"
-        ],
-        "implementation_priority": [
-          "already implemented in the live model portfolio",
-          "functions as a growth engine in the current portfolio"
-        ],
-        "diversification": [],
-        "continuity": [],
-        "fragility": []
-      }
-    },
-    {
       "exposure_id": "em_broad",
       "public_index_name": "Emerging Markets",
       "benchmark_symbol": "EEM",
@@ -97,22 +56,22 @@
       "region": "Emerging Markets",
       "style": "broad equity",
       "currently_held": true,
-      "relative_strength_score": 1.67,
+      "relative_strength_score": 1.89,
       "regime_alignment_score": 0.45,
       "implementation_priority_score": 0.65,
       "diversification_score": 0.0,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
-      "board_score": 2.77,
-      "challenger_score": 2.12,
-      "final_score": 2.77,
+      "board_score": 2.99,
+      "challenger_score": 2.34,
+      "final_score": 2.99,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-21",
-        "return_20d": 0.086198,
-        "return_60d": 0.053834,
-        "return_120d": 0.117394,
-        "drawdown_from_120d_high": -0.021842,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-22",
+        "return_20d": 0.121373,
+        "return_60d": 0.071151,
+        "return_120d": 0.138086,
+        "drawdown_from_120d_high": -0.004085,
         "analysis_symbol": "EEM"
       },
       "evidence_notes": {
@@ -123,6 +82,47 @@
         "implementation_priority": [
           "already implemented in the live model portfolio",
           "already serves as the funded non-U.S. sleeve"
+        ],
+        "diversification": [],
+        "continuity": [],
+        "fragility": []
+      }
+    },
+    {
+      "exposure_id": "us_tech_leadership",
+      "public_index_name": "Nasdaq 100",
+      "benchmark_symbol": "^NDX",
+      "primary_proxy": "QQQ",
+      "alternative_proxy": "QQQM",
+      "region": "US",
+      "style": "large-cap growth",
+      "currently_held": true,
+      "relative_strength_score": 1.56,
+      "regime_alignment_score": 0.55,
+      "implementation_priority_score": 0.8,
+      "diversification_score": 0.0,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "board_score": 2.91,
+      "challenger_score": 2.11,
+      "final_score": 2.91,
+      "relative_strength_metrics": {
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-22",
+        "return_20d": 0.122272,
+        "return_60d": 0.047604,
+        "return_120d": 0.035565,
+        "drawdown_from_120d_high": 0.0,
+        "analysis_symbol": "^NDX"
+      },
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "growth leadership is supportive"
+        ],
+        "implementation_priority": [
+          "already implemented in the live model portfolio",
+          "functions as a growth engine in the current portfolio"
         ],
         "diversification": [],
         "continuity": [],
@@ -148,12 +148,12 @@
       "challenger_score": 2.7,
       "final_score": 2.57,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.141887,
-        "return_60d": 0.114643,
-        "return_120d": 0.192814,
-        "drawdown_from_120d_high": -0.011651,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.13582,
+        "return_60d": 0.105427,
+        "return_120d": 0.203647,
+        "drawdown_from_120d_high": -0.002842,
         "analysis_symbol": "^N225"
       },
       "evidence_notes": {
@@ -178,22 +178,22 @@
       "region": "US",
       "style": "large cap",
       "currently_held": true,
-      "relative_strength_score": 1.11,
+      "relative_strength_score": 1.22,
       "regime_alignment_score": 0.45,
       "implementation_priority_score": 0.8,
       "diversification_score": 0.0,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
-      "board_score": 2.36,
-      "challenger_score": 1.56,
-      "final_score": 2.36,
+      "board_score": 2.47,
+      "challenger_score": 1.67,
+      "final_score": 2.47,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-21",
-        "return_20d": 0.073395,
-        "return_60d": 0.021459,
-        "return_120d": 0.027468,
-        "drawdown_from_120d_high": -0.008708,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-22",
+        "return_20d": 0.088697,
+        "return_60d": 0.027002,
+        "return_120d": 0.035846,
+        "drawdown_from_120d_high": 0.0,
         "analysis_symbol": "^GSPC"
       },
       "evidence_notes": {
@@ -220,66 +220,23 @@
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
-      "relative_strength_score": 1.89,
+      "relative_strength_score": 1.78,
       "regime_alignment_score": 0.25,
       "implementation_priority_score": 0.0,
       "diversification_score": 0.2,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.15,
-      "board_score": 2.06,
-      "challenger_score": 2.19,
-      "final_score": 2.06,
+      "board_score": 1.95,
+      "challenger_score": 2.08,
+      "final_score": 1.95,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.10311,
-        "return_60d": 0.069105,
-        "return_120d": 0.13744,
-        "drawdown_from_120d_high": -0.013546,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.118158,
+        "return_60d": 0.0685,
+        "return_120d": 0.127474,
+        "drawdown_from_120d_high": -0.019767,
         "analysis_symbol": "FTSEMIB.MI"
-      },
-      "evidence_notes": {
-        "regime_alignment": [
-          "broad equity risk appetite is supportive",
-          "Europe confirmation is supportive",
-          "commodity pressure can challenge Europe"
-        ],
-        "implementation_priority": [],
-        "diversification": [
-          "adds a new regional sleeve"
-        ],
-        "continuity": [],
-        "fragility": [
-          "commodity pressure adds European fragility"
-        ]
-      }
-    },
-    {
-      "exposure_id": "spain_large_cap",
-      "public_index_name": "IBEX 35",
-      "benchmark_symbol": "^IBEX",
-      "primary_proxy": "EWP",
-      "alternative_proxy": "IBEX.MC",
-      "region": "Europe",
-      "style": "large cap",
-      "currently_held": false,
-      "relative_strength_score": 1.56,
-      "regime_alignment_score": 0.25,
-      "implementation_priority_score": 0.0,
-      "diversification_score": 0.2,
-      "continuity_bonus": 0.0,
-      "fragility_penalty": 0.15,
-      "board_score": 1.73,
-      "challenger_score": 1.86,
-      "final_score": 1.73,
-      "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.08015,
-        "return_60d": 0.033827,
-        "return_120d": 0.141292,
-        "drawdown_from_120d_high": -0.012743,
-        "analysis_symbol": "^IBEX"
       },
       "evidence_notes": {
         "regime_alignment": [
@@ -306,22 +263,22 @@
       "region": "Canada",
       "style": "large cap",
       "currently_held": false,
-      "relative_strength_score": 1.22,
+      "relative_strength_score": 1.33,
       "regime_alignment_score": 0.32,
       "implementation_priority_score": 0.0,
       "diversification_score": 0.2,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
-      "board_score": 1.61,
-      "challenger_score": 1.74,
-      "final_score": 1.61,
+      "board_score": 1.72,
+      "challenger_score": 1.85,
+      "final_score": 1.72,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-21",
-        "return_20d": 0.06036,
-        "return_60d": 0.020012,
-        "return_120d": 0.111395,
-        "drawdown_from_120d_high": -0.021221,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-22",
+        "return_20d": 0.063037,
+        "return_60d": 0.026042,
+        "return_120d": 0.1264,
+        "drawdown_from_120d_high": -0.016971,
         "analysis_symbol": "^GSPTSE"
       },
       "evidence_notes": {
@@ -339,158 +296,31 @@
       }
     },
     {
-      "exposure_id": "uk_large_cap",
-      "public_index_name": "FTSE 100",
-      "benchmark_symbol": "^FTSE",
-      "primary_proxy": "EWU",
-      "alternative_proxy": "ISF.L",
-      "region": "UK",
-      "style": "large cap",
-      "currently_held": false,
-      "relative_strength_score": 1.33,
-      "regime_alignment_score": 0.2,
-      "implementation_priority_score": 0.0,
-      "diversification_score": 0.2,
-      "continuity_bonus": 0.0,
-      "fragility_penalty": 0.0,
-      "board_score": 1.6,
-      "challenger_score": 1.73,
-      "final_score": 1.6,
-      "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.054216,
-        "return_60d": 0.045221,
-        "return_120d": 0.098956,
-        "drawdown_from_120d_high": -0.027634,
-        "analysis_symbol": "^FTSE"
-      },
-      "evidence_notes": {
-        "regime_alignment": [
-          "broad equity risk appetite is supportive",
-          "risk appetite modestly supports the UK large-cap sleeve"
-        ],
-        "implementation_priority": [],
-        "diversification": [
-          "adds a new regional sleeve"
-        ],
-        "continuity": [],
-        "fragility": []
-      }
-    },
-    {
-      "exposure_id": "europe_large_cap",
-      "public_index_name": "Euro Stoxx 50",
-      "benchmark_symbol": "^STOXX50E",
-      "primary_proxy": "FEZ",
-      "alternative_proxy": "VGK",
+      "exposure_id": "spain_large_cap",
+      "public_index_name": "IBEX 35",
+      "benchmark_symbol": "^IBEX",
+      "primary_proxy": "EWP",
+      "alternative_proxy": "IBEX.MC",
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
-      "relative_strength_score": 1.0,
+      "relative_strength_score": 1.44,
       "regime_alignment_score": 0.25,
       "implementation_priority_score": 0.0,
       "diversification_score": 0.2,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.15,
-      "board_score": 1.17,
-      "challenger_score": 1.3,
-      "final_score": 1.17,
+      "board_score": 1.61,
+      "challenger_score": 1.74,
+      "final_score": 1.61,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.065695,
-        "return_60d": 0.004442,
-        "return_120d": 0.060899,
-        "drawdown_from_120d_high": -0.030889,
-        "analysis_symbol": "^STOXX50E"
-      },
-      "evidence_notes": {
-        "regime_alignment": [
-          "broad equity risk appetite is supportive",
-          "Europe confirmation is supportive",
-          "commodity pressure can challenge Europe"
-        ],
-        "implementation_priority": [],
-        "diversification": [
-          "adds a new regional sleeve"
-        ],
-        "continuity": [],
-        "fragility": [
-          "commodity pressure adds European fragility"
-        ]
-      }
-    },
-    {
-      "exposure_id": "switzerland_large_cap",
-      "public_index_name": "SMI",
-      "benchmark_symbol": "^SSMI",
-      "primary_proxy": "EWL",
-      "alternative_proxy": "CSSMI.SW",
-      "region": "Switzerland",
-      "style": "large cap defensive quality",
-      "currently_held": false,
-      "relative_strength_score": 0.67,
-      "regime_alignment_score": 0.37,
-      "implementation_priority_score": 0.0,
-      "diversification_score": 0.28,
-      "continuity_bonus": 0.0,
-      "fragility_penalty": 0.05,
-      "board_score": 1.088,
-      "challenger_score": 1.27,
-      "final_score": 1.088,
-      "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.066189,
-        "return_60d": 0.00422,
-        "return_120d": 0.053097,
-        "drawdown_from_120d_high": -0.052095,
-        "analysis_symbol": "^SSMI"
-      },
-      "evidence_notes": {
-        "regime_alignment": [
-          "broad equity risk appetite is supportive",
-          "credit support helps high-quality defensives",
-          "Europe confirmation supports Switzerland’s global exporters"
-        ],
-        "implementation_priority": [],
-        "diversification": [
-          "adds a new regional sleeve",
-          "adds a differentiated style bucket"
-        ],
-        "continuity": [],
-        "fragility": [
-          "commodity pressure modestly affects Swiss exporters"
-        ]
-      }
-    },
-    {
-      "exposure_id": "netherlands_large_cap",
-      "public_index_name": "AEX",
-      "benchmark_symbol": "^AEX",
-      "primary_proxy": "EWN",
-      "alternative_proxy": "IAEX.AS",
-      "region": "Europe",
-      "style": "large cap",
-      "currently_held": false,
-      "relative_strength_score": 0.89,
-      "regime_alignment_score": 0.25,
-      "implementation_priority_score": 0.0,
-      "diversification_score": 0.2,
-      "continuity_bonus": 0.0,
-      "fragility_penalty": 0.15,
-      "board_score": 1.06,
-      "challenger_score": 1.19,
-      "final_score": 1.06,
-      "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.045344,
-        "return_60d": 0.021735,
-        "return_120d": 0.040692,
-        "drawdown_from_120d_high": -0.007864,
-        "analysis_symbol": "^AEX"
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.085473,
+        "return_60d": 0.034096,
+        "return_120d": 0.12778,
+        "drawdown_from_120d_high": -0.019139,
+        "analysis_symbol": "^IBEX"
       },
       "evidence_notes": {
         "regime_alignment": [
@@ -517,22 +347,22 @@
       "region": "China",
       "style": "large cap",
       "currently_held": false,
-      "relative_strength_score": 0.56,
+      "relative_strength_score": 1.11,
       "regime_alignment_score": 0.33,
       "implementation_priority_score": 0.0,
       "diversification_score": 0.2,
       "continuity_bonus": 0.0,
       "fragility_penalty": 0.0,
-      "board_score": 0.96,
-      "challenger_score": 1.09,
-      "final_score": 0.96,
+      "board_score": 1.51,
+      "challenger_score": 1.64,
+      "final_score": 1.51,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.041695,
-        "return_60d": 0.001265,
-        "return_120d": 0.03246,
-        "drawdown_from_120d_high": -0.006941,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.079221,
+        "return_60d": 0.007635,
+        "return_120d": 0.038199,
+        "drawdown_from_120d_high": -0.004736,
         "analysis_symbol": "000300.SS"
       },
       "evidence_notes": {
@@ -549,11 +379,138 @@
       }
     },
     {
-      "exposure_id": "france_large_cap",
-      "public_index_name": "CAC 40",
-      "benchmark_symbol": "^FCHI",
-      "primary_proxy": "EWQ",
-      "alternative_proxy": "CAC.PA",
+      "exposure_id": "uk_large_cap",
+      "public_index_name": "FTSE 100",
+      "benchmark_symbol": "^FTSE",
+      "primary_proxy": "EWU",
+      "alternative_proxy": "ISF.L",
+      "region": "UK",
+      "style": "large cap",
+      "currently_held": false,
+      "relative_strength_score": 1.0,
+      "regime_alignment_score": 0.2,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.0,
+      "board_score": 1.27,
+      "challenger_score": 1.4,
+      "final_score": 1.27,
+      "relative_strength_metrics": {
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-22",
+        "return_20d": 0.058849,
+        "return_60d": 0.032275,
+        "return_120d": 0.073837,
+        "drawdown_from_120d_high": -0.039791,
+        "analysis_symbol": "^FTSE"
+      },
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "risk appetite modestly supports the UK large-cap sleeve"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": []
+      }
+    },
+    {
+      "exposure_id": "netherlands_large_cap",
+      "public_index_name": "AEX",
+      "benchmark_symbol": "^AEX",
+      "primary_proxy": "EWN",
+      "alternative_proxy": "IAEX.AS",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "relative_strength_score": 0.89,
+      "regime_alignment_score": 0.25,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "board_score": 1.06,
+      "challenger_score": 1.19,
+      "final_score": 1.06,
+      "relative_strength_metrics": {
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.059722,
+        "return_60d": 0.018928,
+        "return_120d": 0.045608,
+        "drawdown_from_120d_high": -0.010689,
+        "analysis_symbol": "^AEX"
+      },
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      }
+    },
+    {
+      "exposure_id": "switzerland_large_cap",
+      "public_index_name": "SMI",
+      "benchmark_symbol": "^SSMI",
+      "primary_proxy": "EWL",
+      "alternative_proxy": "CSSMI.SW",
+      "region": "Switzerland",
+      "style": "large cap defensive quality",
+      "currently_held": false,
+      "relative_strength_score": 0.56,
+      "regime_alignment_score": 0.37,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.28,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.05,
+      "board_score": 0.978,
+      "challenger_score": 1.16,
+      "final_score": 0.978,
+      "relative_strength_metrics": {
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.065997,
+        "return_60d": -0.000988,
+        "return_120d": 0.045939,
+        "drawdown_from_120d_high": -0.062804,
+        "analysis_symbol": "^SSMI"
+      },
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "credit support helps high-quality defensives",
+          "Europe confirmation supports Switzerland’s global exporters"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve",
+          "adds a differentiated style bucket"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure modestly affects Swiss exporters"
+        ]
+      }
+    },
+    {
+      "exposure_id": "europe_large_cap",
+      "public_index_name": "Euro Stoxx 50",
+      "benchmark_symbol": "^STOXX50E",
+      "primary_proxy": "FEZ",
+      "alternative_proxy": "VGK",
       "region": "Europe",
       "style": "large cap",
       "currently_held": false,
@@ -567,12 +524,55 @@
       "challenger_score": 1.08,
       "final_score": 0.95,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.067007,
-        "return_60d": 0.022354,
-        "return_120d": 0.01115,
-        "drawdown_from_120d_high": -0.033625,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.077976,
+        "return_60d": -0.003018,
+        "return_120d": 0.046208,
+        "drawdown_from_120d_high": -0.039374,
+        "analysis_symbol": "^STOXX50E"
+      },
+      "evidence_notes": {
+        "regime_alignment": [
+          "broad equity risk appetite is supportive",
+          "Europe confirmation is supportive",
+          "commodity pressure can challenge Europe"
+        ],
+        "implementation_priority": [],
+        "diversification": [
+          "adds a new regional sleeve"
+        ],
+        "continuity": [],
+        "fragility": [
+          "commodity pressure adds European fragility"
+        ]
+      }
+    },
+    {
+      "exposure_id": "france_large_cap",
+      "public_index_name": "CAC 40",
+      "benchmark_symbol": "^FCHI",
+      "primary_proxy": "EWQ",
+      "alternative_proxy": "CAC.PA",
+      "region": "Europe",
+      "style": "large cap",
+      "currently_held": false,
+      "relative_strength_score": 0.67,
+      "regime_alignment_score": 0.25,
+      "implementation_priority_score": 0.0,
+      "diversification_score": 0.2,
+      "continuity_bonus": 0.0,
+      "fragility_penalty": 0.15,
+      "board_score": 0.84,
+      "challenger_score": 0.97,
+      "final_score": 0.84,
+      "relative_strength_metrics": {
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.074371,
+        "return_60d": 0.01138,
+        "return_120d": 0.002329,
+        "drawdown_from_120d_high": -0.044683,
         "analysis_symbol": "^FCHI"
       },
       "evidence_notes": {
@@ -610,12 +610,12 @@
       "challenger_score": 0.96,
       "final_score": 0.83,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.053602,
-        "return_60d": 0.019401,
-        "return_120d": -0.007285,
-        "drawdown_from_120d_high": -0.026667,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.061815,
+        "return_60d": 0.01138,
+        "return_120d": -0.011727,
+        "drawdown_from_120d_high": -0.027091,
         "analysis_symbol": "^AXJO"
       },
       "evidence_notes": {
@@ -651,12 +651,12 @@
       "challenger_score": 0.75,
       "final_score": 0.62,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.012897,
-        "return_60d": -0.018025,
-        "return_120d": 0.019422,
-        "drawdown_from_120d_high": -0.057459,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.038701,
+        "return_60d": -0.002877,
+        "return_120d": 0.017671,
+        "drawdown_from_120d_high": -0.052939,
         "analysis_symbol": "^HSI"
       },
       "evidence_notes": {
@@ -691,12 +691,12 @@
       "challenger_score": 0.76,
       "final_score": 0.578,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.069101,
-        "return_60d": -0.017648,
-        "return_120d": 0.008675,
-        "drawdown_from_120d_high": -0.039451,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.08448,
+        "return_60d": -0.025294,
+        "return_120d": 0.001278,
+        "drawdown_from_120d_high": -0.045231,
         "analysis_symbol": "^GDAXI"
       },
       "evidence_notes": {
@@ -736,12 +736,12 @@
       "challenger_score": 0.64,
       "final_score": 0.51,
       "relative_strength_metrics": {
-        "requested_close_date": "2026-04-21",
-        "selected_data_date": "2026-04-20",
-        "return_20d": 0.033234,
-        "return_60d": -0.051743,
-        "return_120d": -0.057203,
-        "drawdown_from_120d_high": -0.074584,
+        "requested_close_date": "2026-04-22",
+        "selected_data_date": "2026-04-21",
+        "return_20d": 0.033594,
+        "return_60d": -0.039433,
+        "return_120d": -0.049945,
+        "drawdown_from_120d_high": -0.066542,
         "analysis_symbol": "^NSEI"
       },
       "evidence_notes": {
