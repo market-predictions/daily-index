@@ -193,7 +193,77 @@ def render_position_review(section: dict) -> str:
     return f"<div class='panel panel-positions'>{_base.section_header_html(section['number'], section['title'])}{''.join(cards)}</div>"
 
 
+def _find_section_bounds(lines: list[str], section_number: int) -> tuple[int | None, int | None]:
+    start = None
+    end = None
+    for idx, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith(f"## {section_number}."):
+            start = idx
+            continue
+        if start is not None and stripped.startswith("## "):
+            end = idx
+            break
+    if start is not None and end is None:
+        end = len(lines)
+    return start, end
+
+
+def _extract_value_from_lines(lines: list[str], field: str) -> str | None:
+    field_lower = field.lower()
+    regexes = [
+        re.compile(rf"^[-*]\s*\**{re.escape(field)}\**\s*:\s*(.+)$", flags=re.IGNORECASE),
+        re.compile(rf"^[-*]\s*\**{re.escape(field)}\**\s+remains\s+(.+)$", flags=re.IGNORECASE),
+        re.compile(rf"^\**{re.escape(field)}\**\s*:\s*(.+)$", flags=re.IGNORECASE),
+        re.compile(rf"^\**{re.escape(field)}\**\s+remains\s+(.+)$", flags=re.IGNORECASE),
+    ]
+    for raw in lines:
+        cleaned = _base.clean_md_inline(raw.strip())
+        if not cleaned:
+            continue
+        for pattern in regexes:
+            match = pattern.match(cleaned)
+            if match:
+                value = match.group(1).strip().rstrip(".")
+                return value
+        if field_lower == "geopolitical regime" and cleaned.lower().startswith("regime classification:"):
+            return cleaned.split(":", 1)[1].strip().rstrip(".")
+    return None
+
+
+def _ensure_executive_summary_labels(md_text: str) -> str:
+    lines = md_text.splitlines()
+    section1_start, section1_end = _find_section_bounds(lines, 1)
+    if section1_start is None or section1_end is None:
+        return md_text
+
+    section1_lines = lines[section1_start + 1:section1_end]
+    section3_start, section3_end = _find_section_bounds(lines, 3)
+    section3_lines = lines[section3_start + 1:section3_end] if section3_start is not None and section3_end is not None else []
+
+    primary = _extract_value_from_lines(section1_lines, "Primary regime") or _extract_value_from_lines(section3_lines, "Primary regime")
+    geo = _extract_value_from_lines(section1_lines, "Geopolitical regime") or _extract_value_from_lines(section3_lines, "Geopolitical regime")
+    takeaway = _extract_value_from_lines(section1_lines, "Main takeaway")
+
+    existing_pairs = dict(_base.extract_label_pairs(section1_lines))
+    additions: list[str] = []
+    if "Primary regime" not in existing_pairs and primary:
+        additions.append(f"- Primary regime: {primary}")
+    if "Geopolitical regime" not in existing_pairs and geo:
+        additions.append(f"- Geopolitical regime: {geo}")
+    if "Main takeaway" not in existing_pairs and takeaway:
+        additions.append(f"- Main takeaway: {takeaway}")
+
+    if not additions:
+        return md_text
+
+    insertion_idx = section1_start + 1
+    new_lines = lines[:insertion_idx] + additions + lines[insertion_idx:]
+    return "\n".join(new_lines)
+
+
 def build_report_html(md_text: str, report_date_str: str, image_src: str | None = None, render_mode: str = "email") -> str:
+    md_text = _ensure_executive_summary_labels(md_text)
     return add_tradingview_targets(orig_build_report_html(md_text, report_date_str, image_src=image_src, render_mode=render_mode))
 
 
