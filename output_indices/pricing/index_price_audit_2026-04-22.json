@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-04-22",
+  "run_date": "2026-04-23",
   "requested_close_date": "2026-04-22",
   "source_mode": "state_file",
   "bootstrapped": false,
@@ -7,12 +7,12 @@
   "fresh_holdings_count": 4,
   "carried_forward_holdings_count": 0,
   "coverage_count_pct": 100.0,
-  "invested_weight_coverage_pct": 85.44,
+  "invested_weight_coverage_pct": 85.34,
   "decision": "update_covered_holdings_carry_unresolved",
   "unresolved_tickers": [],
   "fx_basis": {
-    "date": "2026-01-23",
-    "usd_per_eur": 1.1742,
+    "date": "2026-01-26",
+    "usd_per_eur": 1.1836,
     "source": "ecb_reference"
   },
   "positions": [
@@ -26,7 +26,7 @@
       "benchmark_close": 7137.8999,
       "proxy_status": "fresh_close",
       "benchmark_status": "fresh_close",
-      "market_value_eur": 26650.69
+      "market_value_eur": 26439.03
     },
     {
       "exposure_id": "us_tech_leadership",
@@ -35,10 +35,10 @@
       "primary_proxy": "QQQ",
       "shares": 48,
       "proxy_close": 655.11,
-      "benchmark_close": 26937.2754,
+      "benchmark_close": 26937.2793,
       "proxy_status": "fresh_close",
       "benchmark_status": "fresh_close",
-      "market_value_eur": 26780.17
+      "market_value_eur": 26567.49
     },
     {
       "exposure_id": "us_small_cap",
@@ -47,10 +47,10 @@
       "primary_proxy": "IWM",
       "shares": 90,
       "proxy_close": 276.48,
-      "benchmark_close": 2785.377,
+      "benchmark_close": 2785.3799,
       "proxy_status": "fresh_close",
       "benchmark_status": "fresh_close",
-      "market_value_eur": 21191.62
+      "market_value_eur": 21023.32
     },
     {
       "exposure_id": "em_broad",
@@ -62,10 +62,10 @@
       "benchmark_close": 63.38,
       "proxy_status": "fresh_close",
       "benchmark_status": "fresh_close",
-      "market_value_eur": 16678.95
+      "market_value_eur": 16546.49
     }
   ],
   "cash_eur": 15566.74,
-  "total_portfolio_value_eur": 106868.17,
+  "total_portfolio_value_eur": 106143.07,
   "state_file": "output_indices/index_portfolio_state.json"
 }
