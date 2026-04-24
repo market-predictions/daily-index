@@ -1,0 +1,71 @@
+{
+  "run_date": "2026-04-24",
+  "requested_close_date": "2026-04-24",
+  "source_mode": "state_file",
+  "bootstrapped": false,
+  "holdings_count": 4,
+  "fresh_holdings_count": 4,
+  "carried_forward_holdings_count": 0,
+  "coverage_count_pct": 100.0,
+  "invested_weight_coverage_pct": 85.4,
+  "decision": "update_covered_holdings_carry_unresolved",
+  "unresolved_tickers": [],
+  "fx_basis": {
+    "date": "2026-01-26",
+    "usd_per_eur": 1.1836,
+    "source": "ecb_reference"
+  },
+  "positions": [
+    {
+      "exposure_id": "us_large_cap",
+      "display_name": "S&P 500",
+      "benchmark_symbol": "^GSPC",
+      "primary_proxy": "SPY",
+      "shares": 44,
+      "proxy_close": 713.94,
+      "benchmark_close": 7165.0801,
+      "proxy_status": "fresh_close",
+      "benchmark_status": "fresh_close",
+      "market_value_eur": 26540.52
+    },
+    {
+      "exposure_id": "us_tech_leadership",
+      "display_name": "Nasdaq 100",
+      "benchmark_symbol": "^NDX",
+      "primary_proxy": "QQQ",
+      "shares": 48,
+      "proxy_close": 663.88,
+      "benchmark_close": 27303.666,
+      "proxy_status": "fresh_close",
+      "benchmark_status": "fresh_close",
+      "market_value_eur": 26923.15
+    },
+    {
+      "exposure_id": "us_small_cap",
+      "display_name": "Russell 2000",
+      "benchmark_symbol": "^RUT",
+      "primary_proxy": "IWM",
+      "shares": 90,
+      "proxy_close": 276.65,
+      "benchmark_close": 2787.0005,
+      "proxy_status": "fresh_close",
+      "benchmark_status": "fresh_close",
+      "market_value_eur": 21036.25
+    },
+    {
+      "exposure_id": "em_broad",
+      "display_name": "Emerging Markets",
+      "benchmark_symbol": "EEM",
+      "primary_proxy": "EEM",
+      "shares": 309,
+      "proxy_close": 63.74,
+      "benchmark_close": 63.74,
+      "proxy_status": "fresh_close",
+      "benchmark_status": "fresh_close",
+      "market_value_eur": 16640.47
+    }
+  ],
+  "cash_eur": 15566.74,
+  "total_portfolio_value_eur": 106707.13,
+  "state_file": "output_indices/index_portfolio_state.json"
+}

@@ -1,7 +1,7 @@
 {
   "report_date_token": "260421",
-  "report_file": "weekly_indices_review_260421_05.md",
-  "requested_close_date": "2026-04-22",
+  "report_file": "weekly_indices_review_260421_06.md",
+  "requested_close_date": "2026-04-24",
   "evidence_file": "index_candidate_evidence_260421.json",
   "groups": [
     {
@@ -9,12 +9,12 @@
       "status": "surfaced",
       "reason_if_ruled_out": "",
       "strongest_candidate": {
-        "exposure_id": "us_small_cap",
-        "public_index_name": "Russell 2000",
-        "primary_proxy": "IWM",
+        "exposure_id": "us_tech_leadership",
+        "public_index_name": "Nasdaq 100",
+        "primary_proxy": "QQQ",
         "score": 3.13,
         "board_score": 3.13,
-        "challenger_score": 2.43,
+        "challenger_score": 2.33,
         "publish": true,
         "reason_code_if_not_published": ""
       }
@@ -27,9 +27,9 @@
         "exposure_id": "italy_large_cap",
         "public_index_name": "FTSE MIB",
         "primary_proxy": "EWI",
-        "score": 1.84,
-        "board_score": 1.84,
-        "challenger_score": 1.97,
+        "score": 1.73,
+        "board_score": 1.73,
+        "challenger_score": 1.86,
         "publish": false,
         "reason_code_if_not_published": "strong_challenger_not_published"
       }
@@ -42,9 +42,9 @@
         "exposure_id": "uk_large_cap",
         "public_index_name": "FTSE 100",
         "primary_proxy": "EWU",
-        "score": 1.27,
-        "board_score": 1.27,
-        "challenger_score": 1.4,
+        "score": 1.16,
+        "board_score": 1.16,
+        "challenger_score": 1.29,
         "publish": false,
         "reason_code_if_not_published": "board_capacity"
       }
@@ -57,9 +57,9 @@
         "exposure_id": "switzerland_large_cap",
         "public_index_name": "SMI",
         "primary_proxy": "EWL",
-        "score": 1.09,
-        "board_score": 1.09,
-        "challenger_score": 1.27,
+        "score": 1.2,
+        "board_score": 1.2,
+        "challenger_score": 1.38,
         "publish": false,
         "reason_code_if_not_published": "weak_relative_strength"
       }
@@ -72,9 +72,9 @@
         "exposure_id": "canada_large_cap",
         "public_index_name": "S&P/TSX 60",
         "primary_proxy": "EWC",
-        "score": 1.83,
-        "board_score": 1.83,
-        "challenger_score": 1.96,
+        "score": 1.72,
+        "board_score": 1.72,
+        "challenger_score": 1.85,
         "publish": false,
         "reason_code_if_not_published": "strong_challenger_not_published"
       }
@@ -102,9 +102,9 @@
         "exposure_id": "china_large_cap",
         "public_index_name": "China large cap",
         "primary_proxy": "FXI",
-        "score": 1.51,
-        "board_score": 1.51,
-        "challenger_score": 1.64,
+        "score": 1.62,
+        "board_score": 1.62,
+        "challenger_score": 1.75,
         "publish": false,
         "reason_code_if_not_published": "strong_challenger_not_published"
       }
