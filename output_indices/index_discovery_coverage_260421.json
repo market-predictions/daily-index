@@ -1,7 +1,7 @@
 {
   "report_date_token": "260421",
-  "report_file": "weekly_indices_review_260421_06.md",
-  "requested_close_date": "2026-04-24",
+  "report_file": "weekly_indices_review_260421_07.md",
+  "requested_close_date": "2026-04-27",
   "evidence_file": "index_candidate_evidence_260421.json",
   "groups": [
     {
@@ -21,17 +21,17 @@
     },
     {
       "group": "continental Europe",
-      "status": "near_miss",
+      "status": "considered",
       "reason_if_ruled_out": "",
       "strongest_candidate": {
         "exposure_id": "italy_large_cap",
         "public_index_name": "FTSE MIB",
         "primary_proxy": "EWI",
-        "score": 1.73,
-        "board_score": 1.73,
-        "challenger_score": 1.86,
+        "score": 1.61,
+        "board_score": 1.61,
+        "challenger_score": 1.74,
         "publish": false,
-        "reason_code_if_not_published": "strong_challenger_not_published"
+        "reason_code_if_not_published": "board_capacity"
       }
     },
     {
@@ -102,9 +102,9 @@
         "exposure_id": "china_large_cap",
         "public_index_name": "China large cap",
         "primary_proxy": "FXI",
-        "score": 1.62,
-        "board_score": 1.62,
-        "challenger_score": 1.75,
+        "score": 1.74,
+        "board_score": 1.74,
+        "challenger_score": 1.87,
         "publish": false,
         "reason_code_if_not_published": "strong_challenger_not_published"
       }
@@ -117,9 +117,9 @@
         "exposure_id": "india_large_cap",
         "public_index_name": "Nifty 50",
         "primary_proxy": "INDA",
-        "score": 0.51,
-        "board_score": 0.51,
-        "challenger_score": 0.64,
+        "score": 0.63,
+        "board_score": 0.63,
+        "challenger_score": 0.76,
         "publish": false,
         "reason_code_if_not_published": "weak_relative_strength"
       }
@@ -132,9 +132,9 @@
         "exposure_id": "em_broad",
         "public_index_name": "Emerging Markets",
         "primary_proxy": "EEM",
-        "score": 2.99,
-        "board_score": 2.99,
-        "challenger_score": 2.34,
+        "score": 3.19,
+        "board_score": 3.19,
+        "challenger_score": 2.54,
         "publish": true,
         "reason_code_if_not_published": ""
       }
