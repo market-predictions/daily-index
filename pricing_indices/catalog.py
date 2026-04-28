@@ -240,8 +240,71 @@ EXTENDED_DISCOVERY_EXPOSURES = [
     },
 ]
 
+INVERSE_RESEARCH_EXPOSURES = [
+    {
+        "exposure_id": "inverse_sp500",
+        "display_name": "Inverse S&P 500",
+        "benchmark_symbol": "SH",
+        "benchmark_name": "ProShares Short S&P500",
+        "primary_proxy": "SH",
+        "alternative_proxy": "—",
+        "region": "Defensive / short research",
+        "style": "inverse hedge",
+        "role": "research-only bearish S&P 500 expression",
+        "target_weight_pct": None,
+        "original_thesis": "Research-visible bearish implementation for S&P 500 downside without funding it in the live long-only portfolio.",
+        "research_only": True,
+        "inverse_of": "us_large_cap",
+    },
+    {
+        "exposure_id": "inverse_nasdaq100",
+        "display_name": "Inverse Nasdaq 100",
+        "benchmark_symbol": "PSQ",
+        "benchmark_name": "ProShares Short QQQ",
+        "primary_proxy": "PSQ",
+        "alternative_proxy": "—",
+        "region": "Defensive / short research",
+        "style": "inverse hedge",
+        "role": "research-only bearish Nasdaq expression",
+        "target_weight_pct": None,
+        "original_thesis": "Research-visible bearish implementation for Nasdaq 100 downside without funding it in the live long-only portfolio.",
+        "research_only": True,
+        "inverse_of": "us_tech_leadership",
+    },
+    {
+        "exposure_id": "inverse_russell2000",
+        "display_name": "Inverse Russell 2000",
+        "benchmark_symbol": "RWM",
+        "benchmark_name": "ProShares Short Russell2000",
+        "primary_proxy": "RWM",
+        "alternative_proxy": "—",
+        "region": "Defensive / short research",
+        "style": "inverse hedge",
+        "role": "research-only bearish small-cap expression",
+        "target_weight_pct": None,
+        "original_thesis": "Research-visible bearish implementation for Russell 2000 downside without funding it in the live long-only portfolio.",
+        "research_only": True,
+        "inverse_of": "us_small_cap",
+    },
+    {
+        "exposure_id": "inverse_em",
+        "display_name": "Inverse Emerging Markets",
+        "benchmark_symbol": "EUM",
+        "benchmark_name": "ProShares Short MSCI Emerging Markets",
+        "primary_proxy": "EUM",
+        "alternative_proxy": "—",
+        "region": "Defensive / short research",
+        "style": "inverse hedge",
+        "role": "research-only bearish EM expression",
+        "target_weight_pct": None,
+        "original_thesis": "Research-visible bearish implementation for emerging-markets downside without funding it in the live long-only portfolio.",
+        "research_only": True,
+        "inverse_of": "em_broad",
+    },
+]
+
 DEFAULT_EXPOSURES = CORE_IMPLEMENTATION_EXPOSURES
-ALL_EXPOSURES = CORE_IMPLEMENTATION_EXPOSURES + EXTENDED_DISCOVERY_EXPOSURES
+ALL_EXPOSURES = CORE_IMPLEMENTATION_EXPOSURES + EXTENDED_DISCOVERY_EXPOSURES + INVERSE_RESEARCH_EXPOSURES
 
 EXPLICIT_DISCOVERY_TAXONOMY = [
     "S&P 500 / U.S. large cap",
@@ -263,6 +326,10 @@ EXPLICIT_DISCOVERY_TAXONOMY = [
     "China large cap / CSI 300",
     "India large cap / Nifty 50",
     "Emerging Markets broad",
+    "inverse S&P 500 research",
+    "inverse Nasdaq 100 research",
+    "inverse Russell 2000 research",
+    "inverse Emerging Markets research",
     "global small caps",
     "quality leadership",
     "defensives",
