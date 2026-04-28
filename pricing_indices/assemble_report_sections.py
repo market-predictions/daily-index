@@ -137,12 +137,14 @@ def build_section7(state: dict[str, Any], valuation_rows: list[dict[str, str]]) 
 
 def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any], plan: dict[str, Any]) -> str:
     all_candidates = candidate_ranking.get("candidates", [])
-    unpublished = [c for c in all_candidates if not c.get("publish")]
-    unpublished = sorted(unpublished, key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))
+    long_unpublished = [c for c in all_candidates if not c.get("publish") and not c.get("research_only")]
+    long_unpublished = sorted(long_unpublished, key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))
+    inverse_candidates = [c for c in all_candidates if c.get("research_only")]
+    inverse_candidates = sorted(inverse_candidates, key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""))
     coverage_groups = coverage.get("groups") or []
-    strongest_omitted = unpublished[0] if unpublished else None
+    strongest_omitted = long_unpublished[0] if long_unpublished else None
 
-    picked: list[dict[str, Any]] = unpublished[:4]
+    picked: list[dict[str, Any]] = long_unpublished[:4]
 
     lines = [f"## 11. {SECTION11_NAME}", ""]
     if strongest_omitted:
@@ -163,6 +165,22 @@ def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
             "",
         ]
 
+    if inverse_candidates:
+        lines += [
+            "### Defensive / short research watchlist",
+            "These inverse ETFs are tracked as **research-only** bearish implementations. They are visible so the review can prepare for risk-off regimes, but they are **not** eligible for live funding in the current long-only portfolio model.",
+            "",
+        ]
+        for row in inverse_candidates:
+            lines += [
+                f"#### {row.get('public_index_name')} ({row.get('primary_proxy')})",
+                f"- Tracks against: {row.get('inverse_of') or 'n/a'}",
+                f"- Challenger score: {float(row.get('challenger_score') or row.get('score') or 0.0):.2f}",
+                f"- Why it matters: Research-visible hedge / bearish implementation candidate.",
+                f"- Funding status: {row.get('reason_code_if_not_published') or 'research_only_inverse_candidate'}",
+                "",
+            ]
+
     lines += [
         "### Breadth checkpoint by regional bucket",
         "| Regional bucket | Strongest candidate | Proxy | Challenger score | Current status |",
@@ -172,7 +190,10 @@ def build_section11(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
         cand = group.get("strongest_candidate") or {}
         if not cand:
             continue
-        status = "Published" if cand.get("publish") else ("Near miss" if group.get("status") == "near_miss" else "Ruled out / lower priority")
+        if cand.get("research_only"):
+            status = "Research-only hedge watchlist"
+        else:
+            status = "Published" if cand.get("publish") else ("Near miss" if group.get("status") == "near_miss" else "Ruled out / lower priority")
         lines.append(
             f"| {group.get('group')} | {cand.get('public_index_name')} | {cand.get('primary_proxy')} | {float(cand.get('challenger_score') or cand.get('score') or 0.0):.2f} | {status} |"
         )
@@ -232,7 +253,7 @@ def build_section16(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
         "|---|---|---|---|---|",
     ]
     watch_candidates = sorted(
-        [c for c in candidate_ranking.get("candidates", []) if not c.get("publish")],
+        [c for c in candidate_ranking.get("candidates", []) if not c.get("publish") and not c.get("research_only")],
         key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""),
     )[:8]
     for row in watch_candidates:
@@ -241,6 +262,22 @@ def build_section16(candidate_ranking: dict[str, Any], coverage: dict[str, Any],
         lines.append(
             f"| {row.get('public_index_name')} | {row.get('regional_group')} | {row.get('primary_proxy')} | {status} | {why} |"
         )
+
+    inverse_watch = sorted(
+        [c for c in candidate_ranking.get("candidates", []) if c.get("research_only")],
+        key=lambda x: (-float(x.get("challenger_score") or x.get("score") or 0.0), x.get("public_index_name") or ""),
+    )
+    if inverse_watch:
+        lines += [
+            "",
+            "### Defensive / short continuity watchlist",
+            "| Theme | Primary Proxy | Status | Why it stays visible |",
+            "|---|---|---|---|",
+        ]
+        for row in inverse_watch:
+            lines.append(
+                f"| {row.get('public_index_name')} | {row.get('primary_proxy')} | Research-only hedge watchlist | Bearish implementation candidate kept visible for risk-off regime transitions. |"
+            )
 
     lines += [
         "",
