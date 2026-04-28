@@ -21,6 +21,7 @@ GROUPS = {
     "Greater China": {"hong_kong_equities", "china_large_cap"},
     "India": {"india_large_cap"},
     "EM broad": {"em_broad"},
+    "Defensive / short research": {"inverse_sp500", "inverse_nasdaq100", "inverse_russell2000", "inverse_em"},
 }
 
 GROUP_BASE_SCORE = {
@@ -33,6 +34,7 @@ GROUP_BASE_SCORE = {
     "Greater China": 3.00,
     "India": 3.25,
     "EM broad": 3.20,
+    "Defensive / short research": 2.50,
 }
 
 
@@ -121,6 +123,8 @@ def fallback_candidates(state: dict[str, Any], plan: dict[str, Any]) -> list[dic
                 "regional_group": group,
                 "region": exposure.get("region"),
                 "style": exposure.get("style"),
+                "research_only": bool(exposure.get("research_only")),
+                "inverse_of": exposure.get("inverse_of"),
                 "currently_held": held,
                 "weight_pct": position.get("weight_pct"),
                 "score": round(min(score, 4.60), 2),
@@ -160,6 +164,8 @@ def evidence_candidates(state: dict[str, Any], evidence: dict[str, Any]) -> list
                 "regional_group": regional_group(exposure_id),
                 "region": row.get("region"),
                 "style": row.get("style"),
+                "research_only": bool(row.get("research_only")),
+                "inverse_of": row.get("inverse_of"),
                 "currently_held": bool(row.get("currently_held")),
                 "weight_pct": position.get("weight_pct"),
                 "score": board_score,
@@ -186,12 +192,16 @@ def _group_limit(group: str) -> int:
 
 
 def _can_add(candidate: dict[str, Any], selected: list[dict[str, Any]]) -> bool:
+    if candidate.get("research_only"):
+        return False
     group = str(candidate["regional_group"])
     count = sum(1 for row in selected if row["regional_group"] == group)
     return count < _group_limit(group)
 
 
 def _replace_for_breadth(selected: list[dict[str, Any]], candidate: dict[str, Any]) -> list[dict[str, Any]]:
+    if candidate.get("research_only"):
+        return selected
     if candidate["regional_group"] in {row["regional_group"] for row in selected}:
         return selected
     replacement_idx = None
@@ -212,7 +222,7 @@ def _replace_for_breadth(selected: list[dict[str, Any]], candidate: dict[str, An
 def assign_publish_flags(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
     selected: list[dict[str, Any]] = []
 
-    held_candidates = [c for c in candidates if c.get("currently_held") and float(c.get("board_score") or 0.0) >= 1.40]
+    held_candidates = [c for c in candidates if c.get("currently_held") and not c.get("research_only") and float(c.get("board_score") or 0.0) >= 1.40]
     held_candidates.sort(key=lambda x: (-float(x.get("board_score") or 0.0), x.get("public_index_name") or ""))
     for candidate in held_candidates:
         if len(selected) >= 4:
@@ -220,7 +230,10 @@ def assign_publish_flags(candidates: list[dict[str, Any]]) -> list[dict[str, Any
         if _can_add(candidate, selected):
             selected.append(candidate)
 
-    overall_candidates = sorted(candidates, key=lambda x: (-float(x.get("board_score") or 0.0), -float(x.get("challenger_score") or 0.0), x.get("public_index_name") or ""))
+    overall_candidates = sorted(
+        [c for c in candidates if not c.get("research_only")],
+        key=lambda x: (-float(x.get("board_score") or 0.0), -float(x.get("challenger_score") or 0.0), x.get("public_index_name") or ""),
+    )
     for candidate in overall_candidates:
         if candidate["exposure_id"] in {row["exposure_id"] for row in selected}:
             continue
@@ -232,7 +245,7 @@ def assign_publish_flags(candidates: list[dict[str, Any]]) -> list[dict[str, Any
     unique_groups = {row["regional_group"] for row in selected}
     if len(unique_groups) < 3:
         challenger_order = sorted(
-            [c for c in candidates if not c.get("currently_held")],
+            [c for c in candidates if not c.get("currently_held") and not c.get("research_only")],
             key=lambda x: (-float(x.get("challenger_score") or 0.0), x.get("public_index_name") or ""),
         )
         for candidate in challenger_order:
@@ -252,7 +265,9 @@ def assign_publish_flags(candidates: list[dict[str, Any]]) -> list[dict[str, Any
         if candidate["publish"]:
             candidate["reason_code_if_not_published"] = ""
             continue
-        if candidate.get("currently_held") and float(candidate.get("board_score") or 0.0) >= 1.40:
+        if candidate.get("research_only"):
+            candidate["reason_code_if_not_published"] = "research_only_inverse_candidate"
+        elif candidate.get("currently_held") and float(candidate.get("board_score") or 0.0) >= 1.40:
             candidate["reason_code_if_not_published"] = "held_but_not_board_named"
         elif float(candidate.get("challenger_score") or 0.0) >= publish_challenger_cutoff - 0.20:
             candidate["reason_code_if_not_published"] = "strong_challenger_not_published"
@@ -290,6 +305,8 @@ def build_coverage(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
         status = "considered"
         if strongest["publish"]:
             status = "surfaced"
+        elif strongest.get("research_only"):
+            status = "considered"
         elif strongest["reason_code_if_not_published"] == "strong_challenger_not_published":
             status = "near_miss"
         elif float(strongest.get("challenger_score") or 0.0) < 1.50:
@@ -308,6 +325,7 @@ def build_coverage(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "board_score": strongest.get("board_score"),
                     "challenger_score": strongest.get("challenger_score"),
                     "publish": strongest["publish"],
+                    "research_only": strongest.get("research_only"),
                     "reason_code_if_not_published": strongest["reason_code_if_not_published"],
                 },
             }
