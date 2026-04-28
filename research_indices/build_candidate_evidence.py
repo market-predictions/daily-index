@@ -31,7 +31,68 @@ def _continuity_sets(plan: dict[str, Any]) -> tuple[set[str], set[str], set[str]
     )
 
 
+def _inverse_regime_alignment(exposure: dict[str, Any], macro: dict[str, Any]) -> tuple[float, list[str]]:
+    inverse_of = exposure.get("inverse_of")
+    signals = macro.get("market_signals") or {}
+    score = 0.0
+    reasons: list[str] = ["research-only bearish implementation candidate"]
+
+    if signals.get("equity_risk_appetite") == "headwind":
+        score += 0.30
+        reasons.append("broad equity risk appetite is a headwind")
+    elif signals.get("equity_risk_appetite") == "supportive":
+        score -= 0.20
+        reasons.append("broad equity risk appetite is still supportive")
+
+    if signals.get("credit_support") == "headwind":
+        score += 0.20
+        reasons.append("credit deterioration increases hedge relevance")
+
+    if inverse_of == "us_large_cap":
+        if signals.get("breadth_confirmation") == "headwind":
+            score += 0.20
+            reasons.append("weak breadth supports a bearish S&P hedge")
+        elif signals.get("breadth_confirmation") == "supportive":
+            score -= 0.12
+            reasons.append("healthy breadth reduces near-term hedge urgency")
+
+    if inverse_of == "us_tech_leadership":
+        if signals.get("growth_leadership") == "headwind":
+            score += 0.28
+            reasons.append("growth leadership is fading")
+        elif signals.get("growth_leadership") == "supportive":
+            score -= 0.16
+            reasons.append("growth leadership remains supportive")
+        if signals.get("duration_support") == "headwind":
+            score += 0.18
+            reasons.append("rates backdrop increases pressure on growth leadership")
+
+    if inverse_of == "us_small_cap":
+        if signals.get("breadth_confirmation") == "headwind":
+            score += 0.30
+            reasons.append("small-cap breadth weakness supports a bearish small-cap hedge")
+        elif signals.get("breadth_confirmation") == "supportive":
+            score -= 0.14
+            reasons.append("small-cap breadth is still supportive")
+
+    if inverse_of == "em_broad":
+        if signals.get("dollar_pressure") == "supportive":
+            score += 0.22
+            reasons.append("renewed dollar pressure raises EM downside risk")
+        elif signals.get("dollar_pressure") == "headwind":
+            score -= 0.12
+            reasons.append("easing dollar pressure reduces EM hedge urgency")
+        if signals.get("em_confirmation") == "headwind":
+            score += 0.22
+            reasons.append("EM confirmation is weakening")
+
+    return round(score, 3), reasons
+
+
 def _regime_alignment(exposure: dict[str, Any], macro: dict[str, Any]) -> tuple[float, list[str]]:
+    if exposure.get("research_only"):
+        return _inverse_regime_alignment(exposure, macro)
+
     region = exposure.get("region")
     exposure_id = exposure["exposure_id"]
     signals = macro.get("market_signals") or {}
@@ -149,6 +210,9 @@ def _regime_alignment(exposure: dict[str, Any], macro: dict[str, Any]) -> tuple[
 
 
 def _implementation_priority(exposure: dict[str, Any], current_positions: dict[str, Any]) -> tuple[float, list[str]]:
+    if exposure.get("research_only"):
+        return 0.0, ["kept out of live funding by design during the research-only phase"]
+
     exposure_id = exposure["exposure_id"]
     position = current_positions.get(exposure_id)
     if not position:
@@ -175,6 +239,9 @@ def _implementation_priority(exposure: dict[str, Any], current_positions: dict[s
 
 
 def _diversification_value(exposure: dict[str, Any], current_positions: dict[str, Any]) -> tuple[float, list[str]]:
+    if exposure.get("research_only"):
+        return 0.12, ["adds a distinct defensive/hedging implementation path for bearish regimes"]
+
     held_regions = {pos.get("region") for pos in current_positions.values()}
     held_styles = {pos.get("style") for pos in current_positions.values()}
     score = 0.0
@@ -198,6 +265,15 @@ def _diversification_value(exposure: dict[str, Any], current_positions: dict[str
 
 
 def _fragility_penalty(exposure: dict[str, Any], macro: dict[str, Any]) -> tuple[float, list[str]]:
+    if exposure.get("research_only"):
+        signals = macro.get("market_signals") or {}
+        penalty = 0.0
+        reasons: list[str] = ["inverse ETFs remain secondary to cash unless a clearer bearish regime emerges"]
+        if signals.get("equity_risk_appetite") == "supportive":
+            penalty += 0.20
+            reasons.append("supportive equity risk appetite reduces immediate hedge urgency")
+        return round(penalty, 3), reasons
+
     region = exposure.get("region")
     exposure_id = exposure["exposure_id"]
     signals = macro.get("market_signals") or {}
@@ -276,6 +352,8 @@ def build_evidence(output_dir: Path, token: str) -> dict[str, Any]:
                 "alternative_proxy": exposure.get("alternative_proxy"),
                 "region": exposure.get("region"),
                 "style": exposure.get("style"),
+                "research_only": bool(exposure.get("research_only")),
+                "inverse_of": exposure.get("inverse_of"),
                 "currently_held": exposure_id in positions,
                 "relative_strength_score": round(rs_score, 3),
                 "regime_alignment_score": round(regime_score, 3),
